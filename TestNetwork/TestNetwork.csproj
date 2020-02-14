@@ -84,9 +84,18 @@
     <EmbeddedResource Include="Forms\FormClient.resx">
       <DependentUpon>FormClient.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="FormTreeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormTreeView.Designer.cs">
+      <DependentUpon>FormTreeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\MySettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormTreeView.resx">
+      <DependentUpon>FormTreeView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

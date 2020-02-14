@@ -1,6 +1,6 @@
 ﻿namespace TestNetwork
 {
-    partial class FormServer
+    partial class FormTreeView
     {
         /// <summary>
         /// Required designer variable.
@@ -28,22 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-      ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
-      this.SuspendLayout();
-      // 
-      // FormServer
-      // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1092, 770);
-      this.Name = "FormServer";
-      // 
-      // 
-      // 
-      this.RootElement.ApplyShapeToControl = true;
-      this.Text = "FormServer";
-      ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
-      this.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // FormTreeView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Name = "FormTreeView";
+            this.Text = "FormTreeView";
+            ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
+            this.ResumeLayout(false);
 
         }
 

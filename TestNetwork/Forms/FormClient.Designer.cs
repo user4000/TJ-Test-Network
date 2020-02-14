@@ -1,4 +1,4 @@
-﻿namespace TestToemselNetwork
+﻿namespace TestNetwork
 {
   partial class FormClient
   {

@@ -5,9 +5,9 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.ApplicationSettings;
 using static TJFramework.Logger.Manager;
-using static TestToemselNetwork.Program;
+using static TestNetwork.Program;
 
-namespace TestToemselNetwork
+namespace TestNetwork
 {
   public enum MyEnum
   {

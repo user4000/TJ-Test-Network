@@ -7,7 +7,7 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
 
-namespace TestToemselNetwork
+namespace TestNetwork
 {
   static class Program
   {

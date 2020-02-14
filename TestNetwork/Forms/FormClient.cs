@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 
-namespace TestToemselNetwork
+namespace TestNetwork
 {
   public partial class FormClient : RadForm
   {

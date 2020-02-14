@@ -6,13 +6,12 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Telerik.WinControls;
-using Telerik.WinControls.UI;
 
 namespace TestNetwork
 {
-    public partial class FormServer : RadForm
+    public partial class FormTreeView : Telerik.WinControls.UI.RadForm
     {
-        public FormServer()
+        public FormTreeView()
         {
             InitializeComponent();
         }
