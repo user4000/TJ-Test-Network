@@ -1,6 +1,6 @@
 ﻿namespace TestToemselNetwork
 {
-  partial class RadForm1
+  partial class FormClient
   {
     /// <summary>
     /// Required designer variable.
@@ -31,11 +31,16 @@
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
-      // RadForm1
-      //
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      // FormMessage
+      // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.Name = "RadForm1";
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.ClientSize = new System.Drawing.Size(753, 506);
+      this.Name = "FormMessage";
+      // 
+      // 
+      // 
+      this.RootElement.ApplyShapeToControl = true;
       this.Text = "RadForm1";
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);

@@ -11,9 +11,9 @@ using Telerik.WinControls.UI;
 
 namespace TestToemselNetwork
 {
-  public partial class RadForm1 : Telerik.WinControls.UI.RadForm
+  public partial class FormClient : RadForm
   {
-    public RadForm1()
+    public FormClient()
     {
       InitializeComponent();
     }
