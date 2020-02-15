@@ -15,6 +15,8 @@ namespace TestNetwork
 {
   public partial class FormTreeView : RadForm, IEventStartWork
   {
+    private DatabaseSettingsManager DbSettings { get; } = new DatabaseSettingsManager();
+
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
@@ -23,60 +25,20 @@ namespace TestNetwork
     public void EventStartWork()
     {
       BtnLoadData.Click += EventButtonLoadData;
-
       TvFolders.ImageList = this.imageList1;
-      //TvFolders.NodeAdded += RadTreeView1_NodeAdded;
-
+      DbSettings.SetFont(TvFolders.Font);
     }
 
     private void EventButtonLoadData(object sender, EventArgs e)
     {
-      string file = Program.ApplicationSettings.SettingsDatabaseLocation;
-      DataTable table = MsAccessDataReader.GetDataTable(file, "FOLDERS");
-
-      IEnumerable<DataRow> BadRows = table.Rows.Cast<DataRow>().Where(r => r["IdFolder"].ToString() == r["IdParent"].ToString());
-      BadRows.ToList().ForEach(r => r.SetField("IdParent", DBNull.Value));
-
-      this.TvFolders.DisplayMember = "NameFolder";
-      this.TvFolders.ParentMember = "IdParent";
-      this.TvFolders.ChildMember = "IdFolder";
-      try
-      {
-        this.TvFolders.DataSource = table;
-      }
-      catch (Exception ex)
-      {
-        Ms.Error("Ошибка при попытке присвоения свойствв DataSource.", ex);
-      }
-
-      foreach (var item in TvFolders.Nodes)
-      {
-        ProcessOneNode(item);
-      }
-
+      DataTable table = DbSettings.GetMsAccessDataTable(Program.ApplicationSettings.SettingsDatabaseLocation, "FOLDERS");
+      DbSettings.FillTreeView(TvFolders, table);
       Ms.Message("", "Data loaded").Control(BtnLoadData).Ok();
     }
 
 
-
-    private void ProcessOneNode(RadTreeNode node)
-    {   
-      if (node.Parent == null)
-        node.ImageIndex = 0;
-      else
-        node.ImageIndex = 3 + node.Nodes.Count;
-      node.Font = TvFolders.Font;
-      foreach (var item in node.Nodes)
-      {
-        ProcessOneNode(item);
-      }
-    }
-
-
-
     private void LoadTestData()
     {
-
       RadTreeNode root = this.TvFolders.Nodes.Add("Programming", 17);
       root.Nodes.Add("Microsoft Research News and Highlights", 1);
 
@@ -105,13 +67,5 @@ namespace TestNetwork
       this.TvFolders.Nodes.Add("Engadget 222", 16);
       this.TvFolders.Nodes.Add("Engadget 333", 15);
     }
-
-    private void RadTreeView1_NodeAdded(object sender, RadTreeViewEventArgs e)
-    {
-      //e.Node.Font = TvFolders.Font;
-      //ProcessOneNode(e.Node);
-    }
-
-
   }
 }

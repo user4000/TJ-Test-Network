@@ -59,29 +59,17 @@
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "add (1).png");
-      this.imageList1.Images.SetKeyName(1, "addbutton.png");
-      this.imageList1.Images.SetKeyName(2, "agt_update_misc.png");
-      this.imageList1.Images.SetKeyName(3, "copy.png");
-      this.imageList1.Images.SetKeyName(4, "document (1).png");
-      this.imageList1.Images.SetKeyName(5, "document (2).png");
-      this.imageList1.Images.SetKeyName(6, "document2 (2).png");
-      this.imageList1.Images.SetKeyName(7, "document-edit.png");
-      this.imageList1.Images.SetKeyName(8, "edit_add (2).png");
-      this.imageList1.Images.SetKeyName(9, "editdelete (1).png");
-      this.imageList1.Images.SetKeyName(10, "folder (2).png");
-      this.imageList1.Images.SetKeyName(11, "folder (3).png");
-      this.imageList1.Images.SetKeyName(12, "folder (4).png");
-      this.imageList1.Images.SetKeyName(13, "folder (7).png");
-      this.imageList1.Images.SetKeyName(14, "folder (8).png");
-      this.imageList1.Images.SetKeyName(15, "folder (9).png");
-      this.imageList1.Images.SetKeyName(16, "folder (10).png");
-      this.imageList1.Images.SetKeyName(17, "folder (11).png");
-      this.imageList1.Images.SetKeyName(18, "folder_blue (1).png");
-      this.imageList1.Images.SetKeyName(19, "folder_blue.png");
-      this.imageList1.Images.SetKeyName(20, "folder-open.png");
-      this.imageList1.Images.SetKeyName(21, "kedit.png");
-      this.imageList1.Images.SetKeyName(22, "textdocument (1).png");
+      this.imageList1.Images.SetKeyName(0, "textdocument.png");
+      this.imageList1.Images.SetKeyName(1, "folder_green (2).png");
+      this.imageList1.Images.SetKeyName(2, "folder (7).png");
+      this.imageList1.Images.SetKeyName(3, "folder (8).png");
+      this.imageList1.Images.SetKeyName(4, "folder_blue (1).png");
+      this.imageList1.Images.SetKeyName(5, "folder (4).png");
+      this.imageList1.Images.SetKeyName(6, "folder (9).png");
+      this.imageList1.Images.SetKeyName(7, "folder (11).png");
+      this.imageList1.Images.SetKeyName(8, "folder-open.png");
+      this.imageList1.Images.SetKeyName(9, "folder (11).png");
+      this.imageList1.Images.SetKeyName(10, "folder-open.png");
       // 
       // BtnLoadData
       // 
