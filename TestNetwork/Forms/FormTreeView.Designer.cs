@@ -30,73 +30,91 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      this.radTreeView1 = new Telerik.WinControls.UI.RadTreeView();
+      this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      ((System.ComponentModel.ISupportInitialize)(this.radTreeView1)).BeginInit();
+      this.BtnLoadData = new Telerik.WinControls.UI.RadButton();
+      ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BtnLoadData)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
-      // radTreeView1
+      // TvFolders
       // 
-      this.radTreeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(255)))));
-      this.radTreeView1.Cursor = System.Windows.Forms.Cursors.Default;
-      this.radTreeView1.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.radTreeView1.ForeColor = System.Drawing.Color.Black;
-      this.radTreeView1.ImageList = this.imageList1;
-      this.radTreeView1.ItemHeight = 34;
-      this.radTreeView1.LineStyle = Telerik.WinControls.UI.TreeLineStyle.Solid;
-      this.radTreeView1.Location = new System.Drawing.Point(48, 32);
-      this.radTreeView1.Name = "radTreeView1";
-      this.radTreeView1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.radTreeView1.ShowLines = true;
-      this.radTreeView1.Size = new System.Drawing.Size(553, 684);
-      this.radTreeView1.SpacingBetweenNodes = -1;
-      this.radTreeView1.TabIndex = 0;
-      this.radTreeView1.TreeIndent = 34;
+      this.TvFolders.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(255)))));
+      this.TvFolders.Cursor = System.Windows.Forms.Cursors.Default;
+      this.TvFolders.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TvFolders.ForeColor = System.Drawing.Color.Black;
+      this.TvFolders.ItemHeight = 34;
+      this.TvFolders.LineStyle = Telerik.WinControls.UI.TreeLineStyle.Solid;
+      this.TvFolders.Location = new System.Drawing.Point(12, 12);
+      this.TvFolders.Name = "TvFolders";
+      this.TvFolders.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.TvFolders.ShowLines = true;
+      this.TvFolders.Size = new System.Drawing.Size(606, 746);
+      this.TvFolders.SpacingBetweenNodes = -1;
+      this.TvFolders.TabIndex = 0;
+      this.TvFolders.TreeIndent = 34;
       // 
       // imageList1
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "copy (1).png");
-      this.imageList1.Images.SetKeyName(1, "document (2).png");
-      this.imageList1.Images.SetKeyName(2, "document_32 (1).png");
-      this.imageList1.Images.SetKeyName(3, "document_32.png");
-      this.imageList1.Images.SetKeyName(4, "edit (3).png");
-      this.imageList1.Images.SetKeyName(5, "edit_add.png");
-      this.imageList1.Images.SetKeyName(6, "folder (4).png");
-      this.imageList1.Images.SetKeyName(7, "folder (11).png");
-      this.imageList1.Images.SetKeyName(8, "folder_blue.png");
-      this.imageList1.Images.SetKeyName(9, "folder_green (2).png");
-      this.imageList1.Images.SetKeyName(10, "folder-open (1).png");
-      this.imageList1.Images.SetKeyName(11, "folder-open.png");
-      this.imageList1.Images.SetKeyName(12, "key_add.png");
-      this.imageList1.Images.SetKeyName(13, "knode.png");
-      this.imageList1.Images.SetKeyName(14, "mail-new.png");
-      this.imageList1.Images.SetKeyName(15, "package_editorspackage_editors.png");
-      this.imageList1.Images.SetKeyName(16, "textdocument.png");
-      this.imageList1.Images.SetKeyName(17, "x-office-document.png");
+      this.imageList1.Images.SetKeyName(0, "add (1).png");
+      this.imageList1.Images.SetKeyName(1, "addbutton.png");
+      this.imageList1.Images.SetKeyName(2, "agt_update_misc.png");
+      this.imageList1.Images.SetKeyName(3, "copy.png");
+      this.imageList1.Images.SetKeyName(4, "document (1).png");
+      this.imageList1.Images.SetKeyName(5, "document (2).png");
+      this.imageList1.Images.SetKeyName(6, "document2 (2).png");
+      this.imageList1.Images.SetKeyName(7, "document-edit.png");
+      this.imageList1.Images.SetKeyName(8, "edit_add (2).png");
+      this.imageList1.Images.SetKeyName(9, "editdelete (1).png");
+      this.imageList1.Images.SetKeyName(10, "folder (2).png");
+      this.imageList1.Images.SetKeyName(11, "folder (3).png");
+      this.imageList1.Images.SetKeyName(12, "folder (4).png");
+      this.imageList1.Images.SetKeyName(13, "folder (7).png");
+      this.imageList1.Images.SetKeyName(14, "folder (8).png");
+      this.imageList1.Images.SetKeyName(15, "folder (9).png");
+      this.imageList1.Images.SetKeyName(16, "folder (10).png");
+      this.imageList1.Images.SetKeyName(17, "folder (11).png");
+      this.imageList1.Images.SetKeyName(18, "folder_blue (1).png");
+      this.imageList1.Images.SetKeyName(19, "folder_blue.png");
+      this.imageList1.Images.SetKeyName(20, "folder-open.png");
+      this.imageList1.Images.SetKeyName(21, "kedit.png");
+      this.imageList1.Images.SetKeyName(22, "textdocument (1).png");
+      // 
+      // BtnLoadData
+      // 
+      this.BtnLoadData.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BtnLoadData.Location = new System.Drawing.Point(659, 12);
+      this.BtnLoadData.Name = "BtnLoadData";
+      this.BtnLoadData.Size = new System.Drawing.Size(129, 29);
+      this.BtnLoadData.TabIndex = 1;
+      this.BtnLoadData.Text = "Load data";
       // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1092, 770);
-      this.Controls.Add(this.radTreeView1);
+      this.Controls.Add(this.BtnLoadData);
+      this.Controls.Add(this.TvFolders);
       this.Name = "FormTreeView";
       // 
       // 
       // 
       this.RootElement.ApplyShapeToControl = true;
       this.Text = "FormTreeView";
-      ((System.ComponentModel.ISupportInitialize)(this.radTreeView1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BtnLoadData)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
         }
 
     #endregion
-    private System.Windows.Forms.ImageList imageList1;
-    public Telerik.WinControls.UI.RadTreeView radTreeView1;
+    public Telerik.WinControls.UI.RadTreeView TvFolders;
+    public System.Windows.Forms.ImageList imageList1;
+    private Telerik.WinControls.UI.RadButton BtnLoadData;
   }
 }

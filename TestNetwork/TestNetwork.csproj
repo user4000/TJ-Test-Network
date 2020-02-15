@@ -78,6 +78,8 @@
     <Compile Include="Forms\FormClient.Designer.cs">
       <DependentUpon>FormClient.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings\CxApplicationSettings.cs" />
+    <Compile Include="Settings\MsAccessDataReader.cs" />
     <EmbeddedResource Include="Forms\FormServer.resx">
       <DependentUpon>FormServer.cs</DependentUpon>
     </EmbeddedResource>
@@ -90,7 +92,6 @@
     <Compile Include="Forms\FormTreeView.Designer.cs">
       <DependentUpon>FormTreeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Settings\MySettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\FormTreeView.resx">

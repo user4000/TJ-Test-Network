@@ -11,14 +11,13 @@ namespace TestNetwork
 {
   public enum MyEnum
   {
-    e_Zero = 0,
-    e_One = 1,
-    e_Two = 2,
-    e_Three = 3,
-    e_Four = 4,
-    e_Five = 5
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4,
+    Five = 5
   }
-
 
   // Пример использования настроек. 
   // В самом низу текста события:
@@ -28,8 +27,12 @@ namespace TestNetwork
 
 
   [Serializable]
-  public class MySettings : TJStandardApplicationSettings
+  public class CxApplicationSettings : TJStandardApplicationSettings
   {
+    [Category("База данных настроек")]
+    [Editor(typeof(PropertyGridBrowseEditor), typeof(BaseInputEditor))] // File name dialog //
+    public string SettingsDatabaseLocation { get; set; }
+
     [Category("Category 1")]
     public string MyString1 { get; set; } = "Privet 1111";
 
@@ -42,9 +45,6 @@ namespace TestNetwork
     [Category("Category 2")]
     public Color MyColor1 { get; set; } = Color.LightGreen;
 
-    [Category("File Location Example")]
-    [Editor(typeof(PropertyGridBrowseEditor), typeof(BaseInputEditor))] // File name dialog //
-    public string FileLocation1 { get; set; }
 
     [Category("Range Example")]
     [RadRange(1, 5)]
@@ -103,11 +103,10 @@ namespace TestNetwork
 
     [Category("Login")]
     [RadSortOrder(6)]
-    public MyEnum my_enum { get; set; } = MyEnum.e_Three;
+    public MyEnum my_enum { get; set; } = MyEnum.Three;
 
     [Category("Application view")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
-
 
     public override void PropertyValueChanged(string PropertyName)
     {
@@ -117,7 +116,6 @@ namespace TestNetwork
       if (PropertyName == nameof(MainPageOrientation))
         TJFrameworkManager.Service.SetMainPageViewOrientation(MainPageOrientation);
     }
-
 
     public override void EventBeforeSaving()
     {

@@ -14,7 +14,7 @@ namespace TestNetwork
     const string ApplicationUniqueName = "Test Toemsel Network";
     private static Mutex AxMutex = null;
 
-    public static MySettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<MySettings>(); } // User custom settings in Property Grid //
+    public static CxApplicationSettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<CxApplicationSettings>(); } // User custom settings in Property Grid //
 
     public static TJStandardFrameworkSettings FrameworkSettings { get; } = TJFrameworkManager.FrameworkSettings; // Framework embedded settings //
 
@@ -42,7 +42,7 @@ namespace TestNetwork
       TJFrameworkManager.Logger.FileSizeLimitBytes = 1000000;
       TJFrameworkManager.Logger.Create();
 
-      TJFrameworkManager.Service.CreateApplicationSettings<MySettings>();
+      TJFrameworkManager.Service.CreateApplicationSettings<CxApplicationSettings>();
       TJFrameworkManager.Service.AddForm<FormServer>("Server");
       TJFrameworkManager.Service.AddForm<FormClient>("Client");
       TJFrameworkManager.Service.AddForm<FormTreeView>("TreeView");
