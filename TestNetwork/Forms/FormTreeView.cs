@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ProjectStandard;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using TJFramework;
@@ -15,7 +17,9 @@ namespace TestNetwork
 {
   public partial class FormTreeView : RadForm, IEventStartWork
   {
-    private DatabaseSettingsManager DbSettings { get; } = new DatabaseSettingsManager();
+    private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
+
+    private DataTable TableFolders { get; set; } = null;
 
     public FormTreeView()
     {
@@ -25,18 +29,108 @@ namespace TestNetwork
     public void EventStartWork()
     {
       BtnLoadData.Click += EventButtonLoadData;
-      TvFolders.ImageList = this.imageList1;
-      DbSettings.SetFont(TvFolders.Font);
+      BtnChooseDatabaseFile.Click += EventButtonChooseFile;
+      BtnAddFolder.Click += EventButtonAddFolder;
+      TvFolders.ImageList = this.ImageListFolders;
+      DbSettings.SetFontOfNode(TvFolders.Font);
+      TxDatabaseFile.IsReadOnly = true;
+      TxDatabaseFile.Text = Program.ApplicationSettings.SettingsDatabaseLocation;
+    }
+
+    private void EventButtonAddFolder(object sender, EventArgs e)
+    {
+      RadTreeNode parent = TvFolders.SelectedNode;
+      int IdFolder = DbSettings.GetIdFolder(parent);
+      string ParentFullPath = parent.FullPath;
+
+      if (IdFolder < 0)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, в которую добавляется новая.", 380, BtnAddFolder).Create();
+        return;
+      }
+
+      string NameFolder = TxNewFolderName.Text.Trim().Length < 1 ? "Folder" : TxNewFolderName.Text.Trim();
+      if (IdFolder >= 0)
+      {
+        int IdNewFolder = -1;
+        try
+        {
+          IdNewFolder = DbSettings.FolderInsert(TxDatabaseFile.Text, IdFolder, NameFolder);
+        }
+        catch (SQLiteException ex)
+        {
+          if (ex.Message.Contains("UNIQUE"))
+            Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", BtnAddFolder).Error();
+          else
+            Ms.Error("Не удалось добавить новую папку", ex).Control(BtnAddFolder).Create();
+        }
+        catch (Exception ex)
+        {
+          Ms.Error("Не удалось добавить новую папку", ex).Control(BtnAddFolder).Create();
+          IdNewFolder = -1;
+        }
+
+        if (IdNewFolder > 0)
+        {
+          Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, BtnAddFolder).Create();
+          //TableFolders.Rows.Add(IdNewFolder, IdFolder, NameFolder);
+          //TableFolders.AcceptChanges();
+          EventButtonLoadData(sender, e);
+          parent = TvFolders.GetNodeByPath(ParentFullPath);
+          parent.Expanded = true;
+          parent.Selected = true;
+        }
+      }
+      TxNewFolderName.Clear();
+    }
+
+    private void EventButtonChooseFile(object sender, EventArgs e)
+    {
+      DialogResult result = DialogOpenFile.ShowDialog();
+      if (result == DialogResult.OK)
+      {
+        TxDatabaseFile.Text = DialogOpenFile.FileName;
+        TvFolders.DataSource = null;
+      }
     }
 
     private void EventButtonLoadData(object sender, EventArgs e)
     {
-      DataTable table = DbSettings.GetMsAccessDataTable(Program.ApplicationSettings.SettingsDatabaseLocation, "FOLDERS");
-      DbSettings.FillTreeView(TvFolders, table);
-      Ms.Message("", "Data loaded").Control(BtnLoadData).Ok();
+      DataTable table = null; bool Error = false;
+      try
+      {
+        table = DbSettings.GetSqliteDataTable(TxDatabaseFile.Text, DbSettings.TableFolders);
+      }
+      catch (Exception ex)
+      {
+        Error = true;
+        Ms.Error("Не удалось прочитать данные из указанного вами файла.", ex).Control(BtnLoadData).Create();
+      }
+
+      if (Error == false)
+        try
+        {
+          if (TableFolders != null) TableFolders.Clear();
+          DbSettings.FillTreeView(TvFolders, table);
+          TableFolders = table;
+        }
+        catch (Exception ex)
+        {
+          Error = true;
+          Ms.Error("Ошибка при попытке чтения структуры настроек из файла.", ex).Control(BtnLoadData).Create();
+        }
+
+      if (Error == false)
+      {
+        Program.ApplicationSettings.SettingsDatabaseLocation = TxDatabaseFile.Text;
+        Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, BtnLoadData).Create();
+      }
     }
+  }
+}
 
 
+/*
     private void LoadTestData()
     {
       RadTreeNode root = this.TvFolders.Nodes.Add("Programming", 17);
@@ -67,5 +161,4 @@ namespace TestNetwork
       this.TvFolders.Nodes.Add("Engadget 222", 16);
       this.TvFolders.Nodes.Add("Engadget 333", 15);
     }
-  }
-}
+*/
