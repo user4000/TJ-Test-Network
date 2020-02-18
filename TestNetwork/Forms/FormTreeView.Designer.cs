@@ -48,6 +48,15 @@
       this.BxRenameFolder = new Telerik.WinControls.UI.RadImageButtonElement();
       this.TxFolderDelete = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxDeleteFolder = new Telerik.WinControls.UI.RadImageButtonElement();
+      this.radThemeManager1 = new Telerik.WinControls.RadThemeManager();
+      this.LxMain = new Telerik.WinControls.UI.RadLayoutControl();
+      this.radPanel2 = new Telerik.WinControls.UI.RadPanel();
+      this.radPanel4 = new Telerik.WinControls.UI.RadPanel();
+      this.layoutControlItem3 = new Telerik.WinControls.UI.LayoutControlItem();
+      this.radPanel3 = new Telerik.WinControls.UI.RadPanel();
+      this.layoutControlItem2 = new Telerik.WinControls.UI.LayoutControlItem();
+      this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
+      this.layoutControlItem1 = new Telerik.WinControls.UI.LayoutControlItem();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PnTreeview)).BeginInit();
       this.PnTreeview.SuspendLayout();
@@ -62,6 +71,12 @@
       this.radPageViewPage3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderDelete)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.LxMain)).BeginInit();
+      this.LxMain.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel4)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel3)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -154,7 +169,7 @@
       this.TxDatabaseFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.TxDatabaseFile.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxSelectFile});
-      this.TxDatabaseFile.Location = new System.Drawing.Point(579, 104);
+      this.TxDatabaseFile.Location = new System.Drawing.Point(594, 80);
       this.TxDatabaseFile.Name = "TxDatabaseFile";
       this.TxDatabaseFile.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxOpenFile});
@@ -276,12 +291,77 @@
       this.BxDeleteFolder.ToolTipText = "Delete folder";
       this.BxDeleteFolder.UseCompatibleTextRendering = false;
       // 
+      // LxMain
+      // 
+      this.LxMain.Controls.Add(this.radPanel4);
+      this.LxMain.Controls.Add(this.radPanel3);
+      this.LxMain.Controls.Add(this.radPanel1);
+      this.LxMain.Items.AddRange(new Telerik.WinControls.RadItem[] {
+            this.layoutControlItem3,
+            this.layoutControlItem2,
+            this.layoutControlItem1});
+      this.LxMain.Location = new System.Drawing.Point(553, 174);
+      this.LxMain.Name = "LxMain";
+      this.LxMain.Size = new System.Drawing.Size(504, 501);
+      this.LxMain.TabIndex = 6;
+      // 
+      // radPanel2
+      // 
+      this.radPanel2.Location = new System.Drawing.Point(87, 38);
+      this.radPanel2.Name = "radPanel2";
+      this.radPanel2.Size = new System.Drawing.Size(171, 112);
+      this.radPanel2.TabIndex = 7;
+      // 
+      // radPanel4
+      // 
+      this.radPanel4.Location = new System.Drawing.Point(251, 106);
+      this.radPanel4.Name = "radPanel4";
+      this.radPanel4.Size = new System.Drawing.Size(250, 392);
+      this.radPanel4.TabIndex = 7;
+      // 
+      // layoutControlItem3
+      // 
+      this.layoutControlItem3.AssociatedControl = this.radPanel4;
+      this.layoutControlItem3.Bounds = new System.Drawing.Rectangle(248, 103, 256, 398);
+      this.layoutControlItem3.Name = "layoutControlItem3";
+      this.layoutControlItem3.Text = "layoutControlItem3";
+      // 
+      // radPanel3
+      // 
+      this.radPanel3.Location = new System.Drawing.Point(3, 106);
+      this.radPanel3.Name = "radPanel3";
+      this.radPanel3.Size = new System.Drawing.Size(242, 392);
+      this.radPanel3.TabIndex = 7;
+      // 
+      // layoutControlItem2
+      // 
+      this.layoutControlItem2.AssociatedControl = this.radPanel3;
+      this.layoutControlItem2.Bounds = new System.Drawing.Rectangle(0, 103, 248, 398);
+      this.layoutControlItem2.Name = "layoutControlItem2";
+      this.layoutControlItem2.Text = "layoutControlItem2";
+      // 
+      // radPanel1
+      // 
+      this.radPanel1.Location = new System.Drawing.Point(3, 3);
+      this.radPanel1.Name = "radPanel1";
+      this.radPanel1.Size = new System.Drawing.Size(498, 97);
+      this.radPanel1.TabIndex = 7;
+      // 
+      // layoutControlItem1
+      // 
+      this.layoutControlItem1.AssociatedControl = this.radPanel1;
+      this.layoutControlItem1.Bounds = new System.Drawing.Rectangle(0, 0, 504, 103);
+      this.layoutControlItem1.Name = "layoutControlItem1";
+      this.layoutControlItem1.Text = "layoutControlItem1";
+      // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1092, 695);
+      this.Controls.Add(this.radPanel2);
       this.Controls.Add(this.TxDatabaseFile);
+      this.Controls.Add(this.LxMain);
       this.Controls.Add(this.PnTreeview);
       this.Name = "FormTreeView";
       // 
@@ -306,6 +386,12 @@
       this.radPageViewPage3.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderDelete)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.LxMain)).EndInit();
+      this.LxMain.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel4)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel3)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -331,5 +417,14 @@
     private Telerik.WinControls.UI.RadPageViewPage radPageViewPage3;
     private Telerik.WinControls.UI.RadButtonTextBox TxFolderDelete;
     private Telerik.WinControls.UI.RadImageButtonElement BxDeleteFolder;
+    private Telerik.WinControls.RadThemeManager radThemeManager1;
+    private Telerik.WinControls.UI.RadLayoutControl LxMain;
+    private Telerik.WinControls.UI.RadPanel radPanel4;
+    private Telerik.WinControls.UI.RadPanel radPanel3;
+    private Telerik.WinControls.UI.RadPanel radPanel1;
+    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem3;
+    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem2;
+    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem1;
+    private Telerik.WinControls.UI.RadPanel radPanel2;
   }
 }
