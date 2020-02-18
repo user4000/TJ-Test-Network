@@ -133,7 +133,7 @@
       this.TxFolderName.Name = "TxFolderName";
       this.TxFolderName.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxAddFolder});
-      this.TxFolderName.Size = new System.Drawing.Size(507, 23);
+      this.TxFolderName.Size = new System.Drawing.Size(369, 23);
       this.TxFolderName.TabIndex = 5;
       // 
       // BxAddFolder
@@ -193,7 +193,7 @@
       this.PvFolders.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvFolders.Location = new System.Drawing.Point(0, 0);
       this.PvFolders.Name = "PvFolders";
-      this.PvFolders.SelectedPage = this.radPageViewPage2;
+      this.PvFolders.SelectedPage = this.radPageViewPage1;
       this.PvFolders.Size = new System.Drawing.Size(400, 78);
       this.PvFolders.TabIndex = 0;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
@@ -206,7 +206,7 @@
       this.radPageViewPage1.Location = new System.Drawing.Point(10, 34);
       this.radPageViewPage1.Name = "radPageViewPage1";
       this.radPageViewPage1.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage1.Size = new System.Drawing.Size(517, 33);
+      this.radPageViewPage1.Size = new System.Drawing.Size(379, 33);
       this.radPageViewPage1.Text = "Add folder";
       this.radPageViewPage1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
@@ -228,7 +228,7 @@
       this.radPageViewPage3.Location = new System.Drawing.Point(10, 34);
       this.radPageViewPage3.Name = "radPageViewPage3";
       this.radPageViewPage3.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage3.Size = new System.Drawing.Size(517, 33);
+      this.radPageViewPage3.Size = new System.Drawing.Size(379, 33);
       this.radPageViewPage3.Text = "Delete folder";
       this.radPageViewPage3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
@@ -262,7 +262,7 @@
       this.radButtonTextBox4.Name = "radButtonTextBox4";
       this.radButtonTextBox4.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.radImageButtonElement4});
-      this.radButtonTextBox4.Size = new System.Drawing.Size(507, 23);
+      this.radButtonTextBox4.Size = new System.Drawing.Size(369, 23);
       this.radButtonTextBox4.TabIndex = 6;
       // 
       // radImageButtonElement4
