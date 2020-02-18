@@ -28,12 +28,15 @@ namespace TestNetwork
 
     public void EventStartWork()
     {
-      BtnLoadData.Click += EventButtonLoadData;
-      BtnChooseDatabaseFile.Click += EventButtonChooseFile;
-      BtnAddFolder.Click += EventButtonAddFolder;
+      BxOpenFile.Click += EventButtonLoadData;
+      BxSelectFile.Click += EventButtonChooseFile;
+      BxAddFolder.Click += EventButtonAddFolder;
+      BxOpenFile.ShowBorder = false;
+      BxSelectFile.ShowBorder = false;
+      BxAddFolder.ShowBorder = false;
       TvFolders.ImageList = this.ImageListFolders;
       DbSettings.SetFontOfNode(TvFolders.Font);
-      TxDatabaseFile.IsReadOnly = true;
+      TxDatabaseFile.ReadOnly = true;
       TxDatabaseFile.Text = Program.ApplicationSettings.SettingsDatabaseLocation;
     }
 
@@ -45,11 +48,11 @@ namespace TestNetwork
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, в которую добавляется новая.", 380, BtnAddFolder).Create();
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, в которую добавляется новая.", 380, TxFolderName).Create();
         return;
       }
 
-      string NameFolder = TxNewFolderName.Text.Trim().Length < 1 ? "Folder" : TxNewFolderName.Text.Trim();
+      string NameFolder = TxFolderName.Text.Trim().Length < 1 ? "Folder" : TxFolderName.Text.Trim();
       if (IdFolder >= 0)
       {
         int IdNewFolder = -1;
@@ -60,19 +63,19 @@ namespace TestNetwork
         catch (SQLiteException ex)
         {
           if (ex.Message.Contains("UNIQUE"))
-            Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", BtnAddFolder).Error();
+            Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", TxFolderName).Error();
           else
-            Ms.Error("Не удалось добавить новую папку", ex).Control(BtnAddFolder).Create();
+            Ms.Error("Не удалось добавить новую папку", ex).Control(TxFolderName).Create();
         }
         catch (Exception ex)
         {
-          Ms.Error("Не удалось добавить новую папку", ex).Control(BtnAddFolder).Create();
+          Ms.Error("Не удалось добавить новую папку", ex).Control(TxFolderName).Create();
           IdNewFolder = -1;
         }
 
         if (IdNewFolder > 0)
         {
-          Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, BtnAddFolder).Create();
+          Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, TxFolderName).Create();
           //TableFolders.Rows.Add(IdNewFolder, IdFolder, NameFolder);
           //TableFolders.AcceptChanges();
           EventButtonLoadData(sender, e);
@@ -81,7 +84,7 @@ namespace TestNetwork
           parent.Selected = true;
         }
       }
-      TxNewFolderName.Clear();
+      TxFolderName.Clear();
     }
 
     private void EventButtonChooseFile(object sender, EventArgs e)
@@ -104,7 +107,7 @@ namespace TestNetwork
       catch (Exception ex)
       {
         Error = true;
-        Ms.Error("Не удалось прочитать данные из указанного вами файла.", ex).Control(BtnLoadData).Create();
+        Ms.Error("Не удалось прочитать данные из указанного вами файла.", ex).Control(TxDatabaseFile).Create();
       }
 
       if (Error == false)
@@ -117,15 +120,17 @@ namespace TestNetwork
         catch (Exception ex)
         {
           Error = true;
-          Ms.Error("Ошибка при попытке чтения структуры настроек из файла.", ex).Control(BtnLoadData).Create();
+          Ms.Error("Ошибка при попытке чтения структуры настроек из файла.", ex).Control(TxDatabaseFile).Create();
         }
 
       if (Error == false)
       {
         Program.ApplicationSettings.SettingsDatabaseLocation = TxDatabaseFile.Text;
-        Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, BtnLoadData).Create();
+        Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, TxDatabaseFile).Create();
       }
     }
+
+
   }
 }
 
