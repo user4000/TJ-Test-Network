@@ -19,25 +19,47 @@ namespace TestNetwork
   {
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
 
-    private DataTable TableFolders { get; set; } = null;
+    private DataTable TableFolders { get; set; } = null; // TODO: сделать так чтобы DataTable была всегда одна и та же
+
+    private string NameOfSelectedNode { get; set; } = string.Empty;
 
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
     }
 
-    public void EventStartWork()
+    private void SetProperties()
+    {
+      BxOpenFile.ShowBorder = false;
+      BxSelectFile.ShowBorder = false;
+      BxAddFolder.ShowBorder = false;
+      BxRenameFolder.ShowBorder = false;
+      BxDeleteFolder.ShowBorder = false;
+      TvFolders.ImageList = this.ImageListFolders;
+      DbSettings.SetFontOfNode(TvFolders.Font);
+      TxDatabaseFile.ReadOnly = true;
+      TxFolderDelete.ReadOnly = true;
+      TxDatabaseFile.Text = Program.ApplicationSettings.SettingsDatabaseLocation;
+    }
+
+    private void SetEvents()
     {
       BxOpenFile.Click += EventButtonLoadData;
       BxSelectFile.Click += EventButtonChooseFile;
       BxAddFolder.Click += EventButtonAddFolder;
-      BxOpenFile.ShowBorder = false;
-      BxSelectFile.ShowBorder = false;
-      BxAddFolder.ShowBorder = false;
-      TvFolders.ImageList = this.ImageListFolders;
-      DbSettings.SetFontOfNode(TvFolders.Font);
-      TxDatabaseFile.ReadOnly = true;
-      TxDatabaseFile.Text = Program.ApplicationSettings.SettingsDatabaseLocation;
+      TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
+    }
+
+    public void EventStartWork()
+    {
+      SetProperties(); SetEvents();
+    }
+
+    private void EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
+    {
+      try { NameOfSelectedNode = e.Node.Text; } catch { NameOfSelectedNode = string.Empty; }
+      TxFolderRename.Text = NameOfSelectedNode;
+      TxFolderDelete.Text = NameOfSelectedNode;
     }
 
     private void EventButtonAddFolder(object sender, EventArgs e)
