@@ -32,51 +32,52 @@
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
-      this.PnTreeview = new Telerik.WinControls.UI.RadPanel();
-      this.PnTreeviewUpper = new Telerik.WinControls.UI.RadPanel();
+      this.PvFolders = new Telerik.WinControls.UI.RadPageView();
+      this.radPageViewPage1 = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxFolderName = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxAddFolder = new Telerik.WinControls.UI.RadImageButtonElement();
+      this.radPageViewPage2 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.TxFolderRename = new Telerik.WinControls.UI.RadButtonTextBox();
+      this.BxRenameFolder = new Telerik.WinControls.UI.RadImageButtonElement();
+      this.radPageViewPage3 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.TxFolderDelete = new Telerik.WinControls.UI.RadButtonTextBox();
+      this.BxDeleteFolder = new Telerik.WinControls.UI.RadImageButtonElement();
       this.DialogOpenFile = new Telerik.WinControls.UI.RadOpenFileDialog();
       this.TxDatabaseFile = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxSelectFile = new Telerik.WinControls.UI.RadImageButtonElement();
       this.BxOpenFile = new Telerik.WinControls.UI.RadImageButtonElement();
-      this.PvFolders = new Telerik.WinControls.UI.RadPageView();
-      this.radPageViewPage1 = new Telerik.WinControls.UI.RadPageViewPage();
-      this.radPageViewPage2 = new Telerik.WinControls.UI.RadPageViewPage();
-      this.radPageViewPage3 = new Telerik.WinControls.UI.RadPageViewPage();
-      this.TxFolderRename = new Telerik.WinControls.UI.RadButtonTextBox();
-      this.BxRenameFolder = new Telerik.WinControls.UI.RadImageButtonElement();
-      this.TxFolderDelete = new Telerik.WinControls.UI.RadButtonTextBox();
-      this.BxDeleteFolder = new Telerik.WinControls.UI.RadImageButtonElement();
       this.radThemeManager1 = new Telerik.WinControls.RadThemeManager();
-      this.LxMain = new Telerik.WinControls.UI.RadLayoutControl();
-      this.radPanel2 = new Telerik.WinControls.UI.RadPanel();
-      this.radPanel4 = new Telerik.WinControls.UI.RadPanel();
-      this.layoutControlItem3 = new Telerik.WinControls.UI.LayoutControlItem();
-      this.radPanel3 = new Telerik.WinControls.UI.RadPanel();
-      this.layoutControlItem2 = new Telerik.WinControls.UI.LayoutControlItem();
-      this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
-      this.layoutControlItem1 = new Telerik.WinControls.UI.LayoutControlItem();
+      this.PnUpper = new Telerik.WinControls.UI.RadPanel();
+      this.ScMain = new Telerik.WinControls.UI.RadSplitContainer();
+      this.PnTreeview = new Telerik.WinControls.UI.SplitPanel();
+      this.PnCommonSettings = new Telerik.WinControls.UI.SplitPanel();
+      this.ScSettings = new Telerik.WinControls.UI.RadSplitContainer();
+      this.PnSettings = new Telerik.WinControls.UI.SplitPanel();
+      this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
+      this.radLabel1 = new Telerik.WinControls.UI.RadLabel();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.PnTreeview)).BeginInit();
-      this.PnTreeview.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PnTreeviewUpper)).BeginInit();
-      this.PnTreeviewUpper.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.TxDatabaseFile)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
       this.radPageViewPage1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).BeginInit();
       this.radPageViewPage2.SuspendLayout();
-      this.radPageViewPage3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).BeginInit();
+      this.radPageViewPage3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderDelete)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.LxMain)).BeginInit();
-      this.LxMain.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel4)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel3)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.TxDatabaseFile)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnUpper)).BeginInit();
+      this.PnUpper.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.ScMain)).BeginInit();
+      this.ScMain.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PnTreeview)).BeginInit();
+      this.PnTreeview.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PnCommonSettings)).BeginInit();
+      this.PnCommonSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.ScSettings)).BeginInit();
+      this.ScSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PnSettings)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radLabel1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -93,7 +94,7 @@
       this.TvFolders.Name = "TvFolders";
       this.TvFolders.RightToLeft = System.Windows.Forms.RightToLeft.No;
       this.TvFolders.ShowLines = true;
-      this.TvFolders.Size = new System.Drawing.Size(400, 222);
+      this.TvFolders.Size = new System.Drawing.Size(416, 622);
       this.TvFolders.SpacingBetweenNodes = -1;
       this.TvFolders.TabIndex = 0;
       this.TvFolders.TreeIndent = 34;
@@ -122,94 +123,19 @@
       this.ImageListFolders.Images.SetKeyName(17, "a18.png");
       this.ImageListFolders.Images.SetKeyName(18, "a19.png");
       // 
-      // PnTreeview
-      // 
-      this.PnTreeview.Controls.Add(this.TvFolders);
-      this.PnTreeview.Controls.Add(this.PnTreeviewUpper);
-      this.PnTreeview.Location = new System.Drawing.Point(64, 170);
-      this.PnTreeview.Name = "PnTreeview";
-      this.PnTreeview.Size = new System.Drawing.Size(400, 300);
-      this.PnTreeview.TabIndex = 2;
-      // 
-      // PnTreeviewUpper
-      // 
-      this.PnTreeviewUpper.Controls.Add(this.PvFolders);
-      this.PnTreeviewUpper.Dock = System.Windows.Forms.DockStyle.Top;
-      this.PnTreeviewUpper.Location = new System.Drawing.Point(0, 0);
-      this.PnTreeviewUpper.Name = "PnTreeviewUpper";
-      this.PnTreeviewUpper.Size = new System.Drawing.Size(400, 78);
-      this.PnTreeviewUpper.TabIndex = 4;
-      // 
-      // TxFolderName
-      // 
-      this.TxFolderName.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.TxFolderName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.TxFolderName.Location = new System.Drawing.Point(5, 5);
-      this.TxFolderName.Name = "TxFolderName";
-      this.TxFolderName.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
-            this.BxAddFolder});
-      this.TxFolderName.Size = new System.Drawing.Size(369, 23);
-      this.TxFolderName.TabIndex = 5;
-      // 
-      // BxAddFolder
-      // 
-      this.BxAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("BxAddFolder.Image")));
-      this.BxAddFolder.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
-      this.BxAddFolder.Name = "BxAddFolder";
-      this.BxAddFolder.Text = "add new folder";
-      this.BxAddFolder.ToolTipText = "Add a new folder";
-      this.BxAddFolder.UseCompatibleTextRendering = false;
-      // 
-      // DialogOpenFile
-      // 
-      this.DialogOpenFile.InitialSelectedLayout = Telerik.WinControls.FileDialogs.LayoutType.MediumIcons;
-      // 
-      // TxDatabaseFile
-      // 
-      this.TxDatabaseFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.TxDatabaseFile.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
-            this.BxSelectFile});
-      this.TxDatabaseFile.Location = new System.Drawing.Point(594, 80);
-      this.TxDatabaseFile.Name = "TxDatabaseFile";
-      this.TxDatabaseFile.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
-            this.BxOpenFile});
-      this.TxDatabaseFile.Size = new System.Drawing.Size(380, 23);
-      this.TxDatabaseFile.TabIndex = 5;
-      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
-      // 
-      // BxSelectFile
-      // 
-      this.BxSelectFile.Image = ((System.Drawing.Image)(resources.GetObject("BxSelectFile.Image")));
-      this.BxSelectFile.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
-      this.BxSelectFile.Name = "BxSelectFile";
-      this.BxSelectFile.Text = "Select a database file";
-      this.BxSelectFile.ToolTipText = "Select a database file";
-      // 
-      // BxOpenFile
-      // 
-      this.BxOpenFile.Image = ((System.Drawing.Image)(resources.GetObject("BxOpenFile.Image")));
-      this.BxOpenFile.ImageIndexClicked = 0;
-      this.BxOpenFile.ImageIndexHovered = 0;
-      this.BxOpenFile.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
-      this.BxOpenFile.Name = "BxOpenFile";
-      this.BxOpenFile.Text = "Open a database";
-      this.BxOpenFile.ToolTipText = "Open a database";
-      this.BxOpenFile.UseCompatibleTextRendering = false;
-      // 
       // PvFolders
       // 
       this.PvFolders.Controls.Add(this.radPageViewPage1);
       this.PvFolders.Controls.Add(this.radPageViewPage2);
       this.PvFolders.Controls.Add(this.radPageViewPage3);
-      this.PvFolders.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.PvFolders.Dock = System.Windows.Forms.DockStyle.Top;
       this.PvFolders.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.PvFolders.ItemSize = new System.Drawing.Size(110, 25);
       this.PvFolders.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvFolders.Location = new System.Drawing.Point(0, 0);
       this.PvFolders.Name = "PvFolders";
       this.PvFolders.SelectedPage = this.radPageViewPage1;
-      this.PvFolders.Size = new System.Drawing.Size(400, 78);
+      this.PvFolders.Size = new System.Drawing.Size(416, 78);
       this.PvFolders.TabIndex = 0;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
@@ -221,9 +147,29 @@
       this.radPageViewPage1.Location = new System.Drawing.Point(10, 34);
       this.radPageViewPage1.Name = "radPageViewPage1";
       this.radPageViewPage1.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage1.Size = new System.Drawing.Size(379, 33);
+      this.radPageViewPage1.Size = new System.Drawing.Size(395, 33);
       this.radPageViewPage1.Text = "Add folder";
       this.radPageViewPage1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // TxFolderName
+      // 
+      this.TxFolderName.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.TxFolderName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxFolderName.Location = new System.Drawing.Point(5, 5);
+      this.TxFolderName.Name = "TxFolderName";
+      this.TxFolderName.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxAddFolder});
+      this.TxFolderName.Size = new System.Drawing.Size(385, 23);
+      this.TxFolderName.TabIndex = 5;
+      // 
+      // BxAddFolder
+      // 
+      this.BxAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("BxAddFolder.Image")));
+      this.BxAddFolder.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxAddFolder.Name = "BxAddFolder";
+      this.BxAddFolder.Text = "add new folder";
+      this.BxAddFolder.ToolTipText = "Add a new folder";
+      this.BxAddFolder.UseCompatibleTextRendering = false;
       // 
       // radPageViewPage2
       // 
@@ -235,17 +181,6 @@
       this.radPageViewPage2.Size = new System.Drawing.Size(379, 33);
       this.radPageViewPage2.Text = "Rename folder";
       this.radPageViewPage2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-      // 
-      // radPageViewPage3
-      // 
-      this.radPageViewPage3.Controls.Add(this.TxFolderDelete);
-      this.radPageViewPage3.ItemSize = new System.Drawing.SizeF(110F, 25F);
-      this.radPageViewPage3.Location = new System.Drawing.Point(10, 34);
-      this.radPageViewPage3.Name = "radPageViewPage3";
-      this.radPageViewPage3.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage3.Size = new System.Drawing.Size(379, 33);
-      this.radPageViewPage3.Text = "Delete folder";
-      this.radPageViewPage3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // TxFolderRename
       // 
@@ -269,6 +204,17 @@
       this.BxRenameFolder.ToolTipText = "Type new name and press the button";
       this.BxRenameFolder.UseCompatibleTextRendering = false;
       // 
+      // radPageViewPage3
+      // 
+      this.radPageViewPage3.Controls.Add(this.TxFolderDelete);
+      this.radPageViewPage3.ItemSize = new System.Drawing.SizeF(110F, 25F);
+      this.radPageViewPage3.Location = new System.Drawing.Point(10, 34);
+      this.radPageViewPage3.Name = "radPageViewPage3";
+      this.radPageViewPage3.Padding = new System.Windows.Forms.Padding(5);
+      this.radPageViewPage3.Size = new System.Drawing.Size(434, 33);
+      this.radPageViewPage3.Text = "Delete folder";
+      this.radPageViewPage3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
       // TxFolderDelete
       // 
       this.TxFolderDelete.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -277,7 +223,7 @@
       this.TxFolderDelete.Name = "TxFolderDelete";
       this.TxFolderDelete.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxDeleteFolder});
-      this.TxFolderDelete.Size = new System.Drawing.Size(369, 23);
+      this.TxFolderDelete.Size = new System.Drawing.Size(424, 23);
       this.TxFolderDelete.TabIndex = 6;
       // 
       // BxDeleteFolder
@@ -291,78 +237,160 @@
       this.BxDeleteFolder.ToolTipText = "Delete folder";
       this.BxDeleteFolder.UseCompatibleTextRendering = false;
       // 
-      // LxMain
+      // DialogOpenFile
       // 
-      this.LxMain.Controls.Add(this.radPanel4);
-      this.LxMain.Controls.Add(this.radPanel3);
-      this.LxMain.Controls.Add(this.radPanel1);
-      this.LxMain.Items.AddRange(new Telerik.WinControls.RadItem[] {
-            this.layoutControlItem3,
-            this.layoutControlItem2,
-            this.layoutControlItem1});
-      this.LxMain.Location = new System.Drawing.Point(553, 174);
-      this.LxMain.Name = "LxMain";
-      this.LxMain.Size = new System.Drawing.Size(504, 501);
-      this.LxMain.TabIndex = 6;
+      this.DialogOpenFile.InitialSelectedLayout = Telerik.WinControls.FileDialogs.LayoutType.MediumIcons;
       // 
-      // radPanel2
+      // TxDatabaseFile
       // 
-      this.radPanel2.Location = new System.Drawing.Point(87, 38);
-      this.radPanel2.Name = "radPanel2";
-      this.radPanel2.Size = new System.Drawing.Size(171, 112);
-      this.radPanel2.TabIndex = 7;
+      this.TxDatabaseFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxDatabaseFile.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxSelectFile});
+      this.TxDatabaseFile.Location = new System.Drawing.Point(116, 11);
+      this.TxDatabaseFile.Name = "TxDatabaseFile";
+      this.TxDatabaseFile.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxOpenFile});
+      this.TxDatabaseFile.Size = new System.Drawing.Size(428, 23);
+      this.TxDatabaseFile.TabIndex = 5;
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
       // 
-      // radPanel4
+      // BxSelectFile
       // 
-      this.radPanel4.Location = new System.Drawing.Point(251, 106);
-      this.radPanel4.Name = "radPanel4";
-      this.radPanel4.Size = new System.Drawing.Size(250, 392);
-      this.radPanel4.TabIndex = 7;
+      this.BxSelectFile.Image = ((System.Drawing.Image)(resources.GetObject("BxSelectFile.Image")));
+      this.BxSelectFile.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxSelectFile.Name = "BxSelectFile";
+      this.BxSelectFile.Text = "Select a database file";
+      this.BxSelectFile.ToolTipText = "Select a database file";
       // 
-      // layoutControlItem3
+      // BxOpenFile
       // 
-      this.layoutControlItem3.AssociatedControl = this.radPanel4;
-      this.layoutControlItem3.Bounds = new System.Drawing.Rectangle(248, 103, 256, 398);
-      this.layoutControlItem3.Name = "layoutControlItem3";
-      this.layoutControlItem3.Text = "layoutControlItem3";
+      this.BxOpenFile.Image = ((System.Drawing.Image)(resources.GetObject("BxOpenFile.Image")));
+      this.BxOpenFile.ImageIndexClicked = 0;
+      this.BxOpenFile.ImageIndexHovered = 0;
+      this.BxOpenFile.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxOpenFile.Name = "BxOpenFile";
+      this.BxOpenFile.Text = "Open a database";
+      this.BxOpenFile.ToolTipText = "Open a database";
+      this.BxOpenFile.UseCompatibleTextRendering = false;
       // 
-      // radPanel3
+      // PnUpper
       // 
-      this.radPanel3.Location = new System.Drawing.Point(3, 106);
-      this.radPanel3.Name = "radPanel3";
-      this.radPanel3.Size = new System.Drawing.Size(242, 392);
-      this.radPanel3.TabIndex = 7;
+      this.PnUpper.Controls.Add(this.radLabel1);
+      this.PnUpper.Controls.Add(this.TxDatabaseFile);
+      this.PnUpper.Dock = System.Windows.Forms.DockStyle.Top;
+      this.PnUpper.Location = new System.Drawing.Point(0, 0);
+      this.PnUpper.Name = "PnUpper";
+      this.PnUpper.Size = new System.Drawing.Size(1092, 45);
+      this.PnUpper.TabIndex = 6;
       // 
-      // layoutControlItem2
+      // ScMain
       // 
-      this.layoutControlItem2.AssociatedControl = this.radPanel3;
-      this.layoutControlItem2.Bounds = new System.Drawing.Rectangle(0, 103, 248, 398);
-      this.layoutControlItem2.Name = "layoutControlItem2";
-      this.layoutControlItem2.Text = "layoutControlItem2";
+      this.ScMain.Controls.Add(this.PnTreeview);
+      this.ScMain.Controls.Add(this.PnCommonSettings);
+      this.ScMain.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.ScMain.Location = new System.Drawing.Point(0, 45);
+      this.ScMain.Name = "ScMain";
       // 
-      // radPanel1
       // 
-      this.radPanel1.Location = new System.Drawing.Point(3, 3);
-      this.radPanel1.Name = "radPanel1";
-      this.radPanel1.Size = new System.Drawing.Size(498, 97);
-      this.radPanel1.TabIndex = 7;
       // 
-      // layoutControlItem1
+      this.ScMain.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.ScMain.Size = new System.Drawing.Size(1092, 700);
+      this.ScMain.TabIndex = 7;
+      this.ScMain.TabStop = false;
       // 
-      this.layoutControlItem1.AssociatedControl = this.radPanel1;
-      this.layoutControlItem1.Bounds = new System.Drawing.Rectangle(0, 0, 504, 103);
-      this.layoutControlItem1.Name = "layoutControlItem1";
-      this.layoutControlItem1.Text = "layoutControlItem1";
+      // PnTreeview
+      // 
+      this.PnTreeview.Controls.Add(this.TvFolders);
+      this.PnTreeview.Controls.Add(this.PvFolders);
+      this.PnTreeview.Location = new System.Drawing.Point(0, 0);
+      this.PnTreeview.Name = "PnTreeview";
+      // 
+      // 
+      // 
+      this.PnTreeview.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.PnTreeview.Size = new System.Drawing.Size(416, 700);
+      this.PnTreeview.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(-0.1176471F, 0F);
+      this.PnTreeview.SizeInfo.MinimumSize = new System.Drawing.Size(350, 0);
+      this.PnTreeview.SizeInfo.SplitterCorrection = new System.Drawing.Size(-128, 0);
+      this.PnTreeview.TabIndex = 0;
+      this.PnTreeview.TabStop = false;
+      this.PnTreeview.Text = "splitPanel1";
+      // 
+      // PnCommonSettings
+      // 
+      this.PnCommonSettings.Controls.Add(this.ScSettings);
+      this.PnCommonSettings.Location = new System.Drawing.Point(420, 0);
+      this.PnCommonSettings.Name = "PnCommonSettings";
+      // 
+      // 
+      // 
+      this.PnCommonSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.PnCommonSettings.Size = new System.Drawing.Size(672, 700);
+      this.PnCommonSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0.1176471F, 0F);
+      this.PnCommonSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(128, 0);
+      this.PnCommonSettings.TabIndex = 1;
+      this.PnCommonSettings.TabStop = false;
+      this.PnCommonSettings.Text = "splitPanel2";
+      // 
+      // ScSettings
+      // 
+      this.ScSettings.Controls.Add(this.PnSettings);
+      this.ScSettings.Controls.Add(this.PnEditSettings);
+      this.ScSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.ScSettings.Location = new System.Drawing.Point(0, 0);
+      this.ScSettings.Name = "ScSettings";
+      this.ScSettings.Orientation = System.Windows.Forms.Orientation.Horizontal;
+      // 
+      // 
+      // 
+      this.ScSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.ScSettings.Size = new System.Drawing.Size(672, 700);
+      this.ScSettings.TabIndex = 8;
+      this.ScSettings.TabStop = false;
+      // 
+      // PnSettings
+      // 
+      this.PnSettings.Location = new System.Drawing.Point(0, 0);
+      this.PnSettings.Name = "PnSettings";
+      // 
+      // 
+      // 
+      this.PnSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.PnSettings.Size = new System.Drawing.Size(672, 348);
+      this.PnSettings.TabIndex = 0;
+      this.PnSettings.TabStop = false;
+      this.PnSettings.Text = "splitPanel3";
+      // 
+      // PnEditSettings
+      // 
+      this.PnEditSettings.Location = new System.Drawing.Point(0, 352);
+      this.PnEditSettings.Name = "PnEditSettings";
+      // 
+      // 
+      // 
+      this.PnEditSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.PnEditSettings.Size = new System.Drawing.Size(672, 348);
+      this.PnEditSettings.TabIndex = 1;
+      this.PnEditSettings.TabStop = false;
+      this.PnEditSettings.Text = "splitPanel4";
+      // 
+      // radLabel1
+      // 
+      this.radLabel1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.radLabel1.Location = new System.Drawing.Point(9, 13);
+      this.radLabel1.Name = "radLabel1";
+      this.radLabel1.Size = new System.Drawing.Size(95, 19);
+      this.radLabel1.TabIndex = 6;
+      this.radLabel1.Text = "Database file";
       // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1092, 695);
-      this.Controls.Add(this.radPanel2);
-      this.Controls.Add(this.TxDatabaseFile);
-      this.Controls.Add(this.LxMain);
-      this.Controls.Add(this.PnTreeview);
+      this.ClientSize = new System.Drawing.Size(1092, 745);
+      this.Controls.Add(this.ScMain);
+      this.Controls.Add(this.PnUpper);
       this.Name = "FormTreeView";
       // 
       // 
@@ -370,39 +398,40 @@
       this.RootElement.ApplyShapeToControl = true;
       this.Text = "TreeView";
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.PnTreeview)).EndInit();
-      this.PnTreeview.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.PnTreeviewUpper)).EndInit();
-      this.PnTreeviewUpper.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.TxDatabaseFile)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).EndInit();
       this.PvFolders.ResumeLayout(false);
       this.radPageViewPage1.ResumeLayout(false);
       this.radPageViewPage1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).EndInit();
       this.radPageViewPage2.ResumeLayout(false);
       this.radPageViewPage2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).EndInit();
       this.radPageViewPage3.ResumeLayout(false);
       this.radPageViewPage3.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderDelete)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.LxMain)).EndInit();
-      this.LxMain.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel4)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel3)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.TxDatabaseFile)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnUpper)).EndInit();
+      this.PnUpper.ResumeLayout(false);
+      this.PnUpper.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.ScMain)).EndInit();
+      this.ScMain.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.PnTreeview)).EndInit();
+      this.PnTreeview.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.PnCommonSettings)).EndInit();
+      this.PnCommonSettings.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.ScSettings)).EndInit();
+      this.ScSettings.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.PnSettings)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.radLabel1)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
-      this.PerformLayout();
 
         }
 
     #endregion
     public Telerik.WinControls.UI.RadTreeView TvFolders;
     public System.Windows.Forms.ImageList ImageListFolders;
-    private Telerik.WinControls.UI.RadPanel PnTreeview;
-    private Telerik.WinControls.UI.RadPanel PnTreeviewUpper;
     internal Telerik.WinControls.UI.RadOpenFileDialog DialogOpenFile;
     private Telerik.WinControls.UI.RadButtonTextBox TxFolderName;
     private Telerik.WinControls.UI.RadImageButtonElement BxAddFolder;
@@ -418,13 +447,13 @@
     private Telerik.WinControls.UI.RadButtonTextBox TxFolderDelete;
     private Telerik.WinControls.UI.RadImageButtonElement BxDeleteFolder;
     private Telerik.WinControls.RadThemeManager radThemeManager1;
-    private Telerik.WinControls.UI.RadLayoutControl LxMain;
-    private Telerik.WinControls.UI.RadPanel radPanel4;
-    private Telerik.WinControls.UI.RadPanel radPanel3;
-    private Telerik.WinControls.UI.RadPanel radPanel1;
-    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem3;
-    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem2;
-    private Telerik.WinControls.UI.LayoutControlItem layoutControlItem1;
-    private Telerik.WinControls.UI.RadPanel radPanel2;
+    private Telerik.WinControls.UI.RadPanel PnUpper;
+    private Telerik.WinControls.UI.RadSplitContainer ScMain;
+    private Telerik.WinControls.UI.SplitPanel PnTreeview;
+    private Telerik.WinControls.UI.SplitPanel PnCommonSettings;
+    private Telerik.WinControls.UI.RadSplitContainer ScSettings;
+    private Telerik.WinControls.UI.SplitPanel PnSettings;
+    private Telerik.WinControls.UI.SplitPanel PnEditSettings;
+    private Telerik.WinControls.UI.RadLabel radLabel1;
   }
 }
