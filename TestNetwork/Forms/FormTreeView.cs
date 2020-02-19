@@ -72,9 +72,9 @@ namespace TestNetwork
       BxSelectFile.Click += EventButtonChooseFile;
       BxFolderAdd.Click += EventButtonAddFolder;
       BxFolderRename.Click += EventButtonRenameFolder;
+      BxFolderDelete.Click += EventButtonDeleteFolder;
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
-
       TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
     }
 
@@ -102,6 +102,7 @@ namespace TestNetwork
     private void EventButtonAddFolder(object sender, EventArgs e)
     {
       RadTreeNode parent = TvFolders.SelectedNode;
+      ReturnCode code = ReturnCodeFactory.Error("Ошибка при добавлении папки");
 
       if (parent == null) return;
 
@@ -128,7 +129,7 @@ namespace TestNetwork
         int IdNewFolder = -1;
         try
         {
-          IdNewFolder = DbSettings.FolderInsert(IdFolder, NameFolder);
+          code = DbSettings.FolderInsert(IdFolder, NameFolder);
         }
         catch (SQLiteException ex)
         {
@@ -145,9 +146,17 @@ namespace TestNetwork
           IdNewFolder = -1;
         }
 
+        IdNewFolder = code.IdObject;
+
+        if (code.Error)
+        {
+          if (Error == false) Ms.Message("Не удалось добавить новую папку.", code.StringValue, TxFolderName).Fail();
+        }
+
+
         if (IdNewFolder <= 0)
         {
-          if (Error==false) Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", TxFolderName).Fail();
+          if (Error==false) Ms.Message("Не удалось добавить новую папку.", code.StringValue, TxFolderName).Fail();
         }
         else
         {
@@ -172,6 +181,7 @@ namespace TestNetwork
     private void EventButtonRenameFolder(object sender, EventArgs e)
     {
       RadTreeNode node = TvFolders.SelectedNode;
+      ReturnCode code = ReturnCodeFactory.Error("Ошибка!");
 
       if (node == null) return;
 
@@ -186,8 +196,6 @@ namespace TestNetwork
 
       string NameFolder = TxFolderRename.Text.Trim();
 
-      bool FolderHasBeenRenamed = false;
-
       if (NameFolder.Length < 1)
       {
         Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указано новое название папки.", 350, TxFolderRename).Create();
@@ -196,7 +204,7 @@ namespace TestNetwork
 
       try
       {
-        FolderHasBeenRenamed = DbSettings.FolderRename(IdFolder, NameFolder);
+        code = DbSettings.FolderRename(IdFolder, NameFolder);
       }
       catch (Exception ex)
       {
@@ -204,15 +212,20 @@ namespace TestNetwork
         return;
       }
 
-      if (FolderHasBeenRenamed)
+      if (code.Success)
       {
-        Ms.ShortMessage(MsgType.Debug, $"Папка переименована: {NameFolder}", 250, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Debug, code.StringValue, 250, TxFolderRename).Create();
         node.Text = NameFolder;
       }
       else
       {
-        Ms.Message("Не удалось переименовать папку.", "Папка с таким именем уже существует", TxFolderRename).Fail();
+        Ms.Message("Не удалось переименовать папку.", code.StringValue, TxFolderRename).Fail();
       }    
+    }
+
+    private void EventButtonDeleteFolder(object sender, EventArgs e)
+    {
+
     }
 
     private void EventButtonSearchFolder(object sender, EventArgs e)

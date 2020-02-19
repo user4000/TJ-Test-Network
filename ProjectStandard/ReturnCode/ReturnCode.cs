@@ -21,8 +21,8 @@ namespace ProjectStandard
       NumericValue = numericValue; IdObject = idObject; StringValue = stringValue; StringNote = stringNote;
     }
 
-    public bool Success() => NumericValue == 0;
+    public bool Success { get => NumericValue == 0; }
 
-    public bool Error() => !Success();
-  }
+    public bool Error { get => NumericValue != 0; }
+}
 }

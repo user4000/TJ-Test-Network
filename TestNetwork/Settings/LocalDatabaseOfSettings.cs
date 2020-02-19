@@ -52,17 +52,16 @@ namespace TestNetwork
       return table;
     }
 
-
-    // TODO: Переделать FolderInsert and FolderRename чтобы возвращали ReturnCode //
-    public int FolderInsert(int IdParent, string NameFolder)
+    public ReturnCode FolderInsert(int IdParent, string NameFolder)
     {
+      ReturnCode code = ReturnCodeFactory.Success($"Папка добавлена: {NameFolder}");
+      string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
+      string sqlInsertFolder = "INSERT INTO FOLDERS (IdParent,NameFolder) VALUES (@IdParent,@NameFolder)";
+      string sqlSelectIdFolder = "SELECT IdFolder FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
+
       int IdNewFolder = -1;
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
-        string sqlInsertFolder = "INSERT INTO FOLDERS (IdParent,NameFolder) VALUES (@IdParent,@NameFolder)";
-        string sqlSelectIdFolder = "SELECT IdFolder FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
-
         using (SQLiteCommand command = new SQLiteCommand(connection))
         {
           connection.Open();
@@ -72,25 +71,40 @@ namespace TestNetwork
           command.Parameters.Add(new SQLiteParameter("@NameFolder", NameFolder));
           int count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
 
-          if (count == 0) // Folder does not exist yet //
+          if (count != 0)
           {
-            command.CommandText = sqlInsertFolder;
-            command.ExecuteNonQuery();
-
-            command.CommandText = sqlSelectIdFolder;
-            IdNewFolder = CxConvert.ToInt32(command.ExecuteScalar(), -1); // Trying to get id of a new inserted folder //
+            return ReturnCodeFactory.Error("Папка с таким именем уже существует");
           }
-          else // Error ! This folder already exists //
+
+          command.CommandText = sqlInsertFolder;
+          command.ExecuteNonQuery();
+
+          command.CommandText = sqlSelectCount;
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+          if (count != 1)
           {
-            IdNewFolder = 0;
+            return ReturnCodeFactory.Error("Ошибка при попытке добавления новой папки");
+          }
+
+          command.CommandText = sqlSelectIdFolder;
+          IdNewFolder = CxConvert.ToInt32(command.ExecuteScalar(), -1); // Trying to get id of a new inserted folder //
+
+          if (IdNewFolder > 0)
+          {
+            code.IdObject = IdNewFolder;
+          }
+          else
+          {
+            return ReturnCodeFactory.Error("Ошибка при попытке добавления новой папки");
           }
         }
       }
-      return IdNewFolder;
+      return code;
     }
 
-    public bool FolderRename(int IdFolder, string NameFolder)
+    public ReturnCode FolderRename(int IdFolder, string NameFolder)
     {
+      ReturnCode code = ReturnCodeFactory.Success($"Папка переименована: {NameFolder}");
       int count = 0;
       string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = (SELECT IdParent FROM FOLDERS WHERE IdFolder=@IdFolder) AND NameFolder=@NameFolder";
       string sqlRenameFolder = "UPDATE FOLDERS SET NameFolder=@NameFolder WHERE IdFolder=@IdFolder";
@@ -104,35 +118,37 @@ namespace TestNetwork
           command.CommandText = sqlSelectCount;
           command.Parameters.Add(new SQLiteParameter("@IdFolder", IdFolder));
           command.Parameters.Add(new SQLiteParameter("@NameFolder", NameFolder));
+
           count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
 
-          if (count == 0) // Folder does not exist yet //
+          if (count != 0)
           {
-            command.CommandText = sqlRenameFolder;
-            command.ExecuteNonQuery();
-
-            command.CommandText = sqlSelectCount;
-            count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
-          }
-          else
-          {
-            count = 0;
+            return ReturnCodeFactory.Error("Папка с таким именем уже существует");
           }
 
+          command.CommandText = sqlRenameFolder;
+          command.ExecuteNonQuery();
+
+          command.CommandText = sqlSelectCount;
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+
+          if (count < 1)
+          {
+            return ReturnCodeFactory.Error("Не удалось переименовать папку");
+          }
         }
       }
-      return count > 0;
+      return code;
     }
 
     public ReturnCode FolderDelete(int IdFolder)
     {
-
+      ReturnCode code = ReturnCodeFactory.Success("Папка удалена");
       string sqlCountFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdFolder = @IdFolder";
       string sqlCountChildFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = @IdFolder";
       string sqlCountChildSettings = "SELECT COUNT(*) FROM SETTINGS WHERE IdFolder = @IdFolder";
       string sqlDeleteFolder = "DELETE FROM FOLDERS WHERE IdFolder=@IdFolder";
       int count = 0;
-      ReturnCode code = ReturnCodeFactory.Success("Папка удалена");
 
       using (SQLiteConnection connection = GetSqliteConnection())
       {
