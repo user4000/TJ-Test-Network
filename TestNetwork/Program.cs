@@ -68,6 +68,8 @@ namespace TestNetwork
       FrameworkSettings.MaxAlertCount = 3;
       FrameworkSettings.LimitNumberOfAlerts = true;
       FrameworkSettings.SecondsAlertAutoClose = 5;
+      FrameworkSettings.FontAlertCaption = new Font("Verdana", 9);
+      FrameworkSettings.FontAlertText = new Font("Verdana", 9);
 
       Action ExampleOfVisualSettingsAndEvents = () =>
       {

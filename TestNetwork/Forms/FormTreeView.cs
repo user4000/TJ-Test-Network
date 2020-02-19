@@ -78,6 +78,8 @@ namespace TestNetwork
       TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
     }
 
+    private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
+
     public void EventStartWork()
     {
       SetProperties(); SetEvents();
@@ -104,7 +106,11 @@ namespace TestNetwork
       RadTreeNode parent = TvFolders.SelectedNode;
       ReturnCode code = ReturnCodeFactory.Error("Ошибка при добавлении папки");
 
-      if (parent == null) return;
+      if (parent == null)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderName).Create();
+        return;
+      }
 
       int IdFolder = DbSettings.GetIdFolder(parent);
       string ParentFullPath = parent.FullPath;
@@ -112,69 +118,59 @@ namespace TestNetwork
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, в которую добавляется новая.", 380, TxFolderName).Create();
+        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderName).Create();
         return;
       }
 
       if (TxFolderName.Text.Trim().Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указано название новой папки.", 350, TxFolderName).Create();
+        Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderName).Create();
         return;
       }
 
-      string NameFolder = /* TxFolderName.Text.Trim().Length < 1 ? "Folder" : */ TxFolderName.Text.Trim();
+      string NameFolder = TxFolderName.Text.Trim();
 
-      if (IdFolder >= 0)
+      int IdNewFolder = -1;
+      const string ErrorHeader = "Не удалось добавить новую папку";
+      try
       {
-        int IdNewFolder = -1;
-        try
-        {
-          code = DbSettings.FolderInsert(IdFolder, NameFolder);
-        }
-        catch (SQLiteException ex)
-        {
-          Error = true;
-          if (ex.Message.Contains("UNIQUE"))
-            Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", TxFolderName).Error();
-          else
-            Ms.Error("Не удалось добавить новую папку", ex).Control(TxFolderName).Create();
-        }
-        catch (Exception ex)
-        {
-          Error = true;
-          Ms.Error("Не удалось добавить новую папку", ex).Control(TxFolderName).Create();
-          IdNewFolder = -1;
-        }
+        code = DbSettings.FolderInsert(IdFolder, NameFolder);
+      }
+      catch (Exception ex)
+      {
+        Error = true;
+        Ms.Error(ErrorHeader, ex).Control(TxFolderName).Create();
+        IdNewFolder = -1;
+      }
 
-        IdNewFolder = code.IdObject;
+      IdNewFolder = code.IdObject;
 
-        if (code.Error)
+      if (code.Error)
+      {
+        if (Error == false) Ms.Message(ErrorHeader, code.StringValue, TxFolderName).Fail();
+      }
+
+      if (IdNewFolder <= 0)
+      {
+        if ((Error == false) && (code.Success)) Ms.Message(ErrorHeader, code.StringValue, TxFolderName).Fail();
+      }
+      else
+      {
+        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderName).Create();
+        EventButtonLoadData(sender, e);
+        parent = TvFolders.GetNodeByPath(ParentFullPath);
+        if (parent == null)
         {
-          if (Error == false) Ms.Message("Не удалось добавить новую папку.", code.StringValue, TxFolderName).Fail();
-        }
-
-
-        if (IdNewFolder <= 0)
-        {
-          if (Error==false) Ms.Message("Не удалось добавить новую папку.", code.StringValue, TxFolderName).Fail();
+          Ms.Message(MsgType.Error, "Ошибка!", $"Метод TvFolders.GetNodeByPath(ParentFullPath) вернул значение null. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
+          Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderName).NoTable().Create();
         }
         else
         {
-          Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, TxFolderName).Create();
-          EventButtonLoadData(sender, e);
-          parent = TvFolders.GetNodeByPath(ParentFullPath);
-          if (parent == null)
-          {
-            Ms.Message(MsgType.Error, "Ошибка!", $"Метод TvFolders.GetNodeByPath(ParentFullPath) вернул значение null. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
-            Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderName).NoTable().Create();
-          }
-          else
-          {
-            parent.Expanded = true;
-            parent.Selected = true;
-          }
+          parent.Expanded = true;
+          parent.Selected = true;
         }
       }
+
       TxFolderName.Clear();
     }
 
@@ -183,11 +179,15 @@ namespace TestNetwork
       RadTreeNode node = TvFolders.SelectedNode;
       ReturnCode code = ReturnCodeFactory.Error("Ошибка!");
 
-      if (node == null) return;
+      if (node == null)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно переименовать.", 380, TxFolderRename).Create();
+        return;
+      }
 
       int IdFolder = DbSettings.GetIdFolder(node);
       string NodeFullPath = node.FullPath;
-   
+
       if (IdFolder < 0)
       {
         Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно переименовать.", 380, TxFolderRename).Create();
@@ -214,18 +214,59 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        Ms.ShortMessage(MsgType.Debug, code.StringValue, 250, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue) , TxFolderRename).Create();
         node.Text = NameFolder;
+        node.Selected = false;
+        node.Selected = true;
       }
       else
       {
         Ms.Message("Не удалось переименовать папку.", code.StringValue, TxFolderRename).Fail();
-      }    
+      }
     }
 
     private void EventButtonDeleteFolder(object sender, EventArgs e)
     {
+      RadTreeNode node = TvFolders.SelectedNode;
+      ReturnCode code = ReturnCodeFactory.Error("Ошибка!");
 
+      if (node == null)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно удалить.", 380, TxFolderDelete).Create();
+        return;
+      }
+
+      RadTreeNode parent = node.Parent;
+      if (parent == null)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не найдена папка, содержащая удаляемую папку", 380, TxFolderDelete).Create();
+        return;
+      }
+
+      string NodeFullPath = parent.FullPath;
+      int IdFolder = DbSettings.GetIdFolder(node);
+
+      try
+      {
+        code = DbSettings.FolderDelete(IdFolder, node.Text);
+      }
+      catch (Exception ex)
+      {
+        Ms.Error("Не удалось удалить папку", ex).Control(TxFolderRename).Create();
+        return;
+      }
+
+      if (code.Success)
+      {
+        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderDelete).Create();
+        parent.Selected = true;
+        node.Remove();
+        if (parent.Nodes.Count < 1) parent.ImageIndex = 0;
+      }
+      else
+      {
+        Ms.Message("Не удалось удалить папку.", code.StringValue, TxFolderRename).Fail();
+      }
     }
 
     private void EventButtonSearchFolder(object sender, EventArgs e)
@@ -250,7 +291,7 @@ namespace TestNetwork
       {
         Ms.ShortMessage(MsgType.Debug, "Найдена 1 папка", 200, PvFolders).Offset(offset).NoTable().Create();
       }
-      
+
       if (SearchResult.Length > 1)
       {
         Ms.ShortMessage(MsgType.Info, $"Найдено элементов: {SearchResult.Length}", 200, PvFolders).Offset(offset).NoTable().Create();
@@ -265,13 +306,13 @@ namespace TestNetwork
       {
         SelectOneNode(SearchResult[SearchIterator]);
         SearchIterator++;
-        if (SearchResult.Length==SearchIterator)
+        if (SearchResult.Length == SearchIterator)
         {
           Ms.ShortMessage(MsgType.Ok, "Поиск завершён", 200, TxFolderSearch).Offset(new Point(TxFolderSearch.Width, 0)).NoTable().Create();
         }
       }
       else
-      {       
+      {
         SearchIterator = 0;
         SelectOneNode(SearchResult[SearchIterator]);
         SearchIterator++;
@@ -297,7 +338,14 @@ namespace TestNetwork
       catch (Exception ex)
       {
         Error = true;
-        Ms.Error("Не удалось прочитать данные из указанного вами файла.", ex).Control(TxDatabaseFile).Create();
+        if (ex.Message.Contains("not a database"))
+        {
+          Ms.Message("Не удалось прочитать данные \nиз указанного вами файла.", "Указанный вами файл не является базой данных заданного типа").Control(TxDatabaseFile).Error();
+        }
+        else
+        {
+          Ms.Error("Не удалось прочитать данные \nиз указанного вами файла.", ex).Control(TxDatabaseFile).Create();
+        }
       }
 
       if (Error == false)
@@ -324,8 +372,8 @@ namespace TestNetwork
         if (sender is RadImageButtonElement)
         {
           RadImageButtonElement item = sender as RadImageButtonElement;
-          if (item.Name==BxOpenFile.Name) Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, TxDatabaseFile).Create();
-        }        
+          if (item.Name == BxOpenFile.Name) Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
+        }
       }
     }
   }

@@ -141,9 +141,9 @@ namespace TestNetwork
       return code;
     }
 
-    public ReturnCode FolderDelete(int IdFolder)
+    public ReturnCode FolderDelete(int IdFolder, string NameFolder)
     {
-      ReturnCode code = ReturnCodeFactory.Success("Папка удалена");
+      ReturnCode code = ReturnCodeFactory.Success($"Папка удалена: {NameFolder}");
       string sqlCountFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdFolder = @IdFolder";
       string sqlCountChildFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = @IdFolder";
       string sqlCountChildSettings = "SELECT COUNT(*) FROM SETTINGS WHERE IdFolder = @IdFolder";
