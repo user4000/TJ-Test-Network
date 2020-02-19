@@ -58,6 +58,7 @@
       this.ScSettings = new Telerik.WinControls.UI.RadSplitContainer();
       this.PnSettings = new Telerik.WinControls.UI.SplitPanel();
       this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
+      this.BxFolderSearchGotoNext = new Telerik.WinControls.UI.RadImageButtonElement();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -258,6 +259,8 @@
       // 
       this.TxFolderSearch.Dock = System.Windows.Forms.DockStyle.Fill;
       this.TxFolderSearch.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxFolderSearch.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxFolderSearchGotoNext});
       this.TxFolderSearch.Location = new System.Drawing.Point(5, 5);
       this.TxFolderSearch.Name = "TxFolderSearch";
       this.TxFolderSearch.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
@@ -423,6 +426,14 @@
       this.PnEditSettings.TabStop = false;
       this.PnEditSettings.Text = "splitPanel4";
       // 
+      // BxFolderSearchGotoNext
+      // 
+      this.BxFolderSearchGotoNext.Image = ((System.Drawing.Image)(resources.GetObject("BxFolderSearchGotoNext.Image")));
+      this.BxFolderSearchGotoNext.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxFolderSearchGotoNext.Name = "BxFolderSearchGotoNext";
+      this.BxFolderSearchGotoNext.Text = "Search next";
+      this.BxFolderSearchGotoNext.ToolTipText = "go to next";
+      // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -500,5 +511,6 @@
     private Telerik.WinControls.UI.RadPageViewPage PgSearch;
     private Telerik.WinControls.UI.RadButtonTextBox TxFolderSearch;
     private Telerik.WinControls.UI.RadImageButtonElement BxFolderSearch;
+    private Telerik.WinControls.UI.RadImageButtonElement BxFolderSearchGotoNext;
   }
 }

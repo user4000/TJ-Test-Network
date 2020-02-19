@@ -23,11 +23,15 @@ namespace TestNetwork
 
     private string NameOfSelectedNode { get; set; } = string.Empty;
 
+    private RadTreeNode[] SearchResult { get; set; } = null;
+
+    private int SearchIterator { get; set; } = 0;
+
+
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
     }
-
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
 
@@ -46,11 +50,14 @@ namespace TestNetwork
       BxFolderRename.ShowBorder = false;
       BxFolderDelete.ShowBorder = false;
       BxFolderSearch.ShowBorder = false;
+      BxFolderSearchGotoNext.ShowBorder = false;
+      BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
 
       PvFolders.Pages.ChangeIndex(PgSearch, 0);
       PvFolders.Pages.ChangeIndex(PgAdd, 1);
       PvFolders.Pages.ChangeIndex(PgRename, 2);
       PvFolders.Pages.ChangeIndex(PgDelete, 3);
+      PvFolders.SelectedPage = PgSearch;
 
       TvFolders.ImageList = this.ImageListFolders;
       DbSettings.SetFontOfNode(TvFolders.Font);
@@ -65,6 +72,9 @@ namespace TestNetwork
       BxSelectFile.Click += EventButtonChooseFile;
       BxFolderAdd.Click += EventButtonAddFolder;
       BxFolderRename.Click += EventButtonRenameFolder;
+      BxFolderSearch.Click += EventButtonSearchFolder;
+      BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
+
       TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
     }
 
@@ -78,6 +88,15 @@ namespace TestNetwork
       try { NameOfSelectedNode = e.Node.Text; } catch { NameOfSelectedNode = string.Empty; }
       TxFolderRename.Text = NameOfSelectedNode;
       TxFolderDelete.Text = NameOfSelectedNode;
+    }
+
+    private void SelectOneNode(RadTreeNode node)
+    {
+      if (node != null)
+      {
+        node.Selected = true;
+        node.EnsureVisible();
+      }
     }
 
     private void EventButtonAddFolder(object sender, EventArgs e)
@@ -186,6 +205,56 @@ namespace TestNetwork
       {
         Ms.Message("Не удалось переименовать папку.", "Папка с таким именем уже существует", TxFolderRename).Fail();
       }    
+    }
+
+    private void EventButtonSearchFolder(object sender, EventArgs e)
+    {
+      string NameFolder = TxFolderSearch.Text;
+      if (SearchResult?.Length > 0) Array.Clear(SearchResult, 0, SearchResult.Length);
+      SearchResult = TvFolders.FindNodes(x => x.Name.StartsWith(NameFolder));
+
+      Point offset = new Point(PvFolders.Width, -1 * PvFolders.Height);
+
+      SearchIterator = 0;
+      if (SearchResult.Length > 0) SelectOneNode(SearchResult[0]);
+
+      BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
+
+      if (SearchResult.Length < 1)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Поиск не дал результатов", 200, PvFolders).Offset(offset).NoTable().Create();
+      }
+
+      if (SearchResult.Length == 1)
+      {
+        Ms.ShortMessage(MsgType.Debug, "Найдена 1 папка", 200, PvFolders).Offset(offset).NoTable().Create();
+      }
+      
+      if (SearchResult.Length > 1)
+      {
+        Ms.ShortMessage(MsgType.Info, $"Найдено элементов: {SearchResult.Length}", 200, PvFolders).Offset(offset).NoTable().Create();
+        SearchIterator = 1;
+        BxFolderSearchGotoNext.Visibility = ElementVisibility.Visible;
+      }
+    }
+
+    private void EventButtonSearchFolderGotoNext(object sender, EventArgs e)
+    {
+      if (SearchResult.Length > SearchIterator)
+      {
+        SelectOneNode(SearchResult[SearchIterator]);
+        SearchIterator++;
+        if (SearchResult.Length==SearchIterator)
+        {
+          Ms.ShortMessage(MsgType.Ok, "Поиск завершён", 200, TxFolderSearch).Offset(new Point(TxFolderSearch.Width, 0)).NoTable().Create();
+        }
+      }
+      else
+      {       
+        SearchIterator = 0;
+        SelectOneNode(SearchResult[SearchIterator]);
+        SearchIterator++;
+      }
     }
 
     private void EventButtonChooseFile(object sender, EventArgs e)
