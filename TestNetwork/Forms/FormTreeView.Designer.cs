@@ -44,6 +44,7 @@
       this.BxFolderDelete = new Telerik.WinControls.UI.RadImageButtonElement();
       this.PgSearch = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxFolderSearch = new Telerik.WinControls.UI.RadButtonTextBox();
+      this.BxFolderSearchGotoNext = new Telerik.WinControls.UI.RadImageButtonElement();
       this.BxFolderSearch = new Telerik.WinControls.UI.RadImageButtonElement();
       this.DialogOpenFile = new Telerik.WinControls.UI.RadOpenFileDialog();
       this.TxDatabaseFile = new Telerik.WinControls.UI.RadButtonTextBox();
@@ -58,7 +59,6 @@
       this.ScSettings = new Telerik.WinControls.UI.RadSplitContainer();
       this.PnSettings = new Telerik.WinControls.UI.SplitPanel();
       this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
-      this.BxFolderSearchGotoNext = new Telerik.WinControls.UI.RadImageButtonElement();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -111,7 +111,7 @@
       this.ImageListFolders.TransparentColor = System.Drawing.Color.Transparent;
       this.ImageListFolders.Images.SetKeyName(0, "a1.png");
       this.ImageListFolders.Images.SetKeyName(1, "a2_1.png");
-      this.ImageListFolders.Images.SetKeyName(2, "a3.png");
+      this.ImageListFolders.Images.SetKeyName(2, "a18.png");
       this.ImageListFolders.Images.SetKeyName(3, "a4.png");
       this.ImageListFolders.Images.SetKeyName(4, "a5.png");
       this.ImageListFolders.Images.SetKeyName(5, "a6.png");
@@ -126,8 +126,7 @@
       this.ImageListFolders.Images.SetKeyName(14, "a15.png");
       this.ImageListFolders.Images.SetKeyName(15, "a16.png");
       this.ImageListFolders.Images.SetKeyName(16, "a17.png");
-      this.ImageListFolders.Images.SetKeyName(17, "a18.png");
-      this.ImageListFolders.Images.SetKeyName(18, "a19.png");
+      this.ImageListFolders.Images.SetKeyName(17, "a19.png");
       // 
       // PvFolders
       // 
@@ -267,6 +266,14 @@
             this.BxFolderSearch});
       this.TxFolderSearch.Size = new System.Drawing.Size(385, 23);
       this.TxFolderSearch.TabIndex = 7;
+      // 
+      // BxFolderSearchGotoNext
+      // 
+      this.BxFolderSearchGotoNext.Image = ((System.Drawing.Image)(resources.GetObject("BxFolderSearchGotoNext.Image")));
+      this.BxFolderSearchGotoNext.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxFolderSearchGotoNext.Name = "BxFolderSearchGotoNext";
+      this.BxFolderSearchGotoNext.Text = "Search next";
+      this.BxFolderSearchGotoNext.ToolTipText = "go to next";
       // 
       // BxFolderSearch
       // 
@@ -425,14 +432,6 @@
       this.PnEditSettings.TabIndex = 1;
       this.PnEditSettings.TabStop = false;
       this.PnEditSettings.Text = "splitPanel4";
-      // 
-      // BxFolderSearchGotoNext
-      // 
-      this.BxFolderSearchGotoNext.Image = ((System.Drawing.Image)(resources.GetObject("BxFolderSearchGotoNext.Image")));
-      this.BxFolderSearchGotoNext.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
-      this.BxFolderSearchGotoNext.Name = "BxFolderSearchGotoNext";
-      this.BxFolderSearchGotoNext.Text = "Search next";
-      this.BxFolderSearchGotoNext.ToolTipText = "go to next";
       // 
       // FormTreeView
       // 

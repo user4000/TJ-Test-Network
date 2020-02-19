@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
+using Telerik.WinControls.UI.Docking;
 using TJFramework;
 using static TJFramework.TJFrameworkManager;
 
@@ -26,7 +27,6 @@ namespace TestNetwork
     private RadTreeNode[] SearchResult { get; set; } = null;
 
     private int SearchIterator { get; set; } = 0;
-
 
     public FormTreeView()
     {
@@ -59,12 +59,17 @@ namespace TestNetwork
       PvFolders.Pages.ChangeIndex(PgDelete, 3);
       PvFolders.SelectedPage = PgSearch;
 
+      this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
+      //TODO: запоминать размер PnTreeview
+      //this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = new Size(450, 0);
+
       TvFolders.ImageList = this.ImageListFolders;
       TvFolders.Font = Program.ApplicationSettings.TreeViewFont;
-
       DbSettings.SetFontOfNode(TvFolders.Font);
+
       TxDatabaseFile.ReadOnly = true;
       TxFolderDelete.ReadOnly = true;
+
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
 
