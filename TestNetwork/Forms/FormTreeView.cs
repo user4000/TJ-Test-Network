@@ -19,13 +19,23 @@ namespace TestNetwork
   {
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
 
-    private DataTable TableFolders { get; set; } = null; // TODO: сделать так чтобы DataTable была всегда одна и та же
+    private DataTable TableFolders { get; set; } = null;
 
     private string NameOfSelectedNode { get; set; } = string.Empty;
 
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
+    }
+
+
+    private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
+
+    private void SetDatabaseFile(string PathToDatabaseFile)
+    {
+      TxDatabaseFile.Text = PathToDatabaseFile;
+      ResetDataSourceForTreeview();
+      DbSettings.SavePathToDatabase(PathToDatabaseFile);
     }
 
     private void SetProperties()
@@ -39,7 +49,7 @@ namespace TestNetwork
       DbSettings.SetFontOfNode(TvFolders.Font);
       TxDatabaseFile.ReadOnly = true;
       TxFolderDelete.ReadOnly = true;
-      TxDatabaseFile.Text = Program.ApplicationSettings.SettingsDatabaseLocation;
+      SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
 
     private void SetEvents()
@@ -47,6 +57,7 @@ namespace TestNetwork
       BxOpenFile.Click += EventButtonLoadData;
       BxSelectFile.Click += EventButtonChooseFile;
       BxAddFolder.Click += EventButtonAddFolder;
+      BxRenameFolder.Click += EventButtonRenameFolder;
       TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
     }
 
@@ -65,8 +76,12 @@ namespace TestNetwork
     private void EventButtonAddFolder(object sender, EventArgs e)
     {
       RadTreeNode parent = TvFolders.SelectedNode;
+
+      if (parent == null) return;
+
       int IdFolder = DbSettings.GetIdFolder(parent);
       string ParentFullPath = parent.FullPath;
+      bool Error = false;
 
       if (IdFolder < 0)
       {
@@ -74,16 +89,24 @@ namespace TestNetwork
         return;
       }
 
-      string NameFolder = TxFolderName.Text.Trim().Length < 1 ? "Folder" : TxFolderName.Text.Trim();
+      if (TxFolderName.Text.Trim().Length < 1)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указано название новой папки.", 350, TxFolderName).Create();
+        return;
+      }
+
+      string NameFolder = /* TxFolderName.Text.Trim().Length < 1 ? "Folder" : */ TxFolderName.Text.Trim();
+
       if (IdFolder >= 0)
       {
         int IdNewFolder = -1;
         try
         {
-          IdNewFolder = DbSettings.FolderInsert(TxDatabaseFile.Text, IdFolder, NameFolder);
+          IdNewFolder = DbSettings.FolderInsert(IdFolder, NameFolder);
         }
         catch (SQLiteException ex)
         {
+          Error = true;
           if (ex.Message.Contains("UNIQUE"))
             Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", TxFolderName).Error();
           else
@@ -91,15 +114,18 @@ namespace TestNetwork
         }
         catch (Exception ex)
         {
+          Error = true;
           Ms.Error("Не удалось добавить новую папку", ex).Control(TxFolderName).Create();
           IdNewFolder = -1;
         }
 
-        if (IdNewFolder > 0)
+        if (IdNewFolder <= 0)
+        {
+          if (Error==false) Ms.Message("Не удалось добавить новую папку.", "Папка с таким именем уже существует", TxFolderName).Fail();
+        }
+        else
         {
           Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, TxFolderName).Create();
-          //TableFolders.Rows.Add(IdNewFolder, IdFolder, NameFolder);
-          //TableFolders.AcceptChanges();
           EventButtonLoadData(sender, e);
           parent = TvFolders.GetNodeByPath(ParentFullPath);
           parent.Expanded = true;
@@ -109,13 +135,58 @@ namespace TestNetwork
       TxFolderName.Clear();
     }
 
+    private void EventButtonRenameFolder(object sender, EventArgs e)
+    {
+      RadTreeNode node = TvFolders.SelectedNode;
+
+      if (node == null) return;
+
+      int IdFolder = DbSettings.GetIdFolder(node);
+      string NodeFullPath = node.FullPath;
+   
+      if (IdFolder < 0)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно переименовать.", 380, TxFolderRename).Create();
+        return;
+      }
+
+      string NameFolder = TxFolderRename.Text.Trim();
+
+      bool FolderHasBeenRenamed = false;
+
+      if (NameFolder.Length < 1)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указано новое название папки.", 350, TxFolderRename).Create();
+        return;
+      }
+
+      try
+      {
+        FolderHasBeenRenamed = DbSettings.FolderRename(IdFolder, NameFolder);
+      }
+      catch (Exception ex)
+      {
+        Ms.Error("Не удалось переименовать папку", ex).Control(TxFolderRename).Create();
+        return;
+      }
+
+      if (FolderHasBeenRenamed)
+      {
+        Ms.ShortMessage(MsgType.Debug, $"Папка переименована: {NameFolder}", 250, TxFolderRename).Create();
+        node.Text = NameFolder;
+      }
+      else
+      {
+        Ms.Message("Не удалось переименовать папку.", "Папка с таким именем уже существует", TxFolderRename).Fail();
+      }    
+    }
+
     private void EventButtonChooseFile(object sender, EventArgs e)
     {
       DialogResult result = DialogOpenFile.ShowDialog();
       if (result == DialogResult.OK)
       {
-        TxDatabaseFile.Text = DialogOpenFile.FileName;
-        TvFolders.DataSource = null;
+        SetDatabaseFile(DialogOpenFile.FileName);
       }
     }
 
@@ -124,7 +195,7 @@ namespace TestNetwork
       DataTable table = null; bool Error = false;
       try
       {
-        table = DbSettings.GetSqliteDataTable(TxDatabaseFile.Text, DbSettings.TableFolders);
+        table = DbSettings.GetSqliteDataTable(DbSettings.TableFolders);
       }
       catch (Exception ex)
       {
@@ -135,7 +206,12 @@ namespace TestNetwork
       if (Error == false)
         try
         {
-          if (TableFolders != null) TableFolders.Clear();
+          if (TableFolders != null)
+          {
+            TableFolders.Clear();
+            //TableFolders.Columns.Clear();
+            //TableFolders.Dispose();
+          }
           DbSettings.FillTreeView(TvFolders, table);
           TableFolders = table;
         }
@@ -148,11 +224,13 @@ namespace TestNetwork
       if (Error == false)
       {
         Program.ApplicationSettings.SettingsDatabaseLocation = TxDatabaseFile.Text;
-        Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, TxDatabaseFile).Create();
+        if (sender is RadImageButtonElement)
+        {
+          RadImageButtonElement item = sender as RadImageButtonElement;
+          if (item.Name==BxOpenFile.Name) Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 150, TxDatabaseFile).Create();
+        }        
       }
     }
-
-
   }
 }
 
