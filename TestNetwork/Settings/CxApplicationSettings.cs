@@ -33,6 +33,21 @@ namespace TestNetwork
     [Editor(typeof(PropertyGridBrowseEditor), typeof(BaseInputEditor))] // File name dialog //
     public string SettingsDatabaseLocation { get; set; }
 
+
+    [Category("Внешний вид")]
+    [DisplayName("Ориентация вкладок главной формы")]
+    public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
+
+
+    [Category("Внешний вид")]
+    [DisplayName("Шрифт иерархического списка папок")]
+    public Font TreeViewFont { get; set; } = new Font("Verdana", 9.75F);
+
+
+
+
+
+
     [Category("Category 1")]
     public string MyString1 { get; set; } = "Privet 1111";
 
@@ -105,8 +120,6 @@ namespace TestNetwork
     [RadSortOrder(6)]
     public MyEnum my_enum { get; set; } = MyEnum.Three;
 
-    [Category("Application view")]
-    public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 
     public override void PropertyValueChanged(string PropertyName)
     {

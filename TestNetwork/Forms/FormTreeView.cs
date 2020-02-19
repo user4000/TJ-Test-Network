@@ -60,6 +60,8 @@ namespace TestNetwork
       PvFolders.SelectedPage = PgSearch;
 
       TvFolders.ImageList = this.ImageListFolders;
+      TvFolders.Font = Program.ApplicationSettings.TreeViewFont;
+
       DbSettings.SetFontOfNode(TvFolders.Font);
       TxDatabaseFile.ReadOnly = true;
       TxFolderDelete.ReadOnly = true;
