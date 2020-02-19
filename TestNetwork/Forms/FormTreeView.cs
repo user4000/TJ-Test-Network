@@ -154,8 +154,16 @@ namespace TestNetwork
           Ms.ShortMessage(MsgType.Debug, $"Папка добавлена: {NameFolder}", 250, TxFolderName).Create();
           EventButtonLoadData(sender, e);
           parent = TvFolders.GetNodeByPath(ParentFullPath);
-          parent.Expanded = true;
-          parent.Selected = true;
+          if (parent == null)
+          {
+            Ms.Message(MsgType.Error, "Ошибка!", $"Метод TvFolders.GetNodeByPath(ParentFullPath) вернул значение null. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
+            Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderName).NoTable().Create();
+          }
+          else
+          {
+            parent.Expanded = true;
+            parent.Selected = true;
+          }
         }
       }
       TxFolderName.Clear();

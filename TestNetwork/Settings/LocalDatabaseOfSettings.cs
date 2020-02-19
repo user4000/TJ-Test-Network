@@ -52,6 +52,8 @@ namespace TestNetwork
       return table;
     }
 
+
+    // TODO: Переделать FolderInsert and FolderRename чтобы возвращали ReturnCode //
     public int FolderInsert(int IdParent, string NameFolder)
     {
       int IdNewFolder = -1;
@@ -90,11 +92,11 @@ namespace TestNetwork
     public bool FolderRename(int IdFolder, string NameFolder)
     {
       int count = 0;
+      string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = (SELECT IdParent FROM FOLDERS WHERE IdFolder=@IdFolder) AND NameFolder=@NameFolder";
+      string sqlRenameFolder = "UPDATE FOLDERS SET NameFolder=@NameFolder WHERE IdFolder=@IdFolder";
+
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = (SELECT IdParent FROM FOLDERS WHERE IdFolder=@IdFolder) AND NameFolder=@NameFolder";
-        string sqlRenameFolder = "UPDATE FOLDERS SET NameFolder=@NameFolder WHERE IdFolder=@IdFolder";
-
         using (SQLiteCommand command = new SQLiteCommand(connection))
         {
           connection.Open();
@@ -110,7 +112,7 @@ namespace TestNetwork
             command.ExecuteNonQuery();
 
             command.CommandText = sqlSelectCount;
-            count = CxConvert.ToInt32(command.ExecuteScalar(), -1); 
+            count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
           }
           else
           {
@@ -120,6 +122,62 @@ namespace TestNetwork
         }
       }
       return count > 0;
+    }
+
+    public ReturnCode FolderDelete(int IdFolder)
+    {
+
+      string sqlCountFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdFolder = @IdFolder";
+      string sqlCountChildFolder = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = @IdFolder";
+      string sqlCountChildSettings = "SELECT COUNT(*) FROM SETTINGS WHERE IdFolder = @IdFolder";
+      string sqlDeleteFolder = "DELETE FROM FOLDERS WHERE IdFolder=@IdFolder";
+      int count = 0;
+      ReturnCode code = ReturnCodeFactory.Success("Папка удалена");
+
+      using (SQLiteConnection connection = GetSqliteConnection())
+      {
+        using (SQLiteCommand command = new SQLiteCommand(connection))
+        {
+          connection.Open();
+
+          command.CommandText = sqlCountFolder;
+          command.Parameters.Add(new SQLiteParameter("@IdFolder", IdFolder));
+
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+
+          if (count != 1) // Folder was not found //
+          {
+            return ReturnCodeFactory.Error("Указанная вами папка не найдена");
+          }
+
+          command.CommandText = sqlCountChildFolder;
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+
+          if (count != 0)
+          {
+            return ReturnCodeFactory.Error("Нельзя удалять папку, внутри которой есть другие папки");
+          }
+
+          command.CommandText = sqlCountChildSettings;
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+
+          if (count != 0)
+          {
+            return ReturnCodeFactory.Error("Нельзя удалять папку, которая содержит настройки");
+          }
+
+          command.CommandText = sqlDeleteFolder;
+          command.ExecuteNonQuery();
+          command.CommandText = sqlCountFolder;
+          count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
+
+          if (count != 0)
+          {
+            return ReturnCodeFactory.Error("Не удалось удалить папку");
+          }
+        }
+      }
+      return code;
     }
 
     public void FillTreeView(RadTreeView treeView, DataTable table)
