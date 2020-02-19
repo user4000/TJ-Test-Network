@@ -42,9 +42,16 @@ namespace TestNetwork
     {
       BxOpenFile.ShowBorder = false;
       BxSelectFile.ShowBorder = false;
-      BxAddFolder.ShowBorder = false;
-      BxRenameFolder.ShowBorder = false;
-      BxDeleteFolder.ShowBorder = false;
+      BxFolderAdd.ShowBorder = false;
+      BxFolderRename.ShowBorder = false;
+      BxFolderDelete.ShowBorder = false;
+      BxFolderSearch.ShowBorder = false;
+
+      PvFolders.Pages.ChangeIndex(PgSearch, 0);
+      PvFolders.Pages.ChangeIndex(PgAdd, 1);
+      PvFolders.Pages.ChangeIndex(PgRename, 2);
+      PvFolders.Pages.ChangeIndex(PgDelete, 3);
+
       TvFolders.ImageList = this.ImageListFolders;
       DbSettings.SetFontOfNode(TvFolders.Font);
       TxDatabaseFile.ReadOnly = true;
@@ -56,8 +63,8 @@ namespace TestNetwork
     {
       BxOpenFile.Click += EventButtonLoadData;
       BxSelectFile.Click += EventButtonChooseFile;
-      BxAddFolder.Click += EventButtonAddFolder;
-      BxRenameFolder.Click += EventButtonRenameFolder;
+      BxFolderAdd.Click += EventButtonAddFolder;
+      BxFolderRename.Click += EventButtonRenameFolder;
       TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
     }
 
@@ -195,7 +202,7 @@ namespace TestNetwork
       DataTable table = null; bool Error = false;
       try
       {
-        table = DbSettings.GetSqliteDataTable(DbSettings.TableFolders);
+        table = DbSettings.GetTableFolders();
       }
       catch (Exception ex)
       {

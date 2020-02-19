@@ -34,12 +34,12 @@ namespace TestNetwork
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
-    public DataTable GetSqliteDataTable(string TableName)
+    public DataTable GetTableFolders()
     {
       DataTable table = new DataTable();
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableName}", connection))
+        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableFolders}", connection))
         {
           connection.Open();
           using (SQLiteDataReader reader = command.ExecuteReader())
@@ -57,15 +57,17 @@ namespace TestNetwork
       int IdNewFolder = -1;
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        string sqlSelectCount = $"SELECT COUNT(*) FROM FOLDERS WHERE IdParent={IdParent} AND NameFolder=\"{NameFolder}\"";
-        string sqlInsertFolder = $"INSERT INTO FOLDERS (IdParent,NameFolder) VALUES ({IdParent},\"{NameFolder}\")";
-        string sqlSelectIdFolder = $"SELECT IdFolder FROM FOLDERS WHERE IdParent={IdParent} AND NameFolder=\"{NameFolder}\"";
+        string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
+        string sqlInsertFolder = "INSERT INTO FOLDERS (IdParent,NameFolder) VALUES (@IdParent,@NameFolder)";
+        string sqlSelectIdFolder = "SELECT IdFolder FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
 
         using (SQLiteCommand command = new SQLiteCommand(connection))
         {
           connection.Open();
 
           command.CommandText = sqlSelectCount;
+          command.Parameters.Add(new SQLiteParameter("@IdParent", IdParent));
+          command.Parameters.Add(new SQLiteParameter("@NameFolder", NameFolder));
           int count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
 
           if (count == 0) // Folder does not exist yet //
@@ -90,14 +92,16 @@ namespace TestNetwork
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        string sqlSelectCount = $"SELECT COUNT(*) FROM FOLDERS WHERE IdParent = (SELECT IdParent FROM FOLDERS WHERE IdFolder={IdFolder}) AND NameFolder=\"{NameFolder}\"";
-        string sqlRenameFolder = $"UPDATE FOLDERS SET NameFolder=\"{NameFolder}\" WHERE IdFolder={IdFolder}";
-        //TODO: use command parameters to avoid sql injection.
+        string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent = (SELECT IdParent FROM FOLDERS WHERE IdFolder=@IdFolder) AND NameFolder=@NameFolder";
+        string sqlRenameFolder = "UPDATE FOLDERS SET NameFolder=@NameFolder WHERE IdFolder=@IdFolder";
+
         using (SQLiteCommand command = new SQLiteCommand(connection))
         {
           connection.Open();
 
           command.CommandText = sqlSelectCount;
+          command.Parameters.Add(new SQLiteParameter("@IdFolder", IdFolder));
+          command.Parameters.Add(new SQLiteParameter("@NameFolder", NameFolder));
           count = CxConvert.ToInt32(command.ExecuteScalar(), -1);
 
           if (count == 0) // Folder does not exist yet //
