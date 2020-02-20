@@ -76,6 +76,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Telerik\Bin40\Telerik.WinControls.RadDock.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.WinControls.Themes.VisualStudio2012Light, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Telerik\Bin40\Telerik.WinControls.Themes.VisualStudio2012Light.dll</HintPath>
+    </Reference>
     <Reference Include="Telerik.WinControls.UI, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Telerik\Bin40\Telerik.WinControls.UI.dll</HintPath>
@@ -105,6 +109,8 @@
     <Compile Include="Extension\XxRadTextBoxControl.cs" />
     <Compile Include="Extension\XxString.cs" />
     <Compile Include="Extension\XxToolWindow.cs" />
+    <Compile Include="Grid\GridManager.cs" />
+    <Compile Include="Grid\GridManagerWithDataTable.cs" />
     <Compile Include="Model\Classificator.cs" />
     <Compile Include="Model\ClassificatorWithEntityName.cs" />
     <Compile Include="Model\EntityColumn.cs" />

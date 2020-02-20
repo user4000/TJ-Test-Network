@@ -13,14 +13,19 @@ namespace TestNetwork
 {
   public class LocalDatabaseOfSettings
   {
-    public string TableFolders { get; } = "FOLDERS";
-    public string TableFoldersColumnIdParent { get; } = "IdParent";
-    public string TableFoldersColumnIdFolder { get; } = "IdFolder";
-    public string TableFoldersColumnNameFolder { get; } = "NameFolder";
+    public string TnFolders { get; } = "FOLDERS";
+    public string CnFoldersIdParent { get; } = "IdParent";
+    public string CnFoldersIdFolder { get; } = "IdFolder";
+    public string CnFoldersNameFolder { get; } = "NameFolder";
 
-    public string TableSettings { get; } = "SETTINGS";
+    public string TnSettings { get; } = "SETTINGS";
 
-    public string TableTypes { get; } = "TYPES";
+    public string TnTypes { get; } = "TYPES";
+
+    public string CnTypesIdType { get; } = "IdType";
+    public string CnTypesNameType { get; } = "NameType";
+
+    internal DataTable TableTypes { get; private set; } = null;
 
     public string SqliteDatabase { get; private set; } = string.Empty;
 
@@ -38,12 +43,13 @@ namespace TestNetwork
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
-    public DataTable GetTableFolders()
+
+    public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
       using (SQLiteConnection connection = GetSqliteConnection())
       {
-        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableFolders}", connection))
+        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableName}", connection))
         {
           connection.Open();
           using (SQLiteDataReader reader = command.ExecuteReader())
@@ -52,9 +58,29 @@ namespace TestNetwork
           }
         }
       }
-      foreach (DataColumn column in table.Columns) if (column.ColumnName == TableFoldersColumnIdParent) column.AllowDBNull = true;
       return table;
     }
+
+    public DataTable GetTableFolders()
+    {
+      DataTable table = GetTable(TnFolders);
+      foreach (DataColumn column in table.Columns) if (column.ColumnName == CnFoldersIdParent) column.AllowDBNull = true;
+      return table;
+    }
+
+    public void InitVariables()
+    {
+      if (TableTypes != null) TableTypes.Clear();
+      TableTypes = GetTable(TnTypes);
+    }
+
+    public void FillDropDownListForTableTypes(RadDropDownList combobox)
+    {
+      combobox.DataSource = TableTypes;
+      combobox.ValueMember = CnTypesIdType;
+      combobox.DisplayMember = CnTypesNameType;
+    }
+
 
     public ReturnCode FolderInsert(int IdParent, string NameFolder)
     {
@@ -135,11 +161,11 @@ namespace TestNetwork
 
     public void FillTreeView(RadTreeView treeView, DataTable table)
     {
-      IEnumerable<DataRow> BadRows = table.Rows.Cast<DataRow>().Where(r => r[TableFoldersColumnIdFolder].ToString() == r[TableFoldersColumnIdParent].ToString());
-      BadRows.ToList().ForEach(r => r.SetField(TableFoldersColumnIdParent, DBNull.Value));
-      treeView.DisplayMember = TableFoldersColumnNameFolder;
-      treeView.ParentMember = TableFoldersColumnIdParent;
-      treeView.ChildMember = TableFoldersColumnIdFolder;
+      IEnumerable<DataRow> BadRows = table.Rows.Cast<DataRow>().Where(r => r[CnFoldersIdFolder].ToString() == r[CnFoldersIdParent].ToString());
+      BadRows.ToList().ForEach(r => r.SetField(CnFoldersIdParent, DBNull.Value));
+      treeView.DisplayMember = CnFoldersNameFolder;
+      treeView.ParentMember = CnFoldersIdParent;
+      treeView.ChildMember = CnFoldersIdFolder;
       treeView.DataSource = table; // <== This may cause application crash if there is any row having IdParent==IdFolder
       treeView.SortOrder = SortOrder.Ascending;
       foreach (var item in treeView.Nodes) ProcessOneNodeSetFontAndImageIndex(item);
@@ -160,7 +186,7 @@ namespace TestNetwork
         try
         {
           DataRowView row = node.DataBoundItem as DataRowView;
-          Id = CxConvert.ToInt32(row.Row[TableFoldersColumnIdFolder].ToString(), -1);
+          Id = CxConvert.ToInt32(row.Row[CnFoldersIdFolder].ToString(), -1);
         }
         catch
         {

@@ -177,7 +177,7 @@ namespace TestNetwork
       else
       {
         Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderName).Create();
-        EventButtonLoadData(sender, e);
+        EventRefreshDataFromDatabaseFile();
         parent = TvFolders.GetNodeByPath(ParentFullPath);
         if (parent == null)
         {
@@ -371,6 +371,13 @@ namespace TestNetwork
 
     private void EventButtonLoadData(object sender, EventArgs e)
     {
+      EventLoadDataFromDatabaseFile(true);
+    }
+
+    private void EventRefreshDataFromDatabaseFile() => EventLoadDataFromDatabaseFile(false);
+
+    private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTime)
+    {
       DataTable table = null; bool Error = false;
       try
       {
@@ -410,12 +417,15 @@ namespace TestNetwork
       if (Error == false)
       {
         Program.ApplicationSettings.SettingsDatabaseLocation = TxDatabaseFile.Text;
-        if (sender is RadImageButtonElement)
-        {
-          RadImageButtonElement item = sender as RadImageButtonElement;
-          if (item.Name == BxOpenFile.Name) Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
-        }
+        if (LoadDataFirstTime) EventLoadDataFromFileFirstTime();
       }
+    }
+
+    public void EventLoadDataFromFileFirstTime()
+    {
+      DbSettings.InitVariables();
+      DbSettings.FillDropDownListForTableTypes(DxTypes);
+      Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
     }
 
     public void EventEndWork()
