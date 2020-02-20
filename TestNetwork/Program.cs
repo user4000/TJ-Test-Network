@@ -9,9 +9,10 @@ using TJFramework.FrameworkSettings;
 
 namespace TestNetwork
 {
-  static class Program
+  public static class Program
   {
-    const string ApplicationUniqueName = "Test Toemsel Network";
+    const string ApplicationUniqueName = "Test Network";
+
     private static Mutex AxMutex = null;
 
     public static CxApplicationSettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<CxApplicationSettings>(); } // User custom settings in Property Grid //

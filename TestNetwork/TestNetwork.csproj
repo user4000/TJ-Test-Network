@@ -59,6 +59,7 @@
       <HintPath>..\lib\RCWF\2019.2.618.40\Telerik.WinControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Telerik.WinControls.GridView, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL" />
     <Reference Include="Telerik.WinControls.UI, Version=2019.2.618.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
       <HintPath>..\lib\RCWF\2019.2.618.40\Telerik.WinControls.UI.dll</HintPath>
       <Private>True</Private>
@@ -86,6 +87,7 @@
     </Compile>
     <Compile Include="Settings\CxApplicationSettings.cs" />
     <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
+    <Compile Include="Settings\XxSQLiteCommand.cs" />
     <EmbeddedResource Include="Forms\FormServer.resx">
       <DependentUpon>FormServer.cs</DependentUpon>
     </EmbeddedResource>
