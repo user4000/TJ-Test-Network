@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace ProjectStandard
 {
@@ -31,6 +32,29 @@ namespace ProjectStandard
         case "": return string.Empty;   // throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
         default: return input.First().ToString().ToUpper() + input.Substring(1);
       }
+    }
+
+    public static bool IsValidChar(char c)
+    {
+      return 
+        (
+        (c >= '0' && c <= '9') || 
+        (c >= 'A' && c <= 'Z') || 
+        (c >= 'a' && c <= 'z') || 
+        c == '-' ||
+        c == '+' ||
+        c == '=' ||
+        c == '(' ||
+        c == ')' ||
+        c == '^' ||
+        c == '_');
+    }
+
+    public static string RemoveSpecialCharacters(this string str)
+    {
+      StringBuilder sb = new StringBuilder();
+      foreach (char c in str) if (IsValidChar(c)) sb.Append(c);
+      return sb.ToString();
     }
   }
 }

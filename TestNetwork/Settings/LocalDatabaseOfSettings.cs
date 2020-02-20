@@ -79,8 +79,8 @@ namespace TestNetwork
       combobox.DataSource = TableTypes;
       combobox.ValueMember = CnTypesIdType;
       combobox.DisplayMember = CnTypesNameType;
+      combobox.ZzSetStandardVisualStyle();
     }
-
 
     public ReturnCode FolderInsert(int IdParent, string NameFolder)
     {
@@ -175,7 +175,7 @@ namespace TestNetwork
     {
       node.ImageIndex = node.Nodes.Count == 0 ? 0 : node.Level + 1;
       node.Font = FontOfNode; // node.Text = node.Text + " => " + node.Level;
-      if (node.Level < 3) node.Expand();
+      if (node.Level < 5) node.Expand();
       foreach (var item in node.Nodes) ProcessOneNodeSetFontAndImageIndex(item);
     }
 

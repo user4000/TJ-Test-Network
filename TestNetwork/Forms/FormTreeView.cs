@@ -142,13 +142,22 @@ namespace TestNetwork
         return;
       }
 
-      if (TxFolderName.Text.Trim().Length < 1)
-      {
-        Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderName).Create();
-        return;
-      }
+      string NameFolderDraft = TxFolderName.Text.Trim();
+      string NameFolder = NameFolderDraft.RemoveSpecialCharacters();
+      TxFolderName.Text = NameFolder;
 
-      string NameFolder = TxFolderName.Text.Trim();
+      if (NameFolder.Length < 1)
+        if (NameFolderDraft.Length < 1)
+        {
+          Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderName).Create();
+          return;
+        }
+        else
+        {
+          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxFolderName).Create();
+          return;
+        }
+
 
       int IdNewFolder = -1;
       const string ErrorHeader = "Не удалось добавить новую папку";
@@ -174,9 +183,21 @@ namespace TestNetwork
       {
         if ((Error == false) && (code.Success)) Ms.Message(ErrorHeader, code.StringValue, TxFolderName).Fail();
       }
-      else
+      else // Give out SUCCESS MESSAGE //
       {
-        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderName).Create();
+        if (NameFolderDraft.Length == NameFolder.Length)
+        {
+          Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderName)
+            .Offset(new Point(TxFolderName.Width, -5 * TxFolderName.Height))
+            .Create();
+        }
+        else
+        {
+          Ms.Message("Некоторые указанные вами символы\nбыли исключены из названия", code.StringValue)
+            .Control(TxFolderName).Offset(new Point(200, 0)).Delay(7)
+            .Info();
+        }
+
         EventRefreshDataFromDatabaseFile();
         parent = TvFolders.GetNodeByPath(ParentFullPath);
         if (parent == null)
@@ -186,12 +207,32 @@ namespace TestNetwork
         }
         else
         {
-          parent.Expanded = true;
-          parent.Selected = true;
+          TryToSelectFolderAfterCreating(parent, NameFolder);
         }
       }
-
       TxFolderName.Clear();
+    }
+
+    private void TryToSelectFolderAfterCreating(RadTreeNode parent, string NameChildFolder)
+    {
+      RadTreeNode[] nodes = parent.FindNodes(item => item.Name == NameChildFolder);
+      if (nodes.Length < 1) return;
+      if (Program.ApplicationSettings.SelectNewFolderAfterCreating)
+        try
+        {
+          nodes[0].Selected = true; nodes[0].EnsureVisible();
+        }
+        catch { }
+      else
+      {
+        parent.Expanded = true; parent.Selected = true;
+        try
+        {
+          foreach (RadTreeNode item in parent.Nodes) if (item != nodes[0]) item.Collapse();
+          nodes[0].EnsureVisible();
+        }
+        catch { }
+      }
     }
 
     private void EventButtonRenameFolder(object sender, EventArgs e)
@@ -273,7 +314,7 @@ namespace TestNetwork
       }
       catch (Exception ex)
       {
-        Ms.Error("Не удалось удалить папку", ex).Control(TxFolderRename).Create();
+        Ms.Error("Не удалось удалить папку", ex).Control(TxFolderDelete).Create();
         return;
       }
 
@@ -287,13 +328,13 @@ namespace TestNetwork
       }
       else
       {
-        Ms.Message("Не удалось удалить папку.", code.StringValue, TxFolderRename).Fail();
+        Ms.Message("Не удалось удалить папку.", code.StringValue, TxFolderDelete).Fail();
       }
     }
 
     private void ClearArraySearchResult()
     {
-      if (SearchResult.Length > 0)
+      if ((SearchResult != null) && (SearchResult.Length > 0))
       {
         Array.Clear(SearchResult, 0, SearchResult.Length);
         SearchIterator = 0;
@@ -401,9 +442,7 @@ namespace TestNetwork
         {
           if (TableFolders != null)
           {
-            TableFolders.Clear();
-            //TableFolders.Columns.Clear();
-            //TableFolders.Dispose();
+            TableFolders.Clear(); //TableFolders.Columns.Clear();// TableFolders.Dispose();
           }
           DbSettings.FillTreeView(TvFolders, table);
           TableFolders = table;

@@ -35,6 +35,10 @@ namespace TestNetwork
     [DisplayName("Режим поиска папки по названию")]
     public TextSearchMode FolderNameSearchMode { get; set; } = TextSearchMode.StartWith;
 
+    [Category("База данных настроек")]
+    [DisplayName("Выделять новую папку после создания")]
+    public bool SelectNewFolderAfterCreating { get; set; } = false;
+
     [Category("Внешний вид")]
     [DisplayName("Ориентация вкладок главной формы")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
