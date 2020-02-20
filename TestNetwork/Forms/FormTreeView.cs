@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,7 +11,6 @@ using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
 using TJFramework;
-using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 
 namespace TestNetwork
@@ -22,9 +20,6 @@ namespace TestNetwork
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
 
     private DataTable TableFolders { get; set; } = null;
-
-
-    private Timer MyTimer = null;
 
     private string NameOfSelectedNode { get; set; } = string.Empty;
 
@@ -66,7 +61,7 @@ namespace TestNetwork
 
       /*if (Program.ApplicationSettings.TreeViewSize.Width < 200)
         Program.ApplicationSettings.TreeViewSize = new Size(this.Width * (37/100), 0);*/
-      this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;     
+      this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
 
       TvFolders.ImageList = this.ImageListFolders;
@@ -92,17 +87,17 @@ namespace TestNetwork
       ScMain.SplitterMoved += EventScMainSplitterMoved;
     }
 
-    private void EventScMainSplitterMoved(object sender, SplitterEventArgs e)
-    {
-      if (this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3 )
-        this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = new Size( (39 * PnUpper.Width) / 100, 0);
-    }
-
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
 
     public void EventStartWork()
     {
       SetProperties(); SetEvents();
+    }
+
+    private void EventScMainSplitterMoved(object sender, SplitterEventArgs e)
+    {
+      if (this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
+        this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
 
     private void EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
@@ -115,10 +110,15 @@ namespace TestNetwork
     private void SelectOneNode(RadTreeNode node)
     {
       if (node != null)
-      {
-        node.Selected = true;
-        node.EnsureVisible();
-      }
+        try
+        {
+          node.Selected = true;
+          node.EnsureVisible();
+        }
+        catch
+        {
+          ClearArraySearchResult();
+        }
     }
 
     private void EventButtonAddFolder(object sender, EventArgs e)
@@ -234,7 +234,8 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue) , TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderRename).Create();
+        ClearArraySearchResult();
         node.Text = NameFolder;
         node.Selected = false;
         node.Selected = true;
@@ -280,6 +281,7 @@ namespace TestNetwork
       {
         Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderDelete).Create();
         parent.Selected = true;
+        ClearArraySearchResult();
         node.Remove();
         if (parent.Nodes.Count < 1) parent.ImageIndex = 0;
       }
@@ -289,11 +291,29 @@ namespace TestNetwork
       }
     }
 
+    private void ClearArraySearchResult()
+    {
+      if (SearchResult.Length > 0)
+      {
+        Array.Clear(SearchResult, 0, SearchResult.Length);
+        SearchIterator = 0;
+      }
+      if (BxFolderSearchGotoNext.Visibility == ElementVisibility.Visible) BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
+    }
+
     private void EventButtonSearchFolder(object sender, EventArgs e)
     {
       string NameFolder = TxFolderSearch.Text;
-      if (SearchResult?.Length > 0) Array.Clear(SearchResult, 0, SearchResult.Length);
-      SearchResult = TvFolders.FindNodes(x => x.Name.StartsWith(NameFolder));
+      if (SearchResult?.Length > 0) ClearArraySearchResult();
+
+      if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.StartWith)
+        SearchResult = TvFolders.FindNodes(x => x.Name.StartsWith(NameFolder));
+
+      if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.Contains)
+        SearchResult = TvFolders.FindNodes(x => x.Name.Contains(NameFolder));
+
+      if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.WholeWord)
+        SearchResult = TvFolders.FindNodes(x => x.Name == NameFolder);
 
       Point offset = new Point(PvFolders.Width, -1 * PvFolders.Height);
 
@@ -322,6 +342,7 @@ namespace TestNetwork
 
     private void EventButtonSearchFolderGotoNext(object sender, EventArgs e)
     {
+      if (SearchResult.Length < 1) return;
       if (SearchResult.Length > SearchIterator)
       {
         SelectOneNode(SearchResult[SearchIterator]);

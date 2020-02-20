@@ -9,7 +9,7 @@ using TJFramework.FrameworkSettings;
 
 namespace TestNetwork
 {
-  public static class Program
+  static class Program
   {
     const string ApplicationUniqueName = "Test Network";
 

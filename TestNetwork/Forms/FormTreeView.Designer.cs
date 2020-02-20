@@ -59,16 +59,17 @@
       this.PnCommonSettings = new Telerik.WinControls.UI.SplitPanel();
       this.ScSettings = new Telerik.WinControls.UI.RadSplitContainer();
       this.PnSettings = new Telerik.WinControls.UI.SplitPanel();
-      this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
+      this.GvSettings = new Telerik.WinControls.UI.RadGridView();
       this.PvSettings = new Telerik.WinControls.UI.RadPageView();
       this.radPageViewPage1 = new Telerik.WinControls.UI.RadPageViewPage();
       this.radPageViewPage2 = new Telerik.WinControls.UI.RadPageViewPage();
       this.radPageViewPage3 = new Telerik.WinControls.UI.RadPageViewPage();
-      this.GvSettings = new Telerik.WinControls.UI.RadGridView();
+      this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
       this.PvEditor = new Telerik.WinControls.UI.RadPageView();
       this.radPageViewPage4 = new Telerik.WinControls.UI.RadPageViewPage();
       this.radPageViewPage5 = new Telerik.WinControls.UI.RadPageViewPage();
       this.radPageViewPage6 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.DxTypes = new Telerik.WinControls.UI.RadDropDownList();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -94,14 +95,16 @@
       this.ScSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.PnSettings)).BeginInit();
       this.PnSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).BeginInit();
-      this.PnEditSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).BeginInit();
-      this.PvSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings.MasterTemplate)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).BeginInit();
+      this.PvSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).BeginInit();
+      this.PnEditSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.PvEditor)).BeginInit();
       this.PvEditor.SuspendLayout();
+      this.radPageViewPage4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.DxTypes)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -445,21 +448,34 @@
       this.PnSettings.TabStop = false;
       this.PnSettings.Text = "splitPanel3";
       // 
-      // PnEditSettings
+      // GvSettings
       // 
-      this.PnEditSettings.Controls.Add(this.PvEditor);
-      this.PnEditSettings.Location = new System.Drawing.Point(0, 420);
-      this.PnEditSettings.Name = "PnEditSettings";
+      this.GvSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.GvSettings.EnableGestures = false;
+      this.GvSettings.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.GvSettings.Location = new System.Drawing.Point(0, 78);
       // 
       // 
       // 
-      this.PnEditSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
-      this.PnEditSettings.Size = new System.Drawing.Size(672, 280);
-      this.PnEditSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, -0.09770115F);
-      this.PnEditSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, -68);
-      this.PnEditSettings.TabIndex = 1;
-      this.PnEditSettings.TabStop = false;
-      this.PnEditSettings.Text = "splitPanel4";
+      this.GvSettings.MasterTemplate.AddNewRowPosition = Telerik.WinControls.UI.SystemRowPosition.Bottom;
+      this.GvSettings.MasterTemplate.AllowAddNewRow = false;
+      this.GvSettings.MasterTemplate.AllowCellContextMenu = false;
+      this.GvSettings.MasterTemplate.AllowColumnHeaderContextMenu = false;
+      this.GvSettings.MasterTemplate.AllowColumnReorder = false;
+      this.GvSettings.MasterTemplate.AllowDeleteRow = false;
+      this.GvSettings.MasterTemplate.AllowDragToGroup = false;
+      this.GvSettings.MasterTemplate.AllowRowHeaderContextMenu = false;
+      this.GvSettings.MasterTemplate.AllowRowResize = false;
+      this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
+      this.GvSettings.MasterTemplate.EnableGrouping = false;
+      this.GvSettings.MasterTemplate.EnableSorting = false;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
+      this.GvSettings.Name = "GvSettings";
+      this.GvSettings.ShowGroupPanel = false;
+      this.GvSettings.ShowGroupPanelScrollbars = false;
+      this.GvSettings.ShowNoDataText = false;
+      this.GvSettings.Size = new System.Drawing.Size(672, 338);
+      this.GvSettings.TabIndex = 2;
       // 
       // PvSettings
       // 
@@ -508,34 +524,21 @@
       this.radPageViewPage3.Text = "Delete";
       this.radPageViewPage3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // GvSettings
+      // PnEditSettings
       // 
-      this.GvSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.GvSettings.EnableGestures = false;
-      this.GvSettings.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.GvSettings.Location = new System.Drawing.Point(0, 78);
-      // 
+      this.PnEditSettings.Controls.Add(this.PvEditor);
+      this.PnEditSettings.Location = new System.Drawing.Point(0, 420);
+      this.PnEditSettings.Name = "PnEditSettings";
       // 
       // 
-      this.GvSettings.MasterTemplate.AddNewRowPosition = Telerik.WinControls.UI.SystemRowPosition.Bottom;
-      this.GvSettings.MasterTemplate.AllowAddNewRow = false;
-      this.GvSettings.MasterTemplate.AllowCellContextMenu = false;
-      this.GvSettings.MasterTemplate.AllowColumnHeaderContextMenu = false;
-      this.GvSettings.MasterTemplate.AllowColumnReorder = false;
-      this.GvSettings.MasterTemplate.AllowDeleteRow = false;
-      this.GvSettings.MasterTemplate.AllowDragToGroup = false;
-      this.GvSettings.MasterTemplate.AllowRowHeaderContextMenu = false;
-      this.GvSettings.MasterTemplate.AllowRowResize = false;
-      this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
-      this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.EnableSorting = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
-      this.GvSettings.Name = "GvSettings";
-      this.GvSettings.ShowGroupPanel = false;
-      this.GvSettings.ShowGroupPanelScrollbars = false;
-      this.GvSettings.ShowNoDataText = false;
-      this.GvSettings.Size = new System.Drawing.Size(672, 338);
-      this.GvSettings.TabIndex = 2;
+      // 
+      this.PnEditSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
+      this.PnEditSettings.Size = new System.Drawing.Size(672, 280);
+      this.PnEditSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, -0.09770115F);
+      this.PnEditSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, -68);
+      this.PnEditSettings.TabIndex = 1;
+      this.PnEditSettings.TabStop = false;
+      this.PnEditSettings.Text = "splitPanel4";
       // 
       // PvEditor
       // 
@@ -556,6 +559,7 @@
       // 
       // radPageViewPage4
       // 
+      this.radPageViewPage4.Controls.Add(this.DxTypes);
       this.radPageViewPage4.ItemSize = new System.Drawing.SizeF(70F, 25F);
       this.radPageViewPage4.Location = new System.Drawing.Point(10, 34);
       this.radPageViewPage4.Name = "radPageViewPage4";
@@ -583,6 +587,16 @@
       this.radPageViewPage6.Size = new System.Drawing.Size(651, 235);
       this.radPageViewPage6.Text = "Delete";
       this.radPageViewPage6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // DxTypes
+      // 
+      this.DxTypes.DropDownHeight = 200;
+      this.DxTypes.DropDownStyle = Telerik.WinControls.RadDropDownStyle.DropDownList;
+      this.DxTypes.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.DxTypes.Location = new System.Drawing.Point(57, 63);
+      this.DxTypes.Name = "DxTypes";
+      this.DxTypes.Size = new System.Drawing.Size(163, 20);
+      this.DxTypes.TabIndex = 0;
       // 
       // FormTreeView
       // 
@@ -627,14 +641,17 @@
       this.ScSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.PnSettings)).EndInit();
       this.PnSettings.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).EndInit();
-      this.PnEditSettings.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).EndInit();
-      this.PvSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings.MasterTemplate)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).EndInit();
+      this.PvSettings.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).EndInit();
+      this.PnEditSettings.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.PvEditor)).EndInit();
       this.PvEditor.ResumeLayout(false);
+      this.radPageViewPage4.ResumeLayout(false);
+      this.radPageViewPage4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.DxTypes)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -679,5 +696,6 @@
     private Telerik.WinControls.UI.RadPageViewPage radPageViewPage4;
     private Telerik.WinControls.UI.RadPageViewPage radPageViewPage5;
     private Telerik.WinControls.UI.RadPageViewPage radPageViewPage6;
+    internal Telerik.WinControls.UI.RadDropDownList DxTypes;
   }
 }

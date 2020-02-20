@@ -9,15 +9,13 @@ using static TJFramework.Logger.Manager;
 
 namespace TestNetwork
 {
-  public enum MyEnum
+  public enum TextSearchMode
   {
-    Zero = 0,
-    One = 1,
-    Two = 2,
-    Three = 3,
-    Four = 4,
-    Five = 5
+    StartWith = 0,
+    Contains = 1,
+    WholeWord = 2
   }
+
 
   // Пример использования настроек. 
   // В самом низу текста события:
@@ -32,6 +30,10 @@ namespace TestNetwork
     [Category("База данных настроек")]
     [Editor(typeof(PropertyGridBrowseEditor), typeof(BaseInputEditor))] // File name dialog //
     public string SettingsDatabaseLocation { get; set; }
+
+    [Category("База данных настроек")]
+    [DisplayName("Режим поиска папки по названию")]
+    public TextSearchMode FolderNameSearchMode { get; set; } = TextSearchMode.StartWith;
 
     [Category("Внешний вид")]
     [DisplayName("Ориентация вкладок главной формы")]
@@ -69,6 +71,9 @@ namespace TestNetwork
       //MessageBox.Show("EventAfter_Saving");
     }
   }
+
+
+
 
   /* ===================================================================================================== */
 
@@ -150,11 +155,6 @@ namespace TestNetwork
       get { return GetDateTime(inner_Date_Time); }
       set { inner_Date_Time = SetDateTime(value, inner_Date_Time); }
     }
-
-    [Category("Login")]
-    [RadSortOrder(6)]
-    public MyEnum my_enum { get; set; } = MyEnum.Three;
-
 
     public override void PropertyValueChanged(string PropertyName)
     {
