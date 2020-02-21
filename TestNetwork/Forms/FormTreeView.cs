@@ -19,6 +19,8 @@ namespace TestNetwork
   {
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
 
+    private TreeviewManager TvManager { get; set; } = null;
+
     private DataTable TableFolders { get; set; } = null;
 
     private string NameOfSelectedNode { get; set; } = string.Empty;
@@ -30,6 +32,7 @@ namespace TestNetwork
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
+      TvManager = TreeviewManager.Create(this.TvFolders, this.ImageListFolders, Program.ApplicationSettings.TreeViewFont);
     }
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
@@ -64,8 +67,8 @@ namespace TestNetwork
       this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
 
-      TvFolders.ImageList = this.ImageListFolders;
-      TvFolders.Font = Program.ApplicationSettings.TreeViewFont;
+      //TvFolders.ImageList = this.ImageListFolders;
+
       DbSettings.SetFontOfNode(TvFolders.Font);
 
       TxDatabaseFile.ReadOnly = true;
@@ -158,7 +161,6 @@ namespace TestNetwork
           return;
         }
 
-
       int IdNewFolder = -1;
       const string ErrorHeader = "Не удалось добавить новую папку";
       try
@@ -196,6 +198,8 @@ namespace TestNetwork
           Ms.Message("Некоторые указанные вами символы\nбыли исключены из названия", code.StringValue)
             .Control(TxFolderName).Offset(new Point(200, 0)).Delay(7)
             .Info();
+          Ms.Message("В названии папки были указаны запрещённые символы:", NameFolderDraft).NoAlert().Warning();
+          Ms.Message("Название было исправлено:", NameFolder).NoAlert().Warning();
         }
 
         EventRefreshDataFromDatabaseFile();
@@ -445,6 +449,7 @@ namespace TestNetwork
             TableFolders.Clear(); //TableFolders.Columns.Clear();// TableFolders.Dispose();
           }
           DbSettings.FillTreeView(TvFolders, table);
+          TvManager.SetFontAndImageForAllNodes();
           TableFolders = table;
         }
         catch (Exception ex)
@@ -474,36 +479,3 @@ namespace TestNetwork
   }
 }
 
-
-/*
-    private void LoadTestData()
-    {
-      RadTreeNode root = this.TvFolders.Nodes.Add("Programming", 17);
-      root.Nodes.Add("Microsoft Research News and Highlights", 1);
-
-      root.Nodes.Add("Joel on Software", 2);
-      root.Nodes.Add("Miguel de Icaza", 3);
-      root.Nodes.Add("channel 9", 4);
-
-      root = this.TvFolders.Nodes.Add("News (1)", 18);
-      root.Nodes.Add("cnn.com (1)", 5);
-      root.Nodes.Add("msnbc.com", 6);
-      root.Nodes.Add("reuters.com", 7);
-      root.Nodes.Add("bbc.co.uk", 8);
-
-      root = this.TvFolders.Nodes.Add("Personal (19)", 3);
-      root.Nodes.Add("sports (2)", 9);
-      RadTreeNode folder = root.Nodes.Add("fun (17)", 7);
-      folder.Nodes.Add("Lolcats (2)", 10);
-      folder.Nodes.Add("FFFOUND (15)", 11);
-      folder.Nodes.Add("axaxaxaxa (2)", 0);
-      folder.Nodes.Add("dsfdsfsdf  (15)", 1);
-
-      this.TvFolders.Nodes.Add("Telerik blogs", 12);
-      this.TvFolders.Nodes.Add("Techcrunch", 13);
-      this.TvFolders.Nodes.Add("Engadget", 14);
-      this.TvFolders.Nodes.Add("Engadget 111", 15);
-      this.TvFolders.Nodes.Add("Engadget 222", 16);
-      this.TvFolders.Nodes.Add("Engadget 333", 15);
-    }
-*/

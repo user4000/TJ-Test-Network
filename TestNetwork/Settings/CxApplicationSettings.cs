@@ -16,13 +16,11 @@ namespace TestNetwork
     WholeWord = 2
   }
 
-
   // Пример использования настроек. 
   // В самом низу текста события:
   // public override void PropertyValueChanged(string PropertyName)
   // public override void EventBeforeSaving()
   // public override void EventAfterSaving()
-
 
   [Serializable]
   public class CxApplicationSettings : TJStandardApplicationSettings

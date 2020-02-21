@@ -34,7 +34,7 @@ namespace ProjectStandard
       }
     }
 
-    public static bool IsValidChar(char c)
+    public static bool IsValidChar(char c) // Только цифры, латинские буквы и несколько символов //
     {
       return 
         (

@@ -43,7 +43,6 @@ namespace TestNetwork
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
-
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
@@ -168,15 +167,6 @@ namespace TestNetwork
       treeView.ChildMember = CnFoldersIdFolder;
       treeView.DataSource = table; // <== This may cause application crash if there is any row having IdParent==IdFolder
       treeView.SortOrder = SortOrder.Ascending;
-      foreach (var item in treeView.Nodes) ProcessOneNodeSetFontAndImageIndex(item);
-    }
-
-    private void ProcessOneNodeSetFontAndImageIndex(RadTreeNode node)
-    {
-      node.ImageIndex = node.Nodes.Count == 0 ? 0 : node.Level + 1;
-      node.Font = FontOfNode; // node.Text = node.Text + " => " + node.Level;
-      if (node.Level < 5) node.Expand();
-      foreach (var item in node.Nodes) ProcessOneNodeSetFontAndImageIndex(item);
     }
 
     public int GetIdFolder(RadTreeNode node)
@@ -198,8 +188,6 @@ namespace TestNetwork
 }
 
 /*
-
-
     public DataTable GetMsAccessDataTable(string PathToDatabase, string TableName)
     {
       string connString = $"Provider=Microsoft.Jet.OLEDB.4.0;data source={PathToDatabase}";
@@ -232,9 +220,6 @@ namespace TestNetwork
       foreach (DataColumn column in table.Columns) if (column.ColumnName == TableFoldersColumnIdParent) column.AllowDBNull = true;
       return table;
     }
-
-
-
 
 */
 
