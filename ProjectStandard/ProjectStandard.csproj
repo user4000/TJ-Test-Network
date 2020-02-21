@@ -97,6 +97,7 @@
     <Compile Include="Extension\XxEncoding.cs" />
     <Compile Include="Extension\XxGridViewDataColumn.cs" />
     <Compile Include="Extension\XxGridViewRowInfo.cs" />
+    <Compile Include="Extension\XxIDataReader.cs" />
     <Compile Include="Extension\XxIListGeneric.cs" />
     <Compile Include="Extension\XxIListReturnCode.cs" />
     <Compile Include="Extension\XxRadButton.cs" />

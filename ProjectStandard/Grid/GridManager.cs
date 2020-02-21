@@ -237,7 +237,8 @@ namespace ProjectStandard
       T dc = CreateColumn<T>(fieldName, headerText, readOnly, null, string.Empty, string.Empty);
       MGridViewTemplate.Columns.Add(dc);
       dc.DataType = type;
-      dc.Width = width;
+      dc.Width = width < 0 ? 0 : width;
+      dc.IsVisible = width < 0 ? false : true;
       return dc;
     }
 
@@ -247,7 +248,8 @@ namespace ProjectStandard
       T dc = CreateColumnCombobox<T>(fieldName, headerText, readOnly, list);
       MGridViewTemplate.Columns.Add(dc);
       dc.DataType = type;
-      dc.Width = width;
+      dc.Width = width < 0 ? 0 : width;
+      dc.IsVisible = width < 0 ? false : true;
       return dc;
     }
 

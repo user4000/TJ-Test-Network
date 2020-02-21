@@ -21,6 +21,8 @@ namespace TestNetwork
 
     private TreeviewManager TvManager { get; set; } = null;
 
+    private GridSettings VxGridSettings { get; set; } = null;
+
     private DataTable TableFolders { get; set; } = null;
 
     private string NameOfSelectedNode { get; set; } = string.Empty;
@@ -33,6 +35,11 @@ namespace TestNetwork
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
       TvManager = TreeviewManager.Create(this.TvFolders, this.ImageListFolders, Program.ApplicationSettings.TreeViewFont);
+    }
+
+    private void ResetView()
+    {
+      VxGridSettings.ResetView();
     }
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
@@ -56,25 +63,22 @@ namespace TestNetwork
       BxFolderSearchGotoNext.ShowBorder = false;
       BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
 
+      TxDatabaseFile.ReadOnly = true;
+      TxFolderDelete.ReadOnly = true;
+
       PvFolders.Pages.ChangeIndex(PgSearch, 0);
       PvFolders.Pages.ChangeIndex(PgAdd, 1);
       PvFolders.Pages.ChangeIndex(PgRename, 2);
       PvFolders.Pages.ChangeIndex(PgDelete, 3);
       PvFolders.SelectedPage = PgSearch;
 
-      /*if (Program.ApplicationSettings.TreeViewSize.Width < 200)
-        Program.ApplicationSettings.TreeViewSize = new Size(this.Width * (37/100), 0);*/
       this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
 
-      //TvFolders.ImageList = this.ImageListFolders;
-
-      DbSettings.SetFontOfNode(TvFolders.Font);
-
-      TxDatabaseFile.ReadOnly = true;
-      TxFolderDelete.ReadOnly = true;
-
+      //DbSettings.SetFontOfNode(TvFolders.Font);
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
+      VxGridSettings = new GridSettings(this);
+      VxGridSettings.InitializeGrid(this.GvSettings);
     }
 
     private void SetEvents()
@@ -105,9 +109,18 @@ namespace TestNetwork
 
     private void EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
     {
-      try { NameOfSelectedNode = e.Node.Text; } catch { NameOfSelectedNode = string.Empty; }
+      try
+      {
+        NameOfSelectedNode = e.Node.Text;
+      }
+      catch
+      {
+        NameOfSelectedNode = string.Empty;
+      }
       TxFolderRename.Text = NameOfSelectedNode;
       TxFolderDelete.Text = NameOfSelectedNode;
+
+      VxGridSettings.RefreshGrid(DbSettings.GetSettings(e.Node));
     }
 
     private void SelectOneNode(RadTreeNode node)

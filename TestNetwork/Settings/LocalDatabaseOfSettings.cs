@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SQLite;
@@ -20,6 +21,18 @@ namespace TestNetwork
 
     public string TnSettings { get; } = "SETTINGS";
 
+    public string CnSettingsIdFolder { get; } = "IdFolder";
+    public string CnSettingsIdSetting { get; } = "IdSetting";
+    public string CnSettingsIdType { get; } = "IdType";
+    public string CnSettingsSettingValue { get; } = "SettingValue";
+    public string CnSettingsRank { get; } = "Rank";
+
+    public string VnSettings { get; } = "V_SETTINGS";
+
+    public string VnSettingsBooleanValue { get; } = "BooleanValue";
+
+
+
     public string TnTypes { get; } = "TYPES";
 
     public string CnTypesIdType { get; } = "IdType";
@@ -29,9 +42,9 @@ namespace TestNetwork
 
     public string SqliteDatabase { get; private set; } = string.Empty;
 
-    public Font FontOfNode { get; private set; } = null;
+    //public Font FontOfNode { get; private set; } = null;
 
-    public void SetFontOfNode(Font font) => FontOfNode = font;
+    //public void SetFontOfNode(Font font) => FontOfNode = font;
 
     public void SavePathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
 
@@ -43,18 +56,19 @@ namespace TestNetwork
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
+    public string SelectSettings { get; private set; } = string.Empty;
+
+
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
       using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableName}", connection))
       {
-        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableName}", connection))
+        connection.Open();
+        using (SQLiteDataReader reader = command.ExecuteReader())
         {
-          connection.Open();
-          using (SQLiteDataReader reader = command.ExecuteReader())
-          {
-            table.Load(reader);
-          }
+          table.Load(reader);
         }
       }
       return table;
@@ -71,6 +85,7 @@ namespace TestNetwork
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
+      if (SelectSettings.Length < 1) SelectSettings = $"SELECT {CnSettingsIdFolder},{CnSettingsIdSetting},{CnSettingsIdType},{CnSettingsSettingValue},{CnSettingsRank},{VnSettingsBooleanValue} FROM {VnSettings}";
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
@@ -150,7 +165,7 @@ namespace TestNetwork
         count = command.ZzGetScalarInteger(sqlCountChildFolder);
         if (count != 0) return ReturnCodeFactory.Error("Нельзя удалять папку, внутри которой есть другие папки");
         count = command.ZzGetScalarInteger(sqlCountChildSettings);
-        if (count != 0) return ReturnCodeFactory.Error("Нельзя удалять папку, которая содержит настройки");    
+        if (count != 0) return ReturnCodeFactory.Error("Нельзя удалять папку, которая содержит настройки");
         count = command.ZzExecuteNonQuery(sqlDeleteFolder);
         count = command.ZzGetScalarInteger(sqlCountFolder);
         if (count != 0) return ReturnCodeFactory.Error("Не удалось удалить папку");
@@ -184,8 +199,38 @@ namespace TestNetwork
         }
       return Id;
     }
+
+    public BindingList<Setting> GetSettings(RadTreeNode node)
+    {
+      if (node == null) return null;
+      return GetSettings(GetIdFolder(node));
+    }
+
+    private BindingList<Setting> GetSettings(int IdFolder)
+    {
+      BindingList<Setting> list = new BindingList<Setting>();
+      string sql = $"{SelectSettings} WHERE IdFolder={IdFolder}";
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+      {
+        connection.Open();
+        using (SQLiteDataReader reader = command.ExecuteReader())       
+          while (reader.Read())     
+            list.ZzAdd
+              (
+              IdFolder: reader.GetInt32(0),
+              IdSetting: reader.GetString(1),
+              IdType: reader.GetInt32(2),
+              SettingValue: reader.GetString(3),
+              Rank: reader.GetInt32(4),
+              BooleanValue: 0 // reader.GetInt32(5)
+              );                        
+      }
+      return list;
+    }
   }
 }
+
 
 /*
     public DataTable GetMsAccessDataTable(string PathToDatabase, string TableName)

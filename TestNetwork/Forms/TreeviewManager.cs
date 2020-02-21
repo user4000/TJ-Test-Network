@@ -11,7 +11,7 @@ namespace TestNetwork
   {
     internal RadTreeView Treeview { get; private set; } = null;
 
-    internal Font FontOfNode { get; private set; } = new Font("Verdana",9);
+    internal Font FontOfNode { get; private set; } = new Font("Verdana", 9);
 
     private TreeviewManager(RadTreeView treeview, ImageList images, Font font)
     {

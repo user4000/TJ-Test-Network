@@ -85,7 +85,9 @@
     <Compile Include="Forms\FormClient.Designer.cs">
       <DependentUpon>FormClient.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\GridSettings.cs" />
     <Compile Include="Forms\TreeviewManager.cs" />
+    <Compile Include="Models\Setting.cs" />
     <Compile Include="Settings\CxApplicationSettings.cs" />
     <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
     <Compile Include="Settings\XxSQLiteCommand.cs" />
