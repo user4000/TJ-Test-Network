@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls;
@@ -90,7 +91,7 @@ namespace TestNetwork
       BxFolderDelete.Click += EventButtonDeleteFolder;
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
-      TvFolders.SelectedNodeChanged += EventTreeviewSelectedNodeChanged;
+      TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s,e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
     }
 
@@ -107,8 +108,9 @@ namespace TestNetwork
         this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
 
-    private void EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
+    private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
     {
+      TvFolders.HideSelection = true;
       try
       {
         NameOfSelectedNode = e.Node.Text;
@@ -120,7 +122,8 @@ namespace TestNetwork
       TxFolderRename.Text = NameOfSelectedNode;
       TxFolderDelete.Text = NameOfSelectedNode;
 
-      VxGridSettings.RefreshGrid(DbSettings.GetSettings(e.Node));
+      VxGridSettings.RefreshGrid(await DbSettings.GetSettings(e.Node));
+      TvFolders.HideSelection = false;
     }
 
     private void SelectOneNode(RadTreeNode node)

@@ -6,6 +6,7 @@ using System.Data.OleDb;
 using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls.UI;
@@ -210,13 +211,13 @@ namespace TestNetwork
       return Id;
     }
 
-    public BindingList<Setting> GetSettings(RadTreeNode node)
+    public async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
     {
       if (node == null) return null;
-      return GetSettings(GetIdFolder(node));
+      return await GetSettings(GetIdFolder(node));
     }
 
-    private BindingList<Setting> GetSettings(int IdFolder)
+    private async Task<BindingList<Setting>> GetSettings(int IdFolder)
     {
       BindingList<Setting> list = new BindingList<Setting>();
       string sql = $"{SelectSettings} WHERE IdFolder={IdFolder}";
@@ -225,7 +226,7 @@ namespace TestNetwork
       {
         connection.Open();
         using (SQLiteDataReader reader = command.ExecuteReader())       
-          while (reader.Read())     
+          while (await reader.ReadAsync())     
             list.ZzAdd
               (
               IdFolder: reader.GetInt32(0),

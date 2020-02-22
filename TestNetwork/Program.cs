@@ -47,7 +47,8 @@ namespace TestNetwork
       TJFrameworkManager.Service.AddForm<FormServer>("Server");
       TJFrameworkManager.Service.AddForm<FormClient>("Client");
       TJFrameworkManager.Service.AddForm<FormTreeView>("TreeView");
-      TJFrameworkManager.Service.SetMainFormCaption("Привет! Это главная форма 123.");
+      TJFrameworkManager.Service.SetMainFormCaption("Application setting editor");
+      TJFrameworkManager.Service.StartPage<FormTreeView>();
       //TJFrameworkManager.Service.SetMainPageViewOrientation(StripViewAlignment.Left);
 
       FrameworkSettings.HeaderFormSettings = "Настройки";
