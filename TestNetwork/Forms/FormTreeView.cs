@@ -30,6 +30,10 @@ namespace TestNetwork
 
     private RadTreeNode[] SearchResult { get; set; } = null;
 
+    private string CurrentIdSetting { get; set; } = string.Empty;
+
+    private int CurrentIdFolder { get; set; } = -1;
+
     private int SearchIterator { get; set; } = 0;
 
     public FormTreeView()
@@ -93,8 +97,12 @@ namespace TestNetwork
       BxFolderDelete.Click += EventButtonDeleteFolder;
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
+      BxSettingChange.Click += EventButtonSettingChange;
+      BxSettingChange.Enabled = false;
+
       TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s,e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
+      GvSettings.SelectionChanged += EventGridSelectionChanged;
     }
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
@@ -124,9 +132,36 @@ namespace TestNetwork
       TxFolderRename.Text = NameOfSelectedNode;
       TxFolderDelete.Text = NameOfSelectedNode;
 
-      VxGridSettings.RefreshGrid(await DbSettings.GetSettings(e.Node));
-      //Ms.Message($"{GvSettings.SelectedRows.Count}", $"{GvSettings.SelectedRows.Count}").Pos(MsgPos.ScreenCenter).Debug();
+      CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
+      //---- Event ---- Get List of Settings of current folder ----//
+      VxGridSettings.RefreshGrid(await DbSettings.GetSettings(CurrentIdFolder));
+
+      ButtonChangeSettingDisable();
+      VxGridSettings.Grid.HideSelection = true;
+
       TvFolders.HideSelection = false;
+    }
+
+    private void ButtonChangeSettingDisable()
+    {
+      CurrentIdSetting = string.Empty;
+      BxSettingChange.Enabled = false;
+    }
+
+    private void EventGridSelectionChanged(object sender, EventArgs e)
+    {
+      CurrentIdSetting = VxGridSettings.GetIdSetting();
+      BxSettingChange.Enabled = CurrentIdSetting.Length > 0 ;
+      if (VxGridSettings.Grid.HideSelection) VxGridSettings.Grid.HideSelection = false;
+    }
+
+    private async void EventButtonSettingChange(object sender, EventArgs e)
+    {
+      BxSettingChange.Enabled = false;
+      Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
+      await Task.Delay(1000);
+      BxSettingChange.Enabled = true;
+      //VxGridSettings.Grid.GridNavigator.ClearSelection();
     }
 
     private void SelectOneNode(RadTreeNode node)

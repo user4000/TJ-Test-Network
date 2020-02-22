@@ -211,13 +211,13 @@ namespace TestNetwork
       return Id;
     }
 
-    public async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
+    private async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
     {
       if (node == null) return null;
       return await GetSettings(GetIdFolder(node));
     }
 
-    private async Task<BindingList<Setting>> GetSettings(int IdFolder)
+    public async Task<BindingList<Setting>> GetSettings(int IdFolder)
     {
       BindingList<Setting> list = new BindingList<Setting>();
       string sql = $"{SelectSettings} WHERE IdFolder={IdFolder}";

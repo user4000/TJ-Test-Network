@@ -40,13 +40,19 @@ namespace TestNetwork
       Grid.EnableGrouping = false;
       Grid.EnableSorting = false;
       Grid.HideSelection = true;
-      Grid.SelectionMode = GridViewSelectionMode.FullRowSelect;
 
+      //Grid.CurrentCellChanged += GridCurrentCellChanged;
+      Grid.CurrentColumnChanged += GridCurrentColumnChanged;
+      Grid.SelectionMode = GridViewSelectionMode.FullRowSelect;
       Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
       //Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
-
-      Grid.CellValueChanged += EventCellValueChanged;
+      //Grid.CellValueChanged += EventCellValueChanged;
       //SetThemeForGrid();
+    }
+
+    private void GridCurrentColumnChanged(object sender, CurrentColumnChangedEventArgs e)
+    {
+      try { if (e.NewColumn.Index > 1) Grid.CurrentColumn = Grid.Columns[1]; } catch { }
     }
 
     private void EventCellValueChanged(object sender, GridViewCellEventArgs e)
@@ -56,8 +62,6 @@ namespace TestNetwork
       CvAction = ChangedRow.Cells[e.ColumnIndex].Value.ToString();
       CvIdFolder = ChangedRow.Cells[Standard.GetGridColumnName(nameof(Setting.IdFolder))].Value.ToString();
       CvIdSetting = ChangedRow.Cells[Standard.GetGridColumnName(nameof(Setting.IdSetting))].Value.ToString();
-      //Ms.Message(MsgType.Debug, CvAction, CvIdResult, null, MsgPos.TopCenter);
-      //ChangeList();
     }
 
     internal void CreateColumns()
@@ -122,6 +126,8 @@ namespace TestNetwork
         ListDataSource = Empty;
       RefreshGrid();     
     }
+
+    internal string GetIdSetting() => this.GetStringValue(nameof(Setting.IdSetting));
   }
 }
 
