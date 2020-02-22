@@ -68,15 +68,17 @@ namespace TestNetwork
       TxFolderDelete.ReadOnly = true;
 
       PvFolders.Pages.ChangeIndex(PgSearch, 0);
-      PvFolders.Pages.ChangeIndex(PgAdd, 1);
-      PvFolders.Pages.ChangeIndex(PgRename, 2);
-      PvFolders.Pages.ChangeIndex(PgDelete, 3);
       PvFolders.SelectedPage = PgSearch;
 
-      this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
+      PvSettings.Pages.ChangeIndex(PgSetting, 0);
+      PvSettings.SelectedPage = PgSetting;
 
-      //DbSettings.SetFontOfNode(TvFolders.Font);
+      //this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
+      //this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
+
+      PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
+      PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
+
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
@@ -123,6 +125,7 @@ namespace TestNetwork
       TxFolderDelete.Text = NameOfSelectedNode;
 
       VxGridSettings.RefreshGrid(await DbSettings.GetSettings(e.Node));
+      //Ms.Message($"{GvSettings.SelectedRows.Count}", $"{GvSettings.SelectedRows.Count}").Pos(MsgPos.ScreenCenter).Debug();
       TvFolders.HideSelection = false;
     }
 

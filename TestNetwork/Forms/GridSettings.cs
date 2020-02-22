@@ -38,10 +38,15 @@ namespace TestNetwork
       Grid.AllowSearchRow = false;
       Grid.EnableFiltering = false;
       Grid.EnableGrouping = false;
-      Grid.SelectionMode = GridViewSelectionMode.CellSelect;
-      //Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
-      Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
+      Grid.EnableSorting = false;
+      Grid.HideSelection = true;
+      Grid.SelectionMode = GridViewSelectionMode.FullRowSelect;
+
+      Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
+      //Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
+
       Grid.CellValueChanged += EventCellValueChanged;
+      //SetThemeForGrid();
     }
 
     private void EventCellValueChanged(object sender, GridViewCellEventArgs e)
@@ -60,32 +65,30 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdFolder), "IdFolder", true, typeof(int), -1);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "Имя переменной", true, typeof(string), 200).ZzPin();
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "setting", true, typeof(string), 200);
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType", true, typeof(int), -1);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType", true, typeof(int), -1);      
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "Тип", true, typeof(string), 100);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 100);
       //----------------------------------------------------------------------------------------------------------------------------------------
       //GridViewComboBoxColumn ColumnAction = AddColumn<GridViewComboBoxColumn>(ListAction, nameof(TTSearchClientResult.IdAction), "Действие", false, typeof(int), 200);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "Значение переменной", true, typeof(string), 300);
+      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 300);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "Порядковый номер", true, typeof(int), 100);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int), -1);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      GridViewTextBoxColumn ColumnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "hidden", true, typeof(string), -1) ;
+      var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "hidden", true, typeof(string), -1) ;
       //----------------------------------------------------------------------------------------------------------------------------------------
 
-      /*ConditionalFormattingObject format = new ConditionalFormattingObject("Boolean_Value_False", ConditionTypes.Equal, "0", "", true);
-      format.RowBackColor = Color.LightPink;
-      format.RowForeColor = Color.Blue;
-      ColumnBooleanValue.ConditionalFormattingObjectList.Add(format);
+      ExpressionFormattingObject obj = new ExpressionFormattingObject("Boolean_Value_False", $"{CnBooleanValue.Name} = '0'", false);
+      obj.CellBackColor = Color.LightPink;
+      CnSettingValue.ConditionalFormattingObjectList.Add(obj);
 
-      format = new ConditionalFormattingObject("Boolean_Value_True", ConditionTypes.Equal, "1", "", true);
-      format.RowBackColor = Color.LightGreen;
-      format.RowForeColor = Color.Blue;
-      ColumnBooleanValue.ConditionalFormattingObjectList.Add(format);*/
+      obj = new ExpressionFormattingObject("Boolean_Value_True", $"{CnBooleanValue.Name} = '1'", false);
+      obj.CellBackColor = Color.LightGreen;
+      CnSettingValue.ConditionalFormattingObjectList.Add(obj);
 
-      AddSorting(nameof(Setting.Rank));
+      //AddSorting(nameof(Setting.Rank));
     }
 
     internal void ResetView()
@@ -93,7 +96,14 @@ namespace TestNetwork
       RefreshGrid(Empty);
     }
 
-    internal void RefreshGrid() => Grid.DataSource = ListDataSource;
+    internal void RefreshGrid()
+    {
+      Grid.DataSource = ListDataSource;
+      if (Grid.Rows.Count > 0)
+      {
+        Grid.GridNavigator.ClearSelection(); // Clear selection //
+      }
+    }
 
     internal void RefreshGrid(BindingList<Setting> list)
     {
@@ -101,8 +111,7 @@ namespace TestNetwork
         ListDataSource = list;
       else
         ListDataSource = Empty;
-      RefreshGrid();
-      //Grid.ClearSelection();
+      RefreshGrid();   
     }
 
     internal void RefreshGrid(List<Setting> list)
@@ -111,7 +120,7 @@ namespace TestNetwork
         ListDataSource = new BindingList<Setting>(list);
       else
         ListDataSource = Empty;
-      RefreshGrid();
+      RefreshGrid();     
     }
   }
 }

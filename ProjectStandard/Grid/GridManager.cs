@@ -123,7 +123,7 @@ namespace ProjectStandard
 
       if (e.CellElement.IsCurrent)
       {
-        e.CellElement.DrawFill = false;
+        e.CellElement.DrawFill = false;        
       }
       else
       {
@@ -162,13 +162,6 @@ namespace ProjectStandard
       }
     }
 
-
-
-
-
-
-
-
     public T CreateColumn<T>(string fieldName, string headerText, bool readOnly, DataTable table = null, string valueMember = "", string displayMember = "")
       where T : GridViewDataColumn, new()
     {
@@ -189,7 +182,6 @@ namespace ProjectStandard
       }
       return dc;
     }
-
 
     public T CreateColumnCombobox<T>(string fieldName, string headerText, bool readOnly, BindingList<Model.SimpleEntity> list)
       where T : GridViewDataColumn, new()
@@ -212,8 +204,6 @@ namespace ProjectStandard
       return dc;
     }
 
-
-
     public void AddSorting(string fieldName, ListSortDirection sortDirection = ListSortDirection.Ascending)
     {
       SortDescriptor GridSorting1 = new SortDescriptor();
@@ -229,7 +219,6 @@ namespace ProjectStandard
       MGridViewTemplate.Columns.Add(dc);
       return dc;
     }
-
 
     public T AddColumn<T>(string fieldName, string headerText, bool readOnly, System.Type type, int width)
       where T : GridViewDataColumn, new()
@@ -252,7 +241,6 @@ namespace ProjectStandard
       dc.IsVisible = width < 0 ? false : true;
       return dc;
     }
-
 
     public string GetColumnNameByFieldName(string fieldName)
     {
