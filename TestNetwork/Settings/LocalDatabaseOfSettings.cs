@@ -31,6 +31,7 @@ namespace TestNetwork
 
     public string VnSettingsBooleanValue { get; } = "BooleanValue";
 
+    public string VnSettingsNameType { get; } = "NameType";
 
 
     public string TnTypes { get; } = "TYPES";
@@ -85,7 +86,16 @@ namespace TestNetwork
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
-      if (SelectSettings.Length < 1) SelectSettings = $"SELECT {CnSettingsIdFolder},{CnSettingsIdSetting},{CnSettingsIdType},{CnSettingsSettingValue},{CnSettingsRank},{VnSettingsBooleanValue} FROM {VnSettings}";
+      if (SelectSettings.Length < 1)
+        SelectSettings = $"SELECT " +
+          $"{CnSettingsIdFolder}," +
+          $"{CnSettingsIdSetting}," +
+          $"{CnSettingsIdType}," +
+          $"{VnSettingsNameType}," +
+          $"{CnSettingsSettingValue}," +
+          $"{CnSettingsRank}," +
+          $"{VnSettingsBooleanValue} " +
+          $"FROM {VnSettings}";
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
@@ -221,9 +231,10 @@ namespace TestNetwork
               IdFolder: reader.GetInt32(0),
               IdSetting: reader.GetString(1),
               IdType: reader.GetInt32(2),
-              SettingValue: reader.GetString(3),
-              Rank: reader.GetInt32(4),
-              BooleanValue: 0 // reader.GetInt32(5)
+              NameType: reader.GetString(3),
+              SettingValue: reader.GetString(4),
+              Rank: reader.GetInt32(5),
+              BooleanValue: reader.GetString(6)
               );                        
       }
       return list;

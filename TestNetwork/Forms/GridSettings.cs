@@ -62,7 +62,9 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "Имя переменной", true, typeof(string), 200).ZzPin();
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "Тип", true, typeof(int), 100);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType", true, typeof(int), -1);
+      //----------------------------------------------------------------------------------------------------------------------------------------    
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "Тип", true, typeof(string), 100);
       //----------------------------------------------------------------------------------------------------------------------------------------
       //GridViewComboBoxColumn ColumnAction = AddColumn<GridViewComboBoxColumn>(ListAction, nameof(TTSearchClientResult.IdAction), "Действие", false, typeof(int), 200);
       //----------------------------------------------------------------------------------------------------------------------------------------
@@ -70,10 +72,10 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "Порядковый номер", true, typeof(int), 100);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      GridViewTextBoxColumn ColumnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "hidden", true, typeof(int), -1) ;
+      GridViewTextBoxColumn ColumnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "hidden", true, typeof(string), -1) ;
       //----------------------------------------------------------------------------------------------------------------------------------------
 
-      ConditionalFormattingObject format = new ConditionalFormattingObject("Boolean_Value_False", ConditionTypes.Equal, "0", "", true);
+      /*ConditionalFormattingObject format = new ConditionalFormattingObject("Boolean_Value_False", ConditionTypes.Equal, "0", "", true);
       format.RowBackColor = Color.LightPink;
       format.RowForeColor = Color.Blue;
       ColumnBooleanValue.ConditionalFormattingObjectList.Add(format);
@@ -81,7 +83,7 @@ namespace TestNetwork
       format = new ConditionalFormattingObject("Boolean_Value_True", ConditionTypes.Equal, "1", "", true);
       format.RowBackColor = Color.LightGreen;
       format.RowForeColor = Color.Blue;
-      ColumnBooleanValue.ConditionalFormattingObjectList.Add(format);
+      ColumnBooleanValue.ConditionalFormattingObjectList.Add(format);*/
 
       AddSorting(nameof(Setting.Rank));
     }
