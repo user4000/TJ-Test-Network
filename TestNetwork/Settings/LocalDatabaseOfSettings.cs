@@ -29,24 +29,16 @@ namespace TestNetwork
     public string CnSettingsRank { get; } = "Rank";
 
     public string VnSettings { get; } = "V_SETTINGS";
-
     public string VnSettingsBooleanValue { get; } = "BooleanValue";
-
     public string VnSettingsNameType { get; } = "NameType";
 
-
     public string TnTypes { get; } = "TYPES";
-
     public string CnTypesIdType { get; } = "IdType";
     public string CnTypesNameType { get; } = "NameType";
 
     internal DataTable TableTypes { get; private set; } = null;
 
     public string SqliteDatabase { get; private set; } = string.Empty;
-
-    //public Font FontOfNode { get; private set; } = null;
-
-    //public void SetFontOfNode(Font font) => FontOfNode = font;
 
     public void SavePathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
 
@@ -59,7 +51,6 @@ namespace TestNetwork
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
     public string SelectSettings { get; private set; } = string.Empty;
-
 
     public DataTable GetTable(string TableName)
     {
@@ -204,10 +195,7 @@ namespace TestNetwork
           DataRowView row = node.DataBoundItem as DataRowView;
           Id = CxConvert.ToInt32(row.Row[CnFoldersIdFolder].ToString(), -1);
         }
-        catch
-        {
-
-        }
+        catch { }
       return Id;
     }
 
@@ -229,13 +217,13 @@ namespace TestNetwork
           while (await reader.ReadAsync())     
             list.ZzAdd
               (
-              IdFolder: reader.GetInt32(0),
-              IdSetting: reader.GetString(1),
-              IdType: reader.GetInt32(2),
-              NameType: reader.GetString(3),
-              SettingValue: reader.GetString(4),
-              Rank: reader.GetInt32(5),
-              BooleanValue: reader.GetString(6)
+                IdFolder: reader.GetInt32(0),
+                IdSetting: reader.GetString(1),
+                IdType: reader.GetInt32(2),
+                NameType: reader.GetString(3),
+                SettingValue: reader.GetString(4),
+                Rank: reader.GetInt32(5),
+                BooleanValue: reader.GetString(6)
               );                        
       }
       return list;

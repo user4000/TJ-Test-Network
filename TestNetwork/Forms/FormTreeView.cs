@@ -178,6 +178,11 @@ namespace TestNetwork
         }
     }
 
+    private string RemoveSpecialCharacters(string NameFolder)
+    {
+      return NameFolder.Trim().Replace(' ','_').RemoveSpecialCharacters();
+    }
+
     private void EventButtonAddFolder(object sender, EventArgs e)
     {
       RadTreeNode parent = TvFolders.SelectedNode;
@@ -200,7 +205,7 @@ namespace TestNetwork
       }
 
       string NameFolderDraft = TxFolderName.Text.Trim();
-      string NameFolder = NameFolderDraft.RemoveSpecialCharacters();
+      string NameFolder = RemoveSpecialCharacters(NameFolderDraft);
       TxFolderName.Text = NameFolder;
 
       if (NameFolder.Length < 1)
@@ -265,32 +270,10 @@ namespace TestNetwork
         }
         else
         {
-          TryToSelectFolderAfterCreating(parent, NameFolder);
+          TvManager.TryToSelectFolderAfterCreating(parent, NameFolder);
         }
       }
       TxFolderName.Clear();
-    }
-
-    private void TryToSelectFolderAfterCreating(RadTreeNode parent, string NameChildFolder)
-    {
-      RadTreeNode[] nodes = parent.FindNodes(item => item.Name == NameChildFolder);
-      if (nodes.Length < 1) return;
-      if (Program.ApplicationSettings.SelectNewFolderAfterCreating)
-        try
-        {
-          nodes[0].Selected = true; nodes[0].EnsureVisible();
-        }
-        catch { }
-      else
-      {
-        parent.Expanded = true; parent.Selected = true;
-        try
-        {
-          foreach (RadTreeNode item in parent.Nodes) if (item != nodes[0]) item.Collapse();
-          nodes[0].EnsureVisible();
-        }
-        catch { }
-      }
     }
 
     private void EventButtonRenameFolder(object sender, EventArgs e)
@@ -313,7 +296,8 @@ namespace TestNetwork
         return;
       }
 
-      string NameFolder = TxFolderRename.Text.Trim();
+      string NameFolder = RemoveSpecialCharacters(TxFolderRename.Text);
+      TxFolderRename.Text = NameFolder;
 
       if (NameFolder.Length < 1)
       {

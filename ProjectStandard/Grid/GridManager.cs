@@ -39,9 +39,10 @@ namespace ProjectStandard
       SetDataViewControlProperties();
       Grid.CellEditorInitialized += EventCellEditorInitialized;
 
-      //TODO: Раскомментируйте если не нравится цвет выделенной строки и ячейки 
-      //Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
-      //Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
+      // TODO: Раскомментируйте если не нравится цвет выделенной строки и ячейки 
+      // Эти две строчки можно добавить в коде наследника класса, а здесь оставить их в виде комментариев
+      // Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
+      // Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
     }
 
     public string GetStringValue(string FieldName) => Grid.ZzGetStringValueByFieldName(FieldName);

@@ -18,9 +18,9 @@ namespace TestNetwork
       Treeview = treeview; Treeview.ImageList = images; FontOfNode = font;
     }
 
-    public static TreeviewManager Create(RadTreeView treeview, ImageList images, Font font) => new TreeviewManager(treeview, images, font);
+    internal static TreeviewManager Create(RadTreeView treeview, ImageList images, Font font) => new TreeviewManager(treeview, images, font);
 
-    public void SetFontAndImageForAllNodes()
+    internal void SetFontAndImageForAllNodes()
     {
       foreach (var item in Treeview.Nodes) SetFontAndImageForOneNode(item);
     }
@@ -31,6 +31,28 @@ namespace TestNetwork
       node.Font = FontOfNode; // node.Text = node.Text + " => " + node.Level;
       if (node.Level < 5) node.Expand();
       foreach (var item in node.Nodes) SetFontAndImageForOneNode(item);
+    }
+
+    internal void TryToSelectFolderAfterCreating(RadTreeNode parent, string NameChildFolder)
+    {
+      RadTreeNode[] nodes = parent.FindNodes(item => item.Name == NameChildFolder);
+      if (nodes.Length < 1) return;
+      if (Program.ApplicationSettings.SelectNewFolderAfterCreating)
+        try
+        {
+          nodes[0].Selected = true; nodes[0].EnsureVisible();
+        }
+        catch { }
+      else
+      {
+        parent.Expanded = true; parent.Selected = true;
+        try
+        {
+          foreach (RadTreeNode item in parent.Nodes) if (item != nodes[0]) item.Collapse();
+          nodes[0].EnsureVisible();
+        }
+        catch { }
+      }
     }
   }
 }

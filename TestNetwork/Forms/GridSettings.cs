@@ -16,7 +16,6 @@ namespace TestNetwork
 
     internal BindingList<Setting> ListDataSource { get; set; } = new BindingList<Setting>();
 
-
     internal GridViewRowInfo ChangedRow { get; private set; } = null;
 
     internal string CvAction { get; set; } = string.Empty;
@@ -74,8 +73,6 @@ namespace TestNetwork
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType", true, typeof(int), -1);      
       //----------------------------------------------------------------------------------------------------------------------------------------    
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 100);
-      //----------------------------------------------------------------------------------------------------------------------------------------
-      //GridViewComboBoxColumn ColumnAction = AddColumn<GridViewComboBoxColumn>(ListAction, nameof(TTSearchClientResult.IdAction), "Действие", false, typeof(int), 200);
       //----------------------------------------------------------------------------------------------------------------------------------------
       var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 300);
       //----------------------------------------------------------------------------------------------------------------------------------------
