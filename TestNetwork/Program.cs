@@ -15,6 +15,8 @@ namespace TestNetwork
 
     private static Mutex AxMutex = null;
 
+    public static ProjectManager Manager { get; set; } = null;
+
     public static CxApplicationSettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<CxApplicationSettings>(); } // User custom settings in Property Grid //
 
     public static TJStandardFrameworkSettings FrameworkSettings { get; } = TJFrameworkManager.FrameworkSettings; // Framework embedded settings //
@@ -72,6 +74,8 @@ namespace TestNetwork
       FrameworkSettings.SecondsAlertAutoClose = 5;
       FrameworkSettings.FontAlertCaption = new Font("Verdana", 9);
       FrameworkSettings.FontAlertText = new Font("Verdana", 9);
+
+      Manager = ProjectManagerFactory.Create();
 
       Action ExampleOfVisualSettingsAndEvents = () =>
       {

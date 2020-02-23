@@ -13,6 +13,7 @@ using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
 using TJFramework;
 using static TJFramework.TJFrameworkManager;
+using static TestNetwork.Program;
 
 namespace TestNetwork
 {
@@ -44,17 +45,32 @@ namespace TestNetwork
 
     private void ResetView()
     {
+      ResetDataSourceForTreeview();
       VxGridSettings.ResetView();
+      CurrentIdFolder = -1;
+      NameOfSelectedNode = string.Empty;
+      CurrentIdSetting = string.Empty;
+      SearchResult = null;
+      SearchIterator = 0;
+      PvSettings.Visible = false;
+      PnEditorTool.Visible = false;
     }
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
 
     private void SetDatabaseFile(string PathToDatabaseFile)
     {
+      ResetView();
       TxDatabaseFile.Text = PathToDatabaseFile;
-      ResetDataSourceForTreeview();
       DbSettings.SavePathToDatabase(PathToDatabaseFile);
       TxDatabaseFile.SelectionStart = PathToDatabaseFile.Length;
+    }
+
+    private void SetPropertiesDateTimePicker()
+    {
+      TxSettingDatetime.DateTimePickerElement.ShowTimePicker = true;
+      TxSettingDatetime.Format = DateTimePickerFormat.Custom;
+      TxSettingDatetime.CustomFormat = Manager.DatetimeFormat;
     }
 
     private void SetProperties()
@@ -68,8 +84,13 @@ namespace TestNetwork
       BxFolderSearchGotoNext.ShowBorder = false;
       BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
 
+      SetPropertiesDateTimePicker();
+
       TxDatabaseFile.ReadOnly = true;
       TxFolderDelete.ReadOnly = true;
+
+      PvEditor.SelectedPage = PgEmpty;
+      PvEditor.ZzPagesVisibility(ElementVisibility.Collapsed);
 
       PvFolders.Pages.ChangeIndex(PgSearch, 0);
       PvFolders.SelectedPage = PgSearch;
@@ -83,9 +104,10 @@ namespace TestNetwork
       PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
 
-      SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
+
+      SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
 
     private void SetEvents()
@@ -99,6 +121,12 @@ namespace TestNetwork
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
       BxSettingChange.Click += EventButtonSettingChange;
       BxSettingChange.Enabled = false;
+      //BxSettingsAdd.Click += EventButtonSettingAdd;
+
+      BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);
+      BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e);
+
+      DxTypes.SelectedValueChanged += EventSettingTypeChanged;
 
       TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s,e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
@@ -107,6 +135,14 @@ namespace TestNetwork
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
 
+    internal TypeSetting GetCurrentType()
+    {
+      int integerValue = 0;
+      try { integerValue = DxTypes.ZzGetIntegerValue(); } catch { integerValue = -1; };
+      if (integerValue < 0) return TypeSetting.Unknown;
+      return TypeSettingConverter.FromInteger(integerValue);
+    }
+
     public void EventStartWork()
     {
       SetProperties(); SetEvents();
@@ -114,13 +150,22 @@ namespace TestNetwork
 
     private void EventScMainSplitterMoved(object sender, SplitterEventArgs e)
     {
-      if (this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
-        this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
+      if (PnTreeview.SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
+        PnTreeview.SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
+
+    private void ButtonChangeSettingDisable()
+    {
+      CurrentIdSetting = string.Empty;
+      BxSettingChange.Enabled = false;
+    }
+
+    private async Task RefreshGridSettings() => VxGridSettings.RefreshGrid(await DbSettings.GetSettings(CurrentIdFolder));
 
     private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
     {
       TvFolders.HideSelection = true;
+
       try
       {
         NameOfSelectedNode = e.Node.Text;
@@ -134,18 +179,13 @@ namespace TestNetwork
 
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
       //---- Event ---- Get List of Settings of current folder ----//
-      VxGridSettings.RefreshGrid(await DbSettings.GetSettings(CurrentIdFolder));
-
+      await RefreshGridSettings();
+      
+      if (PvSettings.Visible == false) PvSettings.Visible = true;
       ButtonChangeSettingDisable();
       VxGridSettings.Grid.HideSelection = true;
 
       TvFolders.HideSelection = false;
-    }
-
-    private void ButtonChangeSettingDisable()
-    {
-      CurrentIdSetting = string.Empty;
-      BxSettingChange.Enabled = false;
     }
 
     private void EventGridSelectionChanged(object sender, EventArgs e)
@@ -158,10 +198,9 @@ namespace TestNetwork
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
       BxSettingChange.Enabled = false;
-      Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
+      //Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
       await Task.Delay(1000);
-      BxSettingChange.Enabled = true;
-      //VxGridSettings.Grid.GridNavigator.ClearSelection();
+      BxSettingChange.Enabled = true;    
     }
 
     private void SelectOneNode(RadTreeNode node)
@@ -176,11 +215,6 @@ namespace TestNetwork
         {
           ClearArraySearchResult();
         }
-    }
-
-    private string RemoveSpecialCharacters(string NameFolder)
-    {
-      return NameFolder.Trim().Replace(' ','_').RemoveSpecialCharacters();
     }
 
     private void EventButtonAddFolder(object sender, EventArgs e)
@@ -205,7 +239,7 @@ namespace TestNetwork
       }
 
       string NameFolderDraft = TxFolderName.Text.Trim();
-      string NameFolder = RemoveSpecialCharacters(NameFolderDraft);
+      string NameFolder = Manager.RemoveSpecialCharacters(NameFolderDraft);
       TxFolderName.Text = NameFolder;
 
       if (NameFolder.Length < 1)
@@ -296,7 +330,7 @@ namespace TestNetwork
         return;
       }
 
-      string NameFolder = RemoveSpecialCharacters(TxFolderRename.Text);
+      string NameFolder = Manager.RemoveSpecialCharacters(TxFolderRename.Text);
       TxFolderRename.Text = NameFolder;
 
       if (NameFolder.Length < 1)
@@ -459,7 +493,7 @@ namespace TestNetwork
 
     private void EventRefreshDataFromDatabaseFile() => EventLoadDataFromDatabaseFile(false);
 
-    private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTime)
+    private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTimeFromThisFile)
     {
       DataTable table = null; bool Error = false;
       try
@@ -471,11 +505,11 @@ namespace TestNetwork
         Error = true;
         if (ex.Message.Contains("not a database"))
         {
-          Ms.Message("Не удалось прочитать данные \nиз указанного вами файла.", "Указанный вами файл не является базой данных заданного типа").Control(TxDatabaseFile).Error();
+          Ms.Message("Не удалось прочитать данные\nиз указанного вами файла.", "Указанный вами файл не является базой данных заданного типа").Control(TxDatabaseFile).Error();
         }
         else
         {
-          Ms.Error("Не удалось прочитать данные \nиз указанного вами файла.", ex).Control(TxDatabaseFile).Create();
+          Ms.Error("Не удалось прочитать данные\nиз указанного вами файла.", ex).Control(TxDatabaseFile).Create();
         }
       }
 
@@ -499,20 +533,94 @@ namespace TestNetwork
       if (Error == false)
       {
         Program.ApplicationSettings.SettingsDatabaseLocation = TxDatabaseFile.Text;
-        if (LoadDataFirstTime) EventLoadDataFromFileFirstTime();
+        if (LoadDataFirstTimeFromThisFile) EventLoadDataFromFileFirstTime();
       }
     }
 
-    public void EventLoadDataFromFileFirstTime()
+    private void EventLoadDataFromFileFirstTime()
     {
-      DbSettings.InitVariables();
+      DbSettings.InitVariables(Manager);
       DbSettings.FillDropDownListForTableTypes(DxTypes);
       Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
     }
 
+    private void EventButtonSettingAdd(object sender, EventArgs e)
+    {
+      TypeSetting type = TypeSettingConverter.FromInteger(DxTypes.ZzGetIntegerValue());
+      if (type==TypeSetting.Unknown)
+      {
+        Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
+        return;
+      }    
+    }
+
+    private async Task EventButtonSettingSave(object sender, EventArgs e)
+    {
+      ReturnCode code = ReturnCodeFactory.Error("Не удалось создать переменную");
+      string IdSetting = Manager.RemoveSpecialCharacters(TxSettingAdd.Text);
+      TxSettingAdd.Text = IdSetting;
+      if (IdSetting.Length < 1)
+      {
+        Ms.Message("Ошибка", "Не указано имя переменной").Control(DxTypes).Warning(); return;
+      }
+
+      switch (GetCurrentType())
+      {
+        case TypeSetting.Boolean:
+          PvEditor.SelectedPage = PgBoolean;
+          code = DbSettings.SaveSettingBoolean(true, CurrentIdFolder, IdSetting, SwBooleanValue.Value);
+          SwBooleanValue.Value = false;
+          break;
+        case TypeSetting.Datetime:
+          PvEditor.SelectedPage = PgDatetime;
+          code = DbSettings.SaveSettingDatetime(true, CurrentIdFolder, IdSetting, TxSettingDatetime.Value);
+          TxSettingDatetime.Value = DateTime.Today;
+          break;
+        case TypeSetting.Text:
+          PvEditor.SelectedPage = PgText;
+          break;
+        default:
+          PvEditor.SelectedPage = PgEmpty;
+          break;
+      }
+
+      if (code.Success)
+      {
+        TxSettingAdd.Clear();
+        Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
+        await RefreshGridSettings();
+      }
+      else
+      {
+        Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
+      }
+    }
+
+    private void EventSettingTypeChanged(object sender, EventArgs e)
+    {
+      switch (GetCurrentType())
+      {
+        case TypeSetting.Boolean:
+          PvEditor.SelectedPage = PgBoolean;
+          break;
+        case TypeSetting.Datetime:
+          PvEditor.SelectedPage = PgDatetime;
+          TxSettingDatetime.Value = DateTime.Today;
+          break;
+        case TypeSetting.Text:
+          PvEditor.SelectedPage = PgText;
+          break;
+        default:
+          PvEditor.SelectedPage = PgEmpty;
+          break;
+      }
+
+      // Ms.Message("aaa", $"{type.ToString()}").Pos(MsgPos.TopCenter).Debug();
+    }
+
     public void EventEndWork()
     {
-      Program.ApplicationSettings.TreeViewSize = this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize;
+      Program.ApplicationSettings.TreeViewSize = PnTreeview.SizeInfo.AbsoluteSize;
     }
   }
 }

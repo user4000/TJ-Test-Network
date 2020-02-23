@@ -88,6 +88,13 @@
     <Compile Include="Forms\GridSettings.cs" />
     <Compile Include="Forms\TreeviewManager.cs" />
     <Compile Include="Models\Setting.cs" />
+    <Compile Include="Models\TypeSetting.cs" />
+    <Compile Include="Models\TypeSettingConverter.cs" />
+    <Compile Include="Models\XxListSetting.cs" />
+    <Compile Include="Standard\ConverterBoolean.cs" />
+    <Compile Include="Standard\ConverterDatetime.cs" />
+    <Compile Include="Standard\ProjectManager.cs" />
+    <Compile Include="Standard\ProjectManagerFactory.cs" />
     <Compile Include="Settings\CxApplicationSettings.cs" />
     <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
     <Compile Include="Settings\XxSQLiteCommand.cs" />
@@ -141,9 +148,7 @@
       <Name>ProjectStandard</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Standard\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

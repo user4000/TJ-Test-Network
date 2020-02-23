@@ -10,11 +10,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls.UI;
+using static TestNetwork.Program;
 
 namespace TestNetwork
 {
   public class LocalDatabaseOfSettings
   {
+    public IOutputMessage Debug { get; private set; } = null;
     public string TnFolders { get; } = "FOLDERS";
     public string CnFoldersIdParent { get; } = "IdParent";
     public string CnFoldersIdFolder { get; } = "IdFolder";
@@ -52,6 +54,12 @@ namespace TestNetwork
 
     public string SelectSettings { get; private set; } = string.Empty;
 
+    public string InsertSetting { get; private set; } = string.Empty;
+
+    public string UpdateSetting { get; private set; } = string.Empty;
+
+    public string CountSetting { get; private set; } = string.Empty;
+
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
@@ -74,20 +82,39 @@ namespace TestNetwork
       return table;
     }
 
-    public void InitVariables()
+    private bool FlagInitVariables { get; set; } = false;
+
+    public void InitVariables(IOutputMessage OutputMessageDevice)
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
-      if (SelectSettings.Length < 1)
-        SelectSettings = $"SELECT " +
-          $"{CnSettingsIdFolder}," +
-          $"{CnSettingsIdSetting}," +
-          $"{CnSettingsIdType}," +
-          $"{VnSettingsNameType}," +
-          $"{CnSettingsSettingValue}," +
-          $"{CnSettingsRank}," +
-          $"{VnSettingsBooleanValue} " +
-          $"FROM {VnSettings}";
+
+      if (FlagInitVariables) return;
+      FlagInitVariables = true;
+
+      Debug = OutputMessageDevice;
+
+      SelectSettings = $"SELECT " +
+        $"{CnSettingsIdFolder}," +
+        $"{CnSettingsIdSetting}," +
+        $"{CnSettingsIdType}," +
+        $"{VnSettingsNameType}," +
+        $"{CnSettingsSettingValue}," +
+        $"{CnSettingsRank}," +
+        $"{VnSettingsBooleanValue} " +
+        $"FROM {VnSettings}";
+
+      CountSetting = $"SELECT COUNT(*) from {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+
+      InsertSetting =
+      $"INSERT INTO {TnSettings} ({CnSettingsIdFolder}, {CnSettingsIdSetting}, {CnSettingsIdType}, {CnSettingsSettingValue}, {CnSettingsRank})" +
+      $" VALUES (@IdFolder, @IdSetting, @IdType, @SettingValue, (SELECT IFNULL(MAX({CnSettingsRank}), 0) + 1 FROM {TnSettings} WHERE {CnSettingsIdFolder} = @IdFolder))";
+
+      UpdateSetting =
+      $"UPDATE {TnSettings} SET {CnSettingsSettingValue}=@SettingValue " +
+      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+
+
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
@@ -98,7 +125,7 @@ namespace TestNetwork
       combobox.ZzSetStandardVisualStyle();
     }
 
-    public ReturnCode FolderInsert(int IdParent, string NameFolder)
+    public ReturnCode FolderInsert(int IdParent, string NameFolder) // TODO: Extract sql commands //
     {
       ReturnCode code = ReturnCodeFactory.Success($"Папка добавлена: {NameFolder}");
       string sqlSelectCount = "SELECT COUNT(*) FROM FOLDERS WHERE IdParent=@IdParent AND NameFolder=@NameFolder";
@@ -213,8 +240,8 @@ namespace TestNetwork
       using (SQLiteCommand command = new SQLiteCommand(sql, connection))
       {
         connection.Open();
-        using (SQLiteDataReader reader = command.ExecuteReader())       
-          while (await reader.ReadAsync())     
+        using (SQLiteDataReader reader = command.ExecuteReader())
+          while (await reader.ReadAsync())
             list.ZzAdd
               (
                 IdFolder: reader.GetInt32(0),
@@ -224,9 +251,79 @@ namespace TestNetwork
                 SettingValue: reader.GetString(4),
                 Rank: reader.GetInt32(5),
                 BooleanValue: reader.GetString(6)
-              );                        
+              );
       }
       return list;
+    }
+
+
+
+
+    public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
+    {
+      string StringValue = Manager.CvDatetime.ToString(value);
+      return
+        AddNewSetting
+        ?
+        SettingCreate(IdFolder, IdSetting, (int)(TypeSetting.Datetime), StringValue)
+        :
+        SettingUpdate(IdFolder, IdSetting, StringValue);
+    }
+
+    public ReturnCode SaveSettingBoolean(bool AddNewSetting, int IdFolder, string IdSetting, bool value)
+    {
+      string StringValue = Manager.CvBoolean.ToString(value);
+      return
+        AddNewSetting
+        ?
+        SettingCreate(IdFolder, IdSetting, (int)(TypeSetting.Boolean), StringValue)
+        :
+        SettingUpdate(IdFolder, IdSetting, StringValue);
+    }
+
+
+
+
+    public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Новая переменная создана: {IdSetting}");
+      if (IdSetting.Trim().Length < 1) ReturnCodeFactory.Error("Не указано название переменной");
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(CountSetting);
+
+        if (count > 0) return ReturnCodeFactory.Error("Переменная с таким именем уже существует");
+
+        count = command.ZzAdd("@IdType", IdType).ZzAdd("@SettingValue", value).ZzExecuteNonQuery(InsertSetting);
+
+        if (count != 1) return ReturnCodeFactory.Error("Не удалось создать переменную");
+
+        code.StringNote = value;
+      }
+      return code;
+    }
+
+    public ReturnCode SettingUpdate(int IdFolder, string IdSetting, string value)
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Изменения сохранены: {IdSetting}");
+      int count = 0;
+
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(CountSetting);
+        
+        if (count != 1) return ReturnCodeFactory.Error("Переменной с таким именем не существует");
+
+        count = command.ZzAdd("@SettingValue", value).ZzExecuteNonQuery(UpdateSetting);
+
+        if (count != 1) return ReturnCodeFactory.Error("Не удалось изменить переменную");
+
+        code.StringNote = value;
+      }
+      return code;
     }
   }
 }

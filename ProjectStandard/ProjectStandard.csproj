@@ -105,6 +105,7 @@
     <Compile Include="Extension\XxRadDropDownList.cs" />
     <Compile Include="Extension\XxRadDropDownListClassificatorStandard.cs" />
     <Compile Include="Extension\XxRadGridView.cs" />
+    <Compile Include="Extension\XxRadPageView.cs" />
     <Compile Include="Extension\XxRadPanel.cs" />
     <Compile Include="Extension\XxRadTextBox.cs" />
     <Compile Include="Extension\XxRadTextBoxControl.cs" />

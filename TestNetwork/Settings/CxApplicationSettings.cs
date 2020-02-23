@@ -41,11 +41,9 @@ namespace TestNetwork
     [DisplayName("Ориентация вкладок главной формы")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 
-
     [Category("Внешний вид")]
     [DisplayName("Шрифт иерархического списка папок")]
     public Font TreeViewFont { get; set; } = new Font("Verdana", 9.75F);
-
 
     [Browsable(false)]
     public Size TreeViewSize { get; set; } = new Size(400, 0);

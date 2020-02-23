@@ -30,7 +30,7 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
@@ -76,16 +76,17 @@
       this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
       this.PvEditor = new Telerik.WinControls.UI.RadPageView();
       this.PgBoolean = new Telerik.WinControls.UI.RadPageViewPage();
+      this.SwBooleanValue = new Telerik.WinControls.UI.RadToggleSwitch();
       this.PgDatetime = new Telerik.WinControls.UI.RadPageViewPage();
+      this.TxSettingDatetime = new Telerik.WinControls.UI.RadDateTimePicker();
       this.PgInteger = new Telerik.WinControls.UI.RadPageViewPage();
       this.PgText = new Telerik.WinControls.UI.RadPageViewPage();
       this.PgPassword = new Telerik.WinControls.UI.RadPageViewPage();
       this.PgFolder = new Telerik.WinControls.UI.RadPageViewPage();
       this.PgFile = new Telerik.WinControls.UI.RadPageViewPage();
-      this.PnSettingTool = new Telerik.WinControls.UI.RadPanel();
-      this.BxSettingSave = new Telerik.WinControls.UI.RadButton();
-      this.SwBooleanValue = new Telerik.WinControls.UI.RadToggleSwitch();
       this.PgEmpty = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PnEditorTool = new Telerik.WinControls.UI.RadPanel();
+      this.BxSettingSave = new Telerik.WinControls.UI.RadButton();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -129,10 +130,12 @@
       ((System.ComponentModel.ISupportInitialize)(this.PvEditor)).BeginInit();
       this.PvEditor.SuspendLayout();
       this.PgBoolean.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.PnSettingTool)).BeginInit();
-      this.PnSettingTool.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.SwBooleanValue)).BeginInit();
+      this.PgDatetime.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxSettingDatetime)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditorTool)).BeginInit();
+      this.PnEditorTool.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -496,7 +499,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition2;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -656,7 +659,7 @@
       // PnEditSettings
       // 
       this.PnEditSettings.Controls.Add(this.PvEditor);
-      this.PnEditSettings.Controls.Add(this.PnSettingTool);
+      this.PnEditSettings.Controls.Add(this.PnEditorTool);
       this.PnEditSettings.Location = new System.Drawing.Point(0, 435);
       this.PnEditSettings.Name = "PnEditSettings";
       // 
@@ -686,7 +689,7 @@
       this.PvEditor.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvEditor.Location = new System.Drawing.Point(0, 0);
       this.PvEditor.Name = "PvEditor";
-      this.PvEditor.SelectedPage = this.PgBoolean;
+      this.PvEditor.SelectedPage = this.PgDatetime;
       this.PvEditor.Size = new System.Drawing.Size(672, 254);
       this.PvEditor.TabIndex = 2;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvEditor.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
@@ -702,13 +705,51 @@
       this.PgBoolean.Text = "Boolean";
       this.PgBoolean.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
+      // SwBooleanValue
+      // 
+      this.SwBooleanValue.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.SwBooleanValue.Location = new System.Drawing.Point(5, 3);
+      this.SwBooleanValue.Name = "SwBooleanValue";
+      this.SwBooleanValue.OffText = "0 = FALSE";
+      this.SwBooleanValue.OnText = "1 = TRUE";
+      this.SwBooleanValue.Size = new System.Drawing.Size(170, 25);
+      this.SwBooleanValue.TabIndex = 0;
+      this.SwBooleanValue.Value = false;
+      ((Telerik.WinControls.UI.RadToggleSwitchElement)(this.SwBooleanValue.GetChildAt(0))).ThumbOffset = 0;
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(202)))), ((int)(((byte)(235)))), ((int)(((byte)(214)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor3 = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(238)))), ((int)(((byte)(138)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor4 = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(251)))), ((int)(((byte)(251)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).Text = "1 = TRUE";
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(115)))), ((int)(((byte)(91)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(237)))), ((int)(((byte)(233)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor3 = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(213)))), ((int)(((byte)(213)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor4 = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(219)))), ((int)(((byte)(237)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).Text = "0 = FALSE";
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(38)))), ((int)(((byte)(127)))));
+      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      // 
       // PgDatetime
       // 
+      this.PgDatetime.Controls.Add(this.TxSettingDatetime);
       this.PgDatetime.ItemSize = new System.Drawing.SizeF(80F, 27F);
       this.PgDatetime.Location = new System.Drawing.Point(10, 36);
       this.PgDatetime.Name = "PgDatetime";
       this.PgDatetime.Size = new System.Drawing.Size(651, 207);
       this.PgDatetime.Text = "Datetime";
+      // 
+      // TxSettingDatetime
+      // 
+      this.TxSettingDatetime.CustomFormat = "yyyy-MM-dd hh:mm:ss";
+      this.TxSettingDatetime.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxSettingDatetime.Location = new System.Drawing.Point(33, 26);
+      this.TxSettingDatetime.Name = "TxSettingDatetime";
+      this.TxSettingDatetime.Size = new System.Drawing.Size(276, 21);
+      this.TxSettingDatetime.TabIndex = 0;
+      this.TxSettingDatetime.TabStop = false;
+      this.TxSettingDatetime.Text = "23 февраля 2020 г.";
+      this.TxSettingDatetime.Value = new System.DateTime(2020, 2, 23, 13, 24, 28, 786);
       // 
       // PgInteger
       // 
@@ -750,17 +791,25 @@
       this.PgFile.Size = new System.Drawing.Size(651, 207);
       this.PgFile.Text = "File";
       // 
-      // PnSettingTool
+      // PgEmpty
       // 
-      this.PnSettingTool.Controls.Add(this.BxSettingSave);
-      this.PnSettingTool.Dock = System.Windows.Forms.DockStyle.Bottom;
-      this.PnSettingTool.Location = new System.Drawing.Point(0, 254);
-      this.PnSettingTool.Name = "PnSettingTool";
-      this.PnSettingTool.Size = new System.Drawing.Size(672, 36);
-      this.PnSettingTool.TabIndex = 3;
-      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnSettingTool.GetChildAt(0).GetChildAt(1))).BorderDashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnSettingTool.GetChildAt(0).GetChildAt(1))).AutoSize = true;
-      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnSettingTool.GetChildAt(0).GetChildAt(1))).Visibility = Telerik.WinControls.ElementVisibility.Hidden;
+      this.PgEmpty.ItemSize = new System.Drawing.SizeF(80F, 27F);
+      this.PgEmpty.Location = new System.Drawing.Point(10, 36);
+      this.PgEmpty.Name = "PgEmpty";
+      this.PgEmpty.Size = new System.Drawing.Size(651, 207);
+      this.PgEmpty.Text = "Empty";
+      // 
+      // PnEditorTool
+      // 
+      this.PnEditorTool.Controls.Add(this.BxSettingSave);
+      this.PnEditorTool.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.PnEditorTool.Location = new System.Drawing.Point(0, 254);
+      this.PnEditorTool.Name = "PnEditorTool";
+      this.PnEditorTool.Size = new System.Drawing.Size(672, 36);
+      this.PnEditorTool.TabIndex = 3;
+      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnEditorTool.GetChildAt(0).GetChildAt(1))).BorderDashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnEditorTool.GetChildAt(0).GetChildAt(1))).AutoSize = true;
+      ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnEditorTool.GetChildAt(0).GetChildAt(1))).Visibility = Telerik.WinControls.ElementVisibility.Hidden;
       // 
       // BxSettingSave
       // 
@@ -772,38 +821,6 @@
       this.BxSettingSave.Size = new System.Drawing.Size(170, 25);
       this.BxSettingSave.TabIndex = 0;
       this.BxSettingSave.Text = "Save changes";
-      // 
-      // SwBooleanValue
-      // 
-      this.SwBooleanValue.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.SwBooleanValue.Location = new System.Drawing.Point(5, 3);
-      this.SwBooleanValue.Name = "SwBooleanValue";
-      this.SwBooleanValue.OffText = "0 = FALSE";
-      this.SwBooleanValue.OnText = "1 = TRUE";
-      this.SwBooleanValue.Size = new System.Drawing.Size(170, 25);
-      this.SwBooleanValue.TabIndex = 0;
-      this.SwBooleanValue.Value = false;
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(202)))), ((int)(((byte)(235)))), ((int)(((byte)(214)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor3 = System.Drawing.Color.FromArgb(((int)(((byte)(190)))), ((int)(((byte)(238)))), ((int)(((byte)(138)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor4 = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(251)))), ((int)(((byte)(251)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).Text = "1 = TRUE";
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(115)))), ((int)(((byte)(91)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(237)))), ((int)(((byte)(233)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(0))).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor3 = System.Drawing.Color.FromArgb(((int)(((byte)(216)))), ((int)(((byte)(213)))), ((int)(((byte)(213)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).BackColor4 = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(219)))), ((int)(((byte)(237)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).Text = "0 = FALSE";
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(38)))), ((int)(((byte)(127)))));
-      ((Telerik.WinControls.UI.ToggleSwitchPartElement)(this.SwBooleanValue.GetChildAt(0).GetChildAt(1))).Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      // 
-      // PgEmpty
-      // 
-      this.PgEmpty.ItemSize = new System.Drawing.SizeF(80F, 27F);
-      this.PgEmpty.Location = new System.Drawing.Point(10, 36);
-      this.PgEmpty.Name = "PgEmpty";
-      this.PgEmpty.Size = new System.Drawing.Size(651, 207);
-      this.PgEmpty.Text = "Empty";
       // 
       // FormTreeView
       // 
@@ -869,10 +886,13 @@
       ((System.ComponentModel.ISupportInitialize)(this.PvEditor)).EndInit();
       this.PvEditor.ResumeLayout(false);
       this.PgBoolean.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.PnSettingTool)).EndInit();
-      this.PnSettingTool.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.SwBooleanValue)).EndInit();
+      this.PgDatetime.ResumeLayout(false);
+      this.PgDatetime.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxSettingDatetime)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PnEditorTool)).EndInit();
+      this.PnEditorTool.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -895,7 +915,6 @@
     private Telerik.WinControls.UI.RadPageViewPage PgDelete;
     private Telerik.WinControls.UI.RadButtonTextBox TxFolderDelete;
     private Telerik.WinControls.UI.RadImageButtonElement BxFolderDelete;
-    private Telerik.WinControls.RadThemeManager radThemeManager1;
     private Telerik.WinControls.UI.RadPanel PnUpper;
     private Telerik.WinControls.UI.RadSplitContainer ScMain;
     private Telerik.WinControls.UI.SplitPanel PnTreeview;
@@ -928,11 +947,13 @@
     private Telerik.WinControls.UI.RadPageViewPage PgPassword;
     private Telerik.WinControls.UI.RadPageViewPage PgFolder;
     private Telerik.WinControls.UI.RadPageViewPage PgFile;
-    private Telerik.WinControls.UI.RadPanel PnSettingTool;
+    private Telerik.WinControls.UI.RadPanel PnEditorTool;
     private Telerik.WinControls.UI.RadButton BxSettingSave;
     private Telerik.WinControls.UI.RadPageViewPage PgSetting;
     private Telerik.WinControls.UI.RadButton BxSettingChange;
     internal Telerik.WinControls.UI.RadToggleSwitch SwBooleanValue;
     private Telerik.WinControls.UI.RadPageViewPage PgEmpty;
+    internal Telerik.WinControls.RadThemeManager radThemeManager1;
+    internal Telerik.WinControls.UI.RadDateTimePicker TxSettingDatetime;
   }
 }

@@ -34,7 +34,7 @@ namespace ProjectStandard
 
     public static string ZzGetStringValue(this RadDropDownList DDList) => DDList.SelectedValue as string ?? string.Empty;
 
-    public static int ZzGetIntegerValue(this RadDropDownList DDList) => Convert.ToInt32(DDList.SelectedValue);
+    //public static int ZzGetIntegerValue(this RadDropDownList DDList) => Convert.ToInt32(DDList.SelectedValue);
 
     public static void EventPopupOpening(object sender, CancelEventArgs e)
     {
