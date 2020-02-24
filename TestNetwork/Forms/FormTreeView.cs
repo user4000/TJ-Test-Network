@@ -31,12 +31,14 @@ namespace TestNetwork
 
     private RadTreeNode[] SearchResult { get; set; } = null;
 
+    private Setting CurrentSetting { get; set; } = null;
     private string CurrentIdSetting { get; set; } = string.Empty;
-
     private int CurrentIdFolder { get; set; } = -1;
 
-    private int SearchIterator { get; set; } = 0;
+    private Size PanelEditSettingsNormalSize { get; set; } = new Size(0, 100);
 
+    private int SearchIterator { get; set; } = 0;
+    
     public FormTreeView()
     {
       InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
@@ -50,6 +52,7 @@ namespace TestNetwork
       CurrentIdFolder = -1;
       NameOfSelectedNode = string.Empty;
       CurrentIdSetting = string.Empty;
+      CurrentSetting = null;
       SearchResult = null;
       SearchIterator = 0;
       PvSettings.Visible = false;
@@ -84,6 +87,9 @@ namespace TestNetwork
       BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
       BxSettingsAdd.ShowBorder = false;
       BxSettingRename.ShowBorder = false;
+      BxSettingFileSelect.ShowBorder = false;
+      BxSettingFolderSelect.ShowBorder = false;
+      BxSettingDelete.ShowBorder = false;
 
       SetPropertiesDateTimePicker();
 
@@ -103,7 +109,7 @@ namespace TestNetwork
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
       PnEditSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       //PnSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      PnEditSettings.Collapsed = true;
+      PanelEditSettingsVisible(false) ; 
       PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       VxGridSettings = new GridSettings(this);
@@ -125,26 +131,105 @@ namespace TestNetwork
       BxSettingChange.Click += EventButtonSettingChange; // Изменить значение переменной //
       BxSettingChange.Enabled = false;
       BxSettingCancel.Click += EventButtonSettingCancel; // Отменить Добавление/Изменение переменной //
+      BxSettingDelete.Click += EventButtonSettingDelete;
+      BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s,e);
 
       BxSettingsAdd.Click += EventButtonSettingAdd;
-      //BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);
       BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e);
+
+      BxSettingFileSelect.Click += EventButtonSettingFileSelect;
+      BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
 
       DxTypes.SelectedValueChanged += EventSettingTypeChanged;
 
-      PvSettings.SelectedPageChanged += EventSettingsSelectedPageChanged;
+      PvSettings.SelectedPageChanged += EventSettingsSelectedPageChanged; // Действия с настройками //
 
       TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
       ScSettings.SplitterMoved += EventScSettingsSplitterMoved;
 
-      PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 100);
+      SetNormalSizeOfPanelEditSettings();
       GvSettings.SelectionChanged += EventGridSelectionChanged;
+    }
+
+    private async Task EventButtonSettingRename(object sender, EventArgs e)
+    {
+      ReturnCode code = ReturnCodeFactory.Error("Ошибка при попытке изменения названия переменной");
+      string NameSettingDraft = TxSettingRename.Text.Trim();
+      string NameSetting = Manager.RemoveSpecialCharacters(NameSettingDraft);
+      TxSettingRename.Text = NameSetting;
+
+      if (NameSetting.Length < 1)
+        if (NameSettingDraft.Length < 1)
+        {
+          Ms.ShortMessage(MsgType.Fail, "Не указано новое название", 350, TxSettingRename).Create();
+          return;
+        }
+        else
+        {
+          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxSettingRename).Create();
+          return;
+        }
+
+      const string ErrorHeader = "Не удалось изменить название переменной";
+      try
+      {
+        code = DbSettings.SettingRename(CurrentIdFolder, CurrentIdSetting, NameSetting);
+      }
+      catch (Exception ex)
+      {
+        Ms.Error(ErrorHeader, ex).Control(TxSettingRename).Create();
+        return;
+      }
+
+      if (code.Success)
+      {
+        CurrentIdSetting = NameSetting;
+        await RefreshGridSettings();
+
+        Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingRename).Offset(TxSettingRename.Width, -2 * TxSettingRename.Height).Ok();
+      }
+      else
+      {
+        Ms.Message(ErrorHeader, code.StringValue).Wire(TxSettingRename).Warning();
+      }
+    }
+
+    private void EventButtonSettingDelete(object sender, EventArgs e)
+    {
+      // TODO: EventButtonSettingDelete
+      ReturnCode code = ReturnCodeFactory.Error("Ошибка при попытке удаления переменной");
+    }
+
+    private void EventButtonSettingFolderSelect(object sender, EventArgs e)
+    {
+      RadOpenFolderDialog dialog = new RadOpenFolderDialog();
+      DialogResult result = dialog.ShowDialog();
+      if (result == DialogResult.OK) StxFolder.Text = dialog.FileName;
+    }
+
+    private void EventButtonSettingFileSelect(object sender, EventArgs e)
+    {
+      RadOpenFileDialog dialog = new RadOpenFileDialog();
+      DialogResult result = dialog.ShowDialog();
+      if (result == DialogResult.OK) StxFile.Text = dialog.FileName;
     }
 
     private void EventSettingsSelectedPageChanged(object sender, EventArgs e)
     {
-      if (PnEditSettings.Collapsed != true) PnEditSettings.Collapsed = true;
+      PanelEditSettingsVisible(false);
+      SettingEditorResetAllInputControls();
+    }
+
+    private void SettingEditorResetAllInputControls()
+    {
+      StxBoolean.Value = false;
+      StxDatetime.Text = string.Empty;
+      StxFile.Clear();
+      StxFolder.Clear();
+      StxLongInteger.Clear();
+      StxPassword.Clear();
+      StxText.Clear();
     }
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
@@ -170,8 +255,6 @@ namespace TestNetwork
 
     private void EventScSettingsSplitterMoved(object sender, SplitterEventArgs e)
     {
-      Ms.Message($"{PnEditSettings.SizeInfo.AbsoluteSize.ToString()}", $"ggg").Pos(MsgPos.TopCenter).Debug();
-
       if (PnEditSettings.SizeInfo.AbsoluteSize.Height > 39 * MainForm.Height / 100)
         PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 39 * MainForm.Height / 100);
 
@@ -180,19 +263,28 @@ namespace TestNetwork
     }
 
     private void SetNormalSizeOfPanelEditSettings()
-    {
-      PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 100);
+    {    
+      PnEditSettings.SizeInfo.AbsoluteSize = PanelEditSettingsNormalSize;
     }
-
-
 
     private void ButtonChangeSettingDisable()
     {
       CurrentIdSetting = string.Empty;
+      CurrentSetting = null;
       BxSettingChange.Enabled = false;
     }
 
     private async Task RefreshGridSettings() => VxGridSettings.RefreshGrid(await DbSettings.GetSettings(CurrentIdFolder));
+
+    private async Task RefreshGridSettingsAdvanced() // TODO: test it
+    {
+      await RefreshGridSettings();
+      if (PvSettings.Visible == false) PvSettings.Visible = true;
+      ButtonChangeSettingDisable();
+      VxGridSettings.Grid.HideSelection = true;
+      PanelEditSettingsVisible(false);
+    }
+
 
     private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
     {
@@ -216,6 +308,7 @@ namespace TestNetwork
       if (PvSettings.Visible == false) PvSettings.Visible = true;
       ButtonChangeSettingDisable();
       VxGridSettings.Grid.HideSelection = true;
+      PanelEditSettingsVisible(false);
 
       TvFolders.HideSelection = false;
     }
@@ -225,13 +318,22 @@ namespace TestNetwork
       CurrentIdSetting = VxGridSettings.GetIdSetting();
       BxSettingChange.Enabled = CurrentIdSetting.Length > 0;
       if (VxGridSettings.Grid.HideSelection) VxGridSettings.Grid.HideSelection = false;
+      CurrentSetting = VxGridSettings.GetSetting(CurrentIdSetting);
+      TxSettingRename.Text = CurrentIdSetting;
+      TxSettingDelete.Text = CurrentIdSetting;
+    }
+
+    private void PanelEditSettingsVisible(bool Show)
+    {
+      if ((Show == false) && (PnEditSettings.Collapsed == false)) SettingEditorResetAllInputControls();
+      if (PnEditSettings.Collapsed == Show) PnEditSettings.Collapsed = !Show;
     }
 
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
       BxSettingChange.Enabled = false;
       //Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
-      if (PnEditSettings.Collapsed != false) PnEditSettings.Collapsed = false;
+      PanelEditSettingsVisible(true);
       VxGridSettings.Grid.Enabled = false;
       await Task.Delay(1000);
       BxSettingChange.Enabled = true;
@@ -241,7 +343,7 @@ namespace TestNetwork
     {
       VxGridSettings.Grid.Enabled = true;
       SetNormalSizeOfPanelEditSettings();
-      if (PnEditSettings.Collapsed != true) PnEditSettings.Collapsed = true;
+      PanelEditSettingsVisible(false);
     }
 
 
@@ -339,6 +441,7 @@ namespace TestNetwork
         }
 
         EventRefreshDataFromDatabaseFile();
+
         parent = TvFolders.GetNodeByPath(ParentFullPath);
         if (parent == null)
         {
@@ -595,8 +698,8 @@ namespace TestNetwork
         Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
         return;
       }
-      PnEditSettings.Collapsed = false;
-      PvEditor.Height = 100;
+      PanelEditSettingsVisible(true); 
+      PvEditor.Height = 100; // TODO: refactor this
     }
 
     private async Task EventButtonSettingSave(object sender, EventArgs e)
@@ -614,28 +717,42 @@ namespace TestNetwork
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
           code = DbSettings.SaveSettingBoolean(true, CurrentIdFolder, IdSetting, StxBoolean.Value);
-          StxBoolean.Value = false;
+          //StxBoolean.Value = false;
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
           code = DbSettings.SaveSettingDatetime(true, CurrentIdFolder, IdSetting, StxDatetime.Value);
-          StxDatetime.Value = DateTime.Today;
+          //StxDatetime.Text = string.Empty;
           break;
         case TypeSetting.Integer64:
           PvEditor.SelectedPage = PgInteger;
-          //code = DbSettings.SaveSettingLong(true, CurrentIdFolder, IdSetting);
+          StxLongInteger.Text = StxLongInteger.Text.Trim();
+          if (Manager.CvInt64.IsValid(StxLongInteger.Text)==false)
+          {
+            Ms.Message("Ошибка", "Значение не является целым числом").Control(DxTypes).Warning(); return;
+          }
+          code = DbSettings.SaveSettingLong(true, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
+          //StxLongInteger.Clear();
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
+          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Text, StxText.Text);
+          //StxText.Clear();
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
+          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Password, StxPassword.Text);
+          //StxPassword.Clear();
           break;
         case TypeSetting.File:
           PvEditor.SelectedPage = PgFile;
+          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.File, StxFile.Text);
+          //StxFile.Clear();
           break;
         case TypeSetting.Folder:
           PvEditor.SelectedPage = PgFolder;
+          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Folder, StxFolder.Text);
+          //StxFolder.Clear();
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
@@ -647,11 +764,17 @@ namespace TestNetwork
         TxSettingAdd.Clear();
         Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
         await RefreshGridSettings();
+        // TODO: С этим надо разобраться - как обновлять элементы после получения списка переменных 
+        if (PvSettings.Visible == false) PvSettings.Visible = true;
+        ButtonChangeSettingDisable();
+        VxGridSettings.Grid.HideSelection = true;
+        PanelEditSettingsVisible(false);
       }
       else
       {
         Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
       }
+      PanelEditSettingsVisible(false);     
     }
 
     private void EventSettingTypeChanged(object sender, EventArgs e)

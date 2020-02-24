@@ -75,6 +75,11 @@ namespace ProjectStandard
       return f;
     }
 
+    public static bool IsValidInt64(string value)
+    {
+      return Int64.TryParse(value, out long x);
+    }
+
 
     public static int ToInt32(object value, int Default)
     {

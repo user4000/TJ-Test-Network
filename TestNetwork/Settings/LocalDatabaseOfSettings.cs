@@ -58,6 +58,8 @@ namespace TestNetwork
 
     public string SqlSettingUpdate { get; private set; } = string.Empty;
 
+    public string SqlSettingRename { get; private set; } = string.Empty;
+
     public string SqlSettingCount { get; private set; } = string.Empty;
 
     public string SqlFolderCountByIdParent { get; private set; } = string.Empty;
@@ -76,7 +78,7 @@ namespace TestNetwork
 
     public string SqlCountChildSettings { get; private set; } = string.Empty;
 
-    public string SqlDeleteFolder { get; private set; } = string.Empty;
+    public string SqlFolderDelete { get; private set; } = string.Empty;
 
 
     public DataTable GetTable(string TableName)
@@ -121,7 +123,7 @@ namespace TestNetwork
         $"{CnSettingsSettingValue}," +
         $"{CnSettingsRank}," +
         $"{VnSettingsBooleanValue} " +
-        $"FROM {VnSettings}";
+        $"FROM {VnSettings} WHERE {CnSettingsIdFolder}=@IdFolder";
 
       SqlSettingCount = $"SELECT COUNT(*) from {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
@@ -133,6 +135,11 @@ namespace TestNetwork
       $"UPDATE {TnSettings} SET {CnSettingsSettingValue}=@SettingValue " +
       $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
+      SqlSettingRename =
+      $"UPDATE {TnSettings} SET {CnSettingsIdSetting}=@IdSettingNew " +
+      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSettingOld";
+
+
       SqlFolderCountByIdParent = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
       SqlFolderInsert = $"INSERT INTO {TnFolders} ({CnFoldersIdParent},{CnFoldersNameFolder}) VALUES (@IdParent,@NameFolder)";
       SqlGetIdFolder = $"SELECT {CnFoldersIdFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
@@ -143,7 +150,7 @@ namespace TestNetwork
       SqlFolderCountSimple = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdFolder} = @IdFolder";
       SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
       SqlCountChildSettings = $"SELECT COUNT(*) FROM SETTINGS WHERE {CnFoldersIdFolder} = @IdFolder";
-      SqlDeleteFolder = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
+      SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
 
     }
 
@@ -211,7 +218,7 @@ namespace TestNetwork
         if (count != 0) return ReturnCodeFactory.Error("Нельзя удалять папку, внутри которой есть другие папки");
         count = command.ZzGetScalarInteger(SqlCountChildSettings);
         if (count != 0) return ReturnCodeFactory.Error("Нельзя удалять папку, которая содержит настройки");
-        count = command.ZzExecuteNonQuery(SqlDeleteFolder);
+        count = command.ZzExecuteNonQuery(SqlFolderDelete);
         if (count == 0) return ReturnCodeFactory.Error("Не удалось удалить папку");
       }
       return code;
@@ -250,11 +257,11 @@ namespace TestNetwork
     public async Task<BindingList<Setting>> GetSettings(int IdFolder)
     {
       BindingList<Setting> list = new BindingList<Setting>();
-      string sql = $"{SqlSettingSelect} WHERE IdFolder={IdFolder}";
+
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(sql, connection))
+      using (SQLiteCommand command = new SQLiteCommand(SqlSettingSelect, connection))
       {
-        connection.Open();
+        command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder);
         using (SQLiteDataReader reader = command.ExecuteReader())
           while (await reader.ReadAsync())
             list.ZzAdd
@@ -270,7 +277,6 @@ namespace TestNetwork
       }
       return list;
     }
-
 
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
     {
@@ -305,12 +311,12 @@ namespace TestNetwork
         SettingUpdate(IdFolder, IdSetting, StringValue);
     }
 
-    public ReturnCode SaveSettingText(bool AddNewSetting, int IdFolder, string IdSetting, string value)
+    public ReturnCode SaveSettingText(bool AddNewSetting, int IdFolder, string IdSetting, TypeSetting type, string value)
     {
       return
         AddNewSetting
         ?
-        SettingCreate(IdFolder, IdSetting, (int)(TypeSetting.Text), value)
+        SettingCreate(IdFolder, IdSetting, (int)(type), value)
         :
         SettingUpdate(IdFolder, IdSetting, value);
     }
@@ -319,7 +325,7 @@ namespace TestNetwork
     public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Новая переменная создана: {IdSetting}");
-      if (IdSetting.Trim().Length < 1) ReturnCodeFactory.Error("Не указано название переменной");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано название переменной");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
@@ -336,6 +342,7 @@ namespace TestNetwork
     public ReturnCode SettingUpdate(int IdFolder, string IdSetting, string value)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Изменения сохранены: {IdSetting}");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано название переменной");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
@@ -346,6 +353,33 @@ namespace TestNetwork
         if (count != 1) return ReturnCodeFactory.Error("Не удалось изменить переменную");
         code.StringNote = value;
       }
+      return code;
+    }
+
+
+    public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Новое имя сохранено: {IdSettingNew}");
+      if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано новое название переменной");
+      
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSettingNew).ZzGetScalarInteger(SqlSettingCount);
+        if (count > 0) return ReturnCodeFactory.Error("Переменная с таким именем уже существует");
+        command.Parameters.Clear();
+
+        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSettingOld", IdSettingOld).ZzAdd("@IdSettingNew", IdSettingNew).ZzExecuteNonQuery(SqlSettingRename);
+        if (count != 1) return ReturnCodeFactory.Error("Не удалось изменить имя переменной");
+      }
+      return code;
+    }
+
+    public ReturnCode SettingDelete(int IdFolder, string IdSetting)
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Переменная удалена: {IdSetting}");
+
       return code;
     }
   }

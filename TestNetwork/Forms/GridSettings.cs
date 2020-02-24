@@ -125,6 +125,14 @@ namespace TestNetwork
     }
 
     internal string GetIdSetting() => this.GetStringValue(nameof(Setting.IdSetting));
+
+    internal Setting GetSetting(string IdSetting)
+    {
+      if (ListDataSource != null)
+        foreach (var item in ListDataSource)
+          if (item.IdSetting == IdSetting) return item;
+      return null;
+    }
   }
 }
 
