@@ -12,5 +12,4 @@
       return value == "1" ? true : false;
     }
   }
-
 }

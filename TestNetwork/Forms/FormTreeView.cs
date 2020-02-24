@@ -53,7 +53,7 @@ namespace TestNetwork
       SearchResult = null;
       SearchIterator = 0;
       PvSettings.Visible = false;
-      PnEditorTool.Visible = false;
+      PnSettingSave.Visible = false;
     }
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
@@ -68,9 +68,9 @@ namespace TestNetwork
 
     private void SetPropertiesDateTimePicker()
     {
-      TxSettingDatetime.DateTimePickerElement.ShowTimePicker = true;
-      TxSettingDatetime.Format = DateTimePickerFormat.Custom;
-      TxSettingDatetime.CustomFormat = Manager.DatetimeFormat;
+      StxDatetime.DateTimePickerElement.ShowTimePicker = true;
+      StxDatetime.Format = DateTimePickerFormat.Custom;
+      StxDatetime.CustomFormat = Manager.DatetimeFormat;
     }
 
     private void SetProperties()
@@ -83,6 +83,8 @@ namespace TestNetwork
       BxFolderSearch.ShowBorder = false;
       BxFolderSearchGotoNext.ShowBorder = false;
       BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
+      BxSettingsAdd.ShowBorder = false;
+      BxSettingRename.ShowBorder = false;
 
       SetPropertiesDateTimePicker();
 
@@ -107,6 +109,9 @@ namespace TestNetwork
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
 
+      PnEditSettings.Collapsed = true;
+      PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
 
@@ -121,9 +126,9 @@ namespace TestNetwork
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
       BxSettingChange.Click += EventButtonSettingChange;
       BxSettingChange.Enabled = false;
-      //BxSettingsAdd.Click += EventButtonSettingAdd;
 
-      BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);
+      BxSettingsAdd.Click += EventButtonSettingAdd;
+      //BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);
       BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e);
 
       DxTypes.SelectedValueChanged += EventSettingTypeChanged;
@@ -551,7 +556,9 @@ namespace TestNetwork
       {
         Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
         return;
-      }    
+      }
+      PnEditSettings.Collapsed = false;
+      PvEditor.Height = 100;
     }
 
     private async Task EventButtonSettingSave(object sender, EventArgs e)
@@ -568,16 +575,29 @@ namespace TestNetwork
       {
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
-          code = DbSettings.SaveSettingBoolean(true, CurrentIdFolder, IdSetting, SwBooleanValue.Value);
-          SwBooleanValue.Value = false;
+          code = DbSettings.SaveSettingBoolean(true, CurrentIdFolder, IdSetting, StxBoolean.Value);
+          StxBoolean.Value = false;
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
-          code = DbSettings.SaveSettingDatetime(true, CurrentIdFolder, IdSetting, TxSettingDatetime.Value);
-          TxSettingDatetime.Value = DateTime.Today;
+          code = DbSettings.SaveSettingDatetime(true, CurrentIdFolder, IdSetting, StxDatetime.Value);
+          StxDatetime.Value = DateTime.Today;
+          break;
+        case TypeSetting.Integer64:
+          PvEditor.SelectedPage = PgInteger;
+          //code = DbSettings.SaveSettingLong(true, CurrentIdFolder, IdSetting);
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
+          break;
+        case TypeSetting.Password:
+          PvEditor.SelectedPage = PgPassword;
+          break;
+        case TypeSetting.File:
+          PvEditor.SelectedPage = PgFile;
+          break;
+        case TypeSetting.Folder:
+          PvEditor.SelectedPage = PgFolder;
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
@@ -605,10 +625,22 @@ namespace TestNetwork
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
-          TxSettingDatetime.Value = DateTime.Today;
+          StxDatetime.Value = DateTime.Today;
+          break;
+        case TypeSetting.Integer64:
+          PvEditor.SelectedPage = PgInteger;
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
+          break;
+        case TypeSetting.Password:
+          PvEditor.SelectedPage = PgPassword;
+          break;
+        case TypeSetting.File:
+          PvEditor.SelectedPage = PgFile;
+          break;
+        case TypeSetting.Folder:
+          PvEditor.SelectedPage = PgFolder;
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;

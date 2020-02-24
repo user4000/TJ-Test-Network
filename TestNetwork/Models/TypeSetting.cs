@@ -5,7 +5,7 @@
     Unknown = 0,
     Boolean = 1,
     Datetime = 2,
-    Integer = 3,
+    Integer64 = 3,
     Text = 4,
     Password = 5,
     Folder = 6,

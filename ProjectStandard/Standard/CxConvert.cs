@@ -68,6 +68,14 @@ namespace ProjectStandard
       return f;
     }
 
+    public static long ToInt64(string value, long Default)
+    {
+      long f = Default;
+      if (Int64.TryParse(value, out long x)) f = x;
+      return f;
+    }
+
+
     public static int ToInt32(object value, int Default)
     {
       int f = Default;

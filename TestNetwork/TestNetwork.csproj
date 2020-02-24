@@ -93,6 +93,8 @@
     <Compile Include="Models\XxListSetting.cs" />
     <Compile Include="Standard\ConverterBoolean.cs" />
     <Compile Include="Standard\ConverterDatetime.cs" />
+    <Compile Include="Standard\ConverterInt32.cs" />
+    <Compile Include="Standard\ConverterInt64.cs" />
     <Compile Include="Standard\ProjectManager.cs" />
     <Compile Include="Standard\ProjectManagerFactory.cs" />
     <Compile Include="Settings\CxApplicationSettings.cs" />
