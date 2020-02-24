@@ -485,15 +485,16 @@
       // 
       this.PnSettings.Controls.Add(this.GvSettings);
       this.PnSettings.Controls.Add(this.PvSettings);
+      this.PnSettings.Dock = System.Windows.Forms.DockStyle.Fill;
       this.PnSettings.Location = new System.Drawing.Point(0, 0);
       this.PnSettings.Name = "PnSettings";
       // 
       // 
       // 
       this.PnSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
-      this.PnSettings.Size = new System.Drawing.Size(672, 431);
-      this.PnSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, 0.09770115F);
-      this.PnSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, 68);
+      this.PnSettings.Size = new System.Drawing.Size(672, 535);
+      this.PnSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, 0.242025F);
+      this.PnSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, 172);
       this.PnSettings.TabIndex = 0;
       this.PnSettings.TabStop = false;
       this.PnSettings.Text = "splitPanel3";
@@ -523,7 +524,7 @@
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
       this.GvSettings.ShowNoDataText = false;
-      this.GvSettings.Size = new System.Drawing.Size(672, 353);
+      this.GvSettings.Size = new System.Drawing.Size(672, 457);
       this.GvSettings.TabIndex = 2;
       // 
       // PvSettings
@@ -679,15 +680,16 @@
       // 
       this.PnEditSettings.Controls.Add(this.PvEditor);
       this.PnEditSettings.Controls.Add(this.PnSettingSave);
-      this.PnEditSettings.Location = new System.Drawing.Point(0, 435);
+      this.PnEditSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.PnEditSettings.Location = new System.Drawing.Point(0, 539);
       this.PnEditSettings.Name = "PnEditSettings";
       // 
       // 
       // 
       this.PnEditSettings.RootElement.MinSize = new System.Drawing.Size(25, 25);
-      this.PnEditSettings.Size = new System.Drawing.Size(672, 290);
-      this.PnEditSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, -0.09770115F);
-      this.PnEditSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, -68);
+      this.PnEditSettings.Size = new System.Drawing.Size(672, 186);
+      this.PnEditSettings.SizeInfo.AutoSizeScale = new System.Drawing.SizeF(0F, -0.242025F);
+      this.PnEditSettings.SizeInfo.SplitterCorrection = new System.Drawing.Size(0, -172);
       this.PnEditSettings.TabIndex = 1;
       this.PnEditSettings.TabStop = false;
       this.PnEditSettings.Text = "splitPanel4";
@@ -702,16 +704,17 @@
       this.PvEditor.Controls.Add(this.PgFolder);
       this.PvEditor.Controls.Add(this.PgFile);
       this.PvEditor.Controls.Add(this.PgEmpty);
+      this.PvEditor.Dock = System.Windows.Forms.DockStyle.Fill;
       this.PvEditor.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.PvEditor.ItemSize = new System.Drawing.Size(80, 25);
       this.PvEditor.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
-      this.PvEditor.Location = new System.Drawing.Point(37, 24);
+      this.PvEditor.Location = new System.Drawing.Point(0, 0);
       this.PvEditor.Name = "PvEditor";
       this.PvEditor.Padding = new System.Windows.Forms.Padding(5);
       this.PvEditor.SelectedPage = this.PgEmpty;
-      this.PvEditor.Size = new System.Drawing.Size(596, 132);
+      this.PvEditor.Size = new System.Drawing.Size(672, 161);
       this.PvEditor.TabIndex = 2;
-      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvEditor.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
+      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvEditor.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvEditor.GetChildAt(0))).ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvEditor.GetChildAt(0))).Padding = new System.Windows.Forms.Padding(5);
       // 
@@ -719,9 +722,9 @@
       // 
       this.PgBoolean.Controls.Add(this.StxBoolean);
       this.PgBoolean.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgBoolean.Location = new System.Drawing.Point(10, 36);
+      this.PgBoolean.Location = new System.Drawing.Point(10, 34);
       this.PgBoolean.Name = "PgBoolean";
-      this.PgBoolean.Size = new System.Drawing.Size(576, 148);
+      this.PgBoolean.Size = new System.Drawing.Size(652, 56);
       this.PgBoolean.Text = "Boolean";
       this.PgBoolean.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
@@ -754,67 +757,66 @@
       // 
       this.PgDatetime.Controls.Add(this.StxDatetime);
       this.PgDatetime.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgDatetime.Location = new System.Drawing.Point(10, 36);
+      this.PgDatetime.Location = new System.Drawing.Point(10, 34);
       this.PgDatetime.Name = "PgDatetime";
-      this.PgDatetime.Size = new System.Drawing.Size(576, 148);
+      this.PgDatetime.Size = new System.Drawing.Size(652, 56);
       this.PgDatetime.Text = "Datetime";
       // 
       // StxDatetime
       // 
       this.StxDatetime.AutoSize = false;
-      this.StxDatetime.CustomFormat = "yyyy-MM-dd hh:mm:ss";
+      this.StxDatetime.CustomFormat = "";
       this.StxDatetime.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.StxDatetime.Location = new System.Drawing.Point(5, 3);
       this.StxDatetime.Name = "StxDatetime";
       this.StxDatetime.Size = new System.Drawing.Size(250, 25);
       this.StxDatetime.TabIndex = 0;
       this.StxDatetime.TabStop = false;
-      this.StxDatetime.Text = "23 февраля 2020 г.";
-      this.StxDatetime.Value = new System.DateTime(2020, 2, 23, 13, 24, 28, 786);
+      this.StxDatetime.Value = new System.DateTime(((long)(0)));
       // 
       // PgInteger
       // 
       this.PgInteger.Controls.Add(this.StxLongInteger);
       this.PgInteger.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgInteger.Location = new System.Drawing.Point(10, 36);
+      this.PgInteger.Location = new System.Drawing.Point(10, 34);
       this.PgInteger.Name = "PgInteger";
-      this.PgInteger.Size = new System.Drawing.Size(576, 148);
+      this.PgInteger.Size = new System.Drawing.Size(652, 56);
       this.PgInteger.Text = "Integer";
       // 
       // PgText
       // 
       this.PgText.Controls.Add(this.StxText);
       this.PgText.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgText.Location = new System.Drawing.Point(10, 36);
+      this.PgText.Location = new System.Drawing.Point(10, 34);
       this.PgText.Name = "PgText";
-      this.PgText.Size = new System.Drawing.Size(576, 148);
+      this.PgText.Size = new System.Drawing.Size(652, 56);
       this.PgText.Text = "Text";
       // 
       // PgPassword
       // 
       this.PgPassword.Controls.Add(this.StxPassword);
       this.PgPassword.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgPassword.Location = new System.Drawing.Point(10, 36);
+      this.PgPassword.Location = new System.Drawing.Point(10, 34);
       this.PgPassword.Name = "PgPassword";
-      this.PgPassword.Size = new System.Drawing.Size(576, 148);
+      this.PgPassword.Size = new System.Drawing.Size(652, 56);
       this.PgPassword.Text = "Password";
       // 
       // PgFolder
       // 
       this.PgFolder.Controls.Add(this.StxFolder);
       this.PgFolder.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgFolder.Location = new System.Drawing.Point(10, 36);
+      this.PgFolder.Location = new System.Drawing.Point(10, 34);
       this.PgFolder.Name = "PgFolder";
-      this.PgFolder.Size = new System.Drawing.Size(652, 219);
+      this.PgFolder.Size = new System.Drawing.Size(652, 56);
       this.PgFolder.Text = "Folder";
       // 
       // PgFile
       // 
       this.PgFile.Controls.Add(this.StxFile);
       this.PgFile.ItemSize = new System.Drawing.SizeF(80F, 25F);
-      this.PgFile.Location = new System.Drawing.Point(10, 36);
+      this.PgFile.Location = new System.Drawing.Point(10, 34);
       this.PgFile.Name = "PgFile";
-      this.PgFile.Size = new System.Drawing.Size(576, 148);
+      this.PgFile.Size = new System.Drawing.Size(652, 56);
       this.PgFile.Text = "File";
       // 
       // PgEmpty
@@ -822,7 +824,7 @@
       this.PgEmpty.ItemSize = new System.Drawing.SizeF(80F, 25F);
       this.PgEmpty.Location = new System.Drawing.Point(10, 34);
       this.PgEmpty.Name = "PgEmpty";
-      this.PgEmpty.Size = new System.Drawing.Size(576, 88);
+      this.PgEmpty.Size = new System.Drawing.Size(652, 117);
       this.PgEmpty.Text = "Empty";
       // 
       // BxSettingSave
@@ -845,7 +847,7 @@
       this.StxText.MaxLength = 1000000;
       this.StxText.Multiline = true;
       this.StxText.Name = "StxText";
-      this.StxText.Size = new System.Drawing.Size(576, 148);
+      this.StxText.Size = new System.Drawing.Size(652, 56);
       this.StxText.TabIndex = 1;
       // 
       // StxLongInteger
@@ -864,7 +866,7 @@
       this.StxPassword.Location = new System.Drawing.Point(0, 0);
       this.StxPassword.MaxLength = 10000;
       this.StxPassword.Name = "StxPassword";
-      this.StxPassword.Size = new System.Drawing.Size(576, 25);
+      this.StxPassword.Size = new System.Drawing.Size(652, 25);
       this.StxPassword.TabIndex = 1;
       // 
       // StxFolder
@@ -910,7 +912,7 @@
       this.StxFile.Name = "StxFile";
       this.StxFile.ReadOnly = true;
       this.StxFile.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.StxFile.Size = new System.Drawing.Size(576, 25);
+      this.StxFile.Size = new System.Drawing.Size(652, 25);
       this.StxFile.TabIndex = 7;
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.StxFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.StxFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
@@ -932,7 +934,7 @@
       this.BxSettingCancel.Dock = System.Windows.Forms.DockStyle.Right;
       this.BxSettingCancel.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.BxSettingCancel.Image = ((System.Drawing.Image)(resources.GetObject("BxSettingCancel.Image")));
-      this.BxSettingCancel.Location = new System.Drawing.Point(398, 0);
+      this.BxSettingCancel.Location = new System.Drawing.Point(527, 0);
       this.BxSettingCancel.Name = "BxSettingCancel";
       this.BxSettingCancel.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
       this.BxSettingCancel.Size = new System.Drawing.Size(140, 25);
@@ -943,10 +945,11 @@
       // 
       this.PnSettingSave.Controls.Add(this.BxSettingCancel);
       this.PnSettingSave.Controls.Add(this.BxSettingSave);
-      this.PnSettingSave.Location = new System.Drawing.Point(69, 227);
+      this.PnSettingSave.Dock = System.Windows.Forms.DockStyle.Bottom;
+      this.PnSettingSave.Location = new System.Drawing.Point(0, 161);
       this.PnSettingSave.Name = "PnSettingSave";
       this.PnSettingSave.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
-      this.PnSettingSave.Size = new System.Drawing.Size(543, 25);
+      this.PnSettingSave.Size = new System.Drawing.Size(672, 25);
       this.PnSettingSave.TabIndex = 3;
       ((Telerik.WinControls.UI.RadPanelElement)(this.PnSettingSave.GetChildAt(0))).Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
       ((Telerik.WinControls.Primitives.BorderPrimitive)(this.PnSettingSave.GetChildAt(0).GetChildAt(1))).BorderDashStyle = System.Drawing.Drawing2D.DashStyle.Solid;

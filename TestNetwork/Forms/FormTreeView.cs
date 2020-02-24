@@ -12,8 +12,8 @@ using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
 using TJFramework;
-using static TJFramework.TJFrameworkManager;
 using static TestNetwork.Program;
+using static TJFramework.TJFrameworkManager;
 
 namespace TestNetwork
 {
@@ -53,7 +53,6 @@ namespace TestNetwork
       SearchResult = null;
       SearchIterator = 0;
       PvSettings.Visible = false;
-      PnSettingSave.Visible = false;
     }
 
     private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
@@ -100,17 +99,15 @@ namespace TestNetwork
       PvSettings.Pages.ChangeIndex(PgSetting, 0);
       PvSettings.SelectedPage = PgSetting;
 
-      //this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      //this.ScMain.SplitPanels[nameof(PnTreeview)].SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
-
       PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
+      PnEditSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
+      //PnSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
+      PnEditSettings.Collapsed = true;
+      PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
-
-      PnEditSettings.Collapsed = true;
-      PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
@@ -124,8 +121,10 @@ namespace TestNetwork
       BxFolderDelete.Click += EventButtonDeleteFolder;
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
-      BxSettingChange.Click += EventButtonSettingChange;
+
+      BxSettingChange.Click += EventButtonSettingChange; // Изменить значение переменной //
       BxSettingChange.Enabled = false;
+      BxSettingCancel.Click += EventButtonSettingCancel; // Отменить Добавление/Изменение переменной //
 
       BxSettingsAdd.Click += EventButtonSettingAdd;
       //BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);
@@ -133,9 +132,19 @@ namespace TestNetwork
 
       DxTypes.SelectedValueChanged += EventSettingTypeChanged;
 
-      TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s,e);
+      PvSettings.SelectedPageChanged += EventSettingsSelectedPageChanged;
+
+      TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
+      ScSettings.SplitterMoved += EventScSettingsSplitterMoved;
+
+      PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 100);
       GvSettings.SelectionChanged += EventGridSelectionChanged;
+    }
+
+    private void EventSettingsSelectedPageChanged(object sender, EventArgs e)
+    {
+      if (PnEditSettings.Collapsed != true) PnEditSettings.Collapsed = true;
     }
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
@@ -158,6 +167,24 @@ namespace TestNetwork
       if (PnTreeview.SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
         PnTreeview.SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
+
+    private void EventScSettingsSplitterMoved(object sender, SplitterEventArgs e)
+    {
+      Ms.Message($"{PnEditSettings.SizeInfo.AbsoluteSize.ToString()}", $"ggg").Pos(MsgPos.TopCenter).Debug();
+
+      if (PnEditSettings.SizeInfo.AbsoluteSize.Height > 39 * MainForm.Height / 100)
+        PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 39 * MainForm.Height / 100);
+
+      if (PnEditSettings.SizeInfo.AbsoluteSize.Height < 100)
+        SetNormalSizeOfPanelEditSettings();
+    }
+
+    private void SetNormalSizeOfPanelEditSettings()
+    {
+      PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 100);
+    }
+
+
 
     private void ButtonChangeSettingDisable()
     {
@@ -185,7 +212,7 @@ namespace TestNetwork
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
       //---- Event ---- Get List of Settings of current folder ----//
       await RefreshGridSettings();
-      
+
       if (PvSettings.Visible == false) PvSettings.Visible = true;
       ButtonChangeSettingDisable();
       VxGridSettings.Grid.HideSelection = true;
@@ -196,7 +223,7 @@ namespace TestNetwork
     private void EventGridSelectionChanged(object sender, EventArgs e)
     {
       CurrentIdSetting = VxGridSettings.GetIdSetting();
-      BxSettingChange.Enabled = CurrentIdSetting.Length > 0 ;
+      BxSettingChange.Enabled = CurrentIdSetting.Length > 0;
       if (VxGridSettings.Grid.HideSelection) VxGridSettings.Grid.HideSelection = false;
     }
 
@@ -204,9 +231,20 @@ namespace TestNetwork
     {
       BxSettingChange.Enabled = false;
       //Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
+      if (PnEditSettings.Collapsed != false) PnEditSettings.Collapsed = false;
+      VxGridSettings.Grid.Enabled = false;
       await Task.Delay(1000);
-      BxSettingChange.Enabled = true;    
+      BxSettingChange.Enabled = true;
     }
+
+    private void EventButtonSettingCancel(object sender, EventArgs e)
+    {
+      VxGridSettings.Grid.Enabled = true;
+      SetNormalSizeOfPanelEditSettings();
+      if (PnEditSettings.Collapsed != true) PnEditSettings.Collapsed = true;
+    }
+
+
 
     private void SelectOneNode(RadTreeNode node)
     {
@@ -552,7 +590,7 @@ namespace TestNetwork
     private void EventButtonSettingAdd(object sender, EventArgs e)
     {
       TypeSetting type = TypeSettingConverter.FromInteger(DxTypes.ZzGetIntegerValue());
-      if (type==TypeSetting.Unknown)
+      if (type == TypeSetting.Unknown)
       {
         Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
         return;
