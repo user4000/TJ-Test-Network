@@ -30,7 +30,7 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
@@ -61,17 +61,17 @@
       this.PnSettings = new Telerik.WinControls.UI.SplitPanel();
       this.GvSettings = new Telerik.WinControls.UI.RadGridView();
       this.PvSettings = new Telerik.WinControls.UI.RadPageView();
-      this.radPageViewPage1 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PgSettingAdd = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxSettingAdd = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxSettingsAdd = new Telerik.WinControls.UI.RadImageButtonElement();
       this.DxTypes = new Telerik.WinControls.UI.RadDropDownList();
-      this.radPageViewPage2 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PgSettingRename = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxSettingRename = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxSettingRename = new Telerik.WinControls.UI.RadImageButtonElement();
-      this.radPageViewPage3 = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PgSettingDelete = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxSettingDelete = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxSettingDelete = new Telerik.WinControls.UI.RadImageButtonElement();
-      this.PgSetting = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PgSettingChange = new Telerik.WinControls.UI.RadPageViewPage();
       this.BxSettingChange = new Telerik.WinControls.UI.RadButton();
       this.PnEditSettings = new Telerik.WinControls.UI.SplitPanel();
       this.PvEditor = new Telerik.WinControls.UI.RadPageView();
@@ -124,14 +124,14 @@
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings.MasterTemplate)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).BeginInit();
       this.PvSettings.SuspendLayout();
-      this.radPageViewPage1.SuspendLayout();
+      this.PgSettingAdd.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingAdd)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.DxTypes)).BeginInit();
-      this.radPageViewPage2.SuspendLayout();
+      this.PgSettingRename.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingRename)).BeginInit();
-      this.radPageViewPage3.SuspendLayout();
+      this.PgSettingDelete.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingDelete)).BeginInit();
-      this.PgSetting.SuspendLayout();
+      this.PgSettingChange.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingChange)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).BeginInit();
       this.PnEditSettings.SuspendLayout();
@@ -518,7 +518,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition2;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -528,33 +528,33 @@
       // 
       // PvSettings
       // 
-      this.PvSettings.Controls.Add(this.radPageViewPage1);
-      this.PvSettings.Controls.Add(this.radPageViewPage2);
-      this.PvSettings.Controls.Add(this.radPageViewPage3);
-      this.PvSettings.Controls.Add(this.PgSetting);
+      this.PvSettings.Controls.Add(this.PgSettingAdd);
+      this.PvSettings.Controls.Add(this.PgSettingRename);
+      this.PvSettings.Controls.Add(this.PgSettingDelete);
+      this.PvSettings.Controls.Add(this.PgSettingChange);
       this.PvSettings.Dock = System.Windows.Forms.DockStyle.Top;
       this.PvSettings.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.PvSettings.ItemSize = new System.Drawing.Size(70, 27);
       this.PvSettings.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvSettings.Location = new System.Drawing.Point(0, 0);
       this.PvSettings.Name = "PvSettings";
-      this.PvSettings.SelectedPage = this.PgSetting;
+      this.PvSettings.SelectedPage = this.PgSettingChange;
       this.PvSettings.Size = new System.Drawing.Size(672, 78);
       this.PvSettings.TabIndex = 1;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvSettings.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvSettings.GetChildAt(0))).ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       // 
-      // radPageViewPage1
+      // PgSettingAdd
       // 
-      this.radPageViewPage1.Controls.Add(this.TxSettingAdd);
-      this.radPageViewPage1.Controls.Add(this.DxTypes);
-      this.radPageViewPage1.ItemSize = new System.Drawing.SizeF(70F, 27F);
-      this.radPageViewPage1.Location = new System.Drawing.Point(10, 36);
-      this.radPageViewPage1.Name = "radPageViewPage1";
-      this.radPageViewPage1.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage1.Size = new System.Drawing.Size(651, 31);
-      this.radPageViewPage1.Text = "Add";
-      this.radPageViewPage1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      this.PgSettingAdd.Controls.Add(this.TxSettingAdd);
+      this.PgSettingAdd.Controls.Add(this.DxTypes);
+      this.PgSettingAdd.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingAdd.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingAdd.Name = "PgSettingAdd";
+      this.PgSettingAdd.Padding = new System.Windows.Forms.Padding(5);
+      this.PgSettingAdd.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingAdd.Text = "Add";
+      this.PgSettingAdd.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // TxSettingAdd
       // 
@@ -589,16 +589,16 @@
       this.DxTypes.Size = new System.Drawing.Size(122, 23);
       this.DxTypes.TabIndex = 0;
       // 
-      // radPageViewPage2
+      // PgSettingRename
       // 
-      this.radPageViewPage2.Controls.Add(this.TxSettingRename);
-      this.radPageViewPage2.ItemSize = new System.Drawing.SizeF(70F, 27F);
-      this.radPageViewPage2.Location = new System.Drawing.Point(10, 36);
-      this.radPageViewPage2.Name = "radPageViewPage2";
-      this.radPageViewPage2.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage2.Size = new System.Drawing.Size(651, 31);
-      this.radPageViewPage2.Text = "Rename";
-      this.radPageViewPage2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      this.PgSettingRename.Controls.Add(this.TxSettingRename);
+      this.PgSettingRename.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingRename.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingRename.Name = "PgSettingRename";
+      this.PgSettingRename.Padding = new System.Windows.Forms.Padding(5);
+      this.PgSettingRename.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingRename.Text = "Rename";
+      this.PgSettingRename.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // TxSettingRename
       // 
@@ -622,16 +622,16 @@
       this.BxSettingRename.ToolTipText = "Rename a variable";
       this.BxSettingRename.UseCompatibleTextRendering = false;
       // 
-      // radPageViewPage3
+      // PgSettingDelete
       // 
-      this.radPageViewPage3.Controls.Add(this.TxSettingDelete);
-      this.radPageViewPage3.ItemSize = new System.Drawing.SizeF(70F, 27F);
-      this.radPageViewPage3.Location = new System.Drawing.Point(10, 36);
-      this.radPageViewPage3.Name = "radPageViewPage3";
-      this.radPageViewPage3.Padding = new System.Windows.Forms.Padding(5);
-      this.radPageViewPage3.Size = new System.Drawing.Size(651, 31);
-      this.radPageViewPage3.Text = "Delete";
-      this.radPageViewPage3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      this.PgSettingDelete.Controls.Add(this.TxSettingDelete);
+      this.PgSettingDelete.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingDelete.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingDelete.Name = "PgSettingDelete";
+      this.PgSettingDelete.Padding = new System.Windows.Forms.Padding(5);
+      this.PgSettingDelete.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingDelete.Text = "Delete";
+      this.PgSettingDelete.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
       // TxSettingDelete
       // 
@@ -656,14 +656,14 @@
       this.BxSettingDelete.ToolTipText = "Delete a variable";
       this.BxSettingDelete.UseCompatibleTextRendering = false;
       // 
-      // PgSetting
+      // PgSettingChange
       // 
-      this.PgSetting.Controls.Add(this.BxSettingChange);
-      this.PgSetting.ItemSize = new System.Drawing.SizeF(70F, 27F);
-      this.PgSetting.Location = new System.Drawing.Point(10, 36);
-      this.PgSetting.Name = "PgSetting";
-      this.PgSetting.Size = new System.Drawing.Size(651, 31);
-      this.PgSetting.Text = "Setting";
+      this.PgSettingChange.Controls.Add(this.BxSettingChange);
+      this.PgSettingChange.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingChange.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingChange.Name = "PgSettingChange";
+      this.PgSettingChange.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingChange.Text = "Setting";
       // 
       // BxSettingChange
       // 
@@ -1002,17 +1002,17 @@
       ((System.ComponentModel.ISupportInitialize)(this.GvSettings)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvSettings)).EndInit();
       this.PvSettings.ResumeLayout(false);
-      this.radPageViewPage1.ResumeLayout(false);
-      this.radPageViewPage1.PerformLayout();
+      this.PgSettingAdd.ResumeLayout(false);
+      this.PgSettingAdd.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingAdd)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.DxTypes)).EndInit();
-      this.radPageViewPage2.ResumeLayout(false);
-      this.radPageViewPage2.PerformLayout();
+      this.PgSettingRename.ResumeLayout(false);
+      this.PgSettingRename.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingRename)).EndInit();
-      this.radPageViewPage3.ResumeLayout(false);
-      this.radPageViewPage3.PerformLayout();
+      this.PgSettingDelete.ResumeLayout(false);
+      this.PgSettingDelete.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxSettingDelete)).EndInit();
-      this.PgSetting.ResumeLayout(false);
+      this.PgSettingChange.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingChange)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.PnEditSettings)).EndInit();
       this.PnEditSettings.ResumeLayout(false);
@@ -1072,9 +1072,9 @@
     private Telerik.WinControls.UI.RadImageButtonElement BxFolderSearchGotoNext;
     internal Telerik.WinControls.UI.RadGridView GvSettings;
     private Telerik.WinControls.UI.RadPageView PvSettings;
-    private Telerik.WinControls.UI.RadPageViewPage radPageViewPage1;
-    private Telerik.WinControls.UI.RadPageViewPage radPageViewPage2;
-    private Telerik.WinControls.UI.RadPageViewPage radPageViewPage3;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingAdd;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingRename;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingDelete;
     internal Telerik.WinControls.UI.RadDropDownList DxTypes;
     private Telerik.WinControls.UI.RadButtonTextBox TxSettingAdd;
     private Telerik.WinControls.UI.RadImageButtonElement BxSettingsAdd;
@@ -1089,7 +1089,7 @@
     private Telerik.WinControls.UI.RadPageViewPage PgFolder;
     private Telerik.WinControls.UI.RadPageViewPage PgFile;
     private Telerik.WinControls.UI.RadButton BxSettingSave;
-    private Telerik.WinControls.UI.RadPageViewPage PgSetting;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingChange;
     private Telerik.WinControls.UI.RadButton BxSettingChange;
     internal Telerik.WinControls.UI.RadToggleSwitch StxBoolean;
     private Telerik.WinControls.UI.RadPageViewPage PgEmpty;

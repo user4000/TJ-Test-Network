@@ -60,6 +60,8 @@ namespace TestNetwork
 
     public string SqlSettingRename { get; private set; } = string.Empty;
 
+    public string SqlSettingDelete { get; private set; } = string.Empty;
+
     public string SqlSettingCount { get; private set; } = string.Empty;
 
     public string SqlFolderCountByIdParent { get; private set; } = string.Empty;
@@ -138,6 +140,10 @@ namespace TestNetwork
       SqlSettingRename =
       $"UPDATE {TnSettings} SET {CnSettingsIdSetting}=@IdSettingNew " +
       $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSettingOld";
+
+      SqlSettingDelete =
+      $"DELETE FROM {TnSettings} " +
+      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
 
       SqlFolderCountByIdParent = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
@@ -321,7 +327,6 @@ namespace TestNetwork
         SettingUpdate(IdFolder, IdSetting, value);
     }
 
-
     public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Новая переменная создана: {IdSetting}");
@@ -356,12 +361,11 @@ namespace TestNetwork
       return code;
     }
 
-
     public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
     {
-      ReturnCode code = ReturnCodeFactory.Success($"Новое имя сохранено: {IdSettingNew}");
+      ReturnCode code = ReturnCodeFactory.Success($"Название переменной изменено");
       if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано новое название переменной");
-      
+
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
@@ -379,7 +383,16 @@ namespace TestNetwork
     public ReturnCode SettingDelete(int IdFolder, string IdSetting)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Переменная удалена: {IdSetting}");
-
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано название переменной");
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(SqlSettingCount);
+        if (count != 1) return ReturnCodeFactory.Error("Переменная не найдена");
+        count = command.ZzExecuteNonQuery(SqlSettingDelete);
+        if (count != 1) return ReturnCodeFactory.Error("Не удалось удалить переменную");
+      }
       return code;
     }
   }
