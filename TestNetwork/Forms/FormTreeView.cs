@@ -138,6 +138,8 @@ namespace TestNetwork
       BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
       BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
 
+      BxTest.Click += EventTest;
+
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
 
@@ -151,6 +153,12 @@ namespace TestNetwork
 
       SetNormalSizeOfPanelEditSettings();
       GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
+    }
+
+    private void EventTest(object sender, EventArgs e)
+    {
+      if (PvSettings.Height < 100) PvSettings.Height = 300;
+      else PvSettings.Height = 78;
     }
 
     private void ShowNotification(bool Success, string Message)
@@ -171,7 +179,8 @@ namespace TestNetwork
         }
         LxSettingMessage.Text = Message;
       }
-      PvSettings.SelectedPage = PgSettingMessage; PgSettingMessage.Select();
+      PvSettings.SelectedPage = PgSettingMessage;
+      PgSettingMessage.Select(); // <-- If we do not do that the row of the grid remains selected //
     }
 
     private async Task EventButtonSettingRename(object sender, EventArgs e)
