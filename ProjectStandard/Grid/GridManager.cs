@@ -197,7 +197,7 @@ namespace ProjectStandard
       if (list != null)
       {
         GridViewComboBoxColumn combobox = (dc as GridViewComboBoxColumn);
-        if (combobox == null) MessageBox.Show("Ошибка! Неправильно указан тип столбца грида - должен быть GridViewComboBoxColumn.");
+        if (combobox == null) MessageBox.Show($"Ошибка! Неправильно указан тип столбца {headerText} - должен быть GridViewComboBoxColumn.");
         combobox.DataSource = list;
         combobox.ValueMember = nameof(Model.Classificator.IdObject);
         combobox.DisplayMember = nameof(Model.Classificator.NameObject);
@@ -213,15 +213,18 @@ namespace ProjectStandard
       Grid.SortDescriptors.Add(GridSorting1);
     }
 
-    public T AddColumn<T>(string fieldName, string headerText, bool readOnly, DataTable table = null, string valueMember = "", string displayMember = "")
+    public T AddColumn<T>(string fieldName, string headerText, bool readOnly, Type type, int width, DataTable table = null, string valueMember = "", string displayMember = "")
       where T : GridViewDataColumn, new()
     {
       T dc = CreateColumn<T>(fieldName, headerText, readOnly, table, valueMember, displayMember);
       MGridViewTemplate.Columns.Add(dc);
+      dc.DataType = type;
+      dc.Width = width < 0 ? 0 : width;
+      dc.IsVisible = width < 0 ? false : true;
       return dc;
     }
 
-    public T AddColumn<T>(string fieldName, string headerText, bool readOnly, System.Type type, int width)
+    public T AddColumn<T>(string fieldName, string headerText, bool readOnly, Type type, int width = -1)
       where T : GridViewDataColumn, new()
     {
       T dc = CreateColumn<T>(fieldName, headerText, readOnly, null, string.Empty, string.Empty);
@@ -232,7 +235,7 @@ namespace ProjectStandard
       return dc;
     }
 
-    public T AddColumn<T>(BindingList<Model.SimpleEntity> list, string fieldName, string headerText, bool readOnly, System.Type type, int width)
+    public T AddColumn<T>(BindingList<Model.SimpleEntity> list, string fieldName, string headerText, bool readOnly, Type type, int width = -1)
        where T : GridViewDataColumn, new()
     {
       T dc = CreateColumnCombobox<T>(fieldName, headerText, readOnly, list);

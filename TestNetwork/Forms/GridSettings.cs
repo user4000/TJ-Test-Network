@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using ProjectStandard;
@@ -25,6 +26,8 @@ namespace TestNetwork
     internal string CvIdSetting { get; set; } = string.Empty;
 
     internal bool BxEventCellValueChanged { get; set; } = true;
+
+    internal string[] Password { get; } = { string.Empty, "* * *" };
 
     public override void SetDataViewControlProperties()
     {
@@ -66,21 +69,21 @@ namespace TestNetwork
     internal void CreateColumns()
     {
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdFolder), "IdFolder", true, typeof(int), -1);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdFolder), "IdFolder hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "setting", true, typeof(string), 200);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "setting", true, typeof(string), 300);
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType", true, typeof(int), -1);      
+      var CnSettingIdType = AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType hidden", true, typeof(int));      
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 100);
+      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 110);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 300);
+      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 500);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int), -1);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "hidden", true, typeof(string), -1) ;
+      var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "boolean value hidden", true, typeof(string)) ;
       //----------------------------------------------------------------------------------------------------------------------------------------
-
+   
       ExpressionFormattingObject obj = new ExpressionFormattingObject("Boolean_Value_False", $"{CnBooleanValue.Name} = '0'", false);
       obj.CellBackColor = Color.LightPink;
       CnSettingValue.ConditionalFormattingObjectList.Add(obj);
@@ -88,6 +91,14 @@ namespace TestNetwork
       obj = new ExpressionFormattingObject("Boolean_Value_True", $"{CnBooleanValue.Name} = '1'", false);
       obj.CellBackColor = Color.LightGreen;
       CnSettingValue.ConditionalFormattingObjectList.Add(obj);
+
+      obj = new ExpressionFormattingObject("Integer", $"{CnSettingIdType.Name} = {(int)(TypeSetting.Integer64)}", false);
+      obj.CellForeColor = Color.Blue;
+      CnSettingValue.ConditionalFormattingObjectList.Add(obj);
+
+      obj = new ExpressionFormattingObject("TypeName", "0 = 0", false);
+      obj.CellForeColor = Color.DarkGray;
+      CnSettingTypeName.ConditionalFormattingObjectList.Add(obj);
 
       //AddSorting(nameof(Setting.Rank));
     }
@@ -106,21 +117,38 @@ namespace TestNetwork
       }
     }
 
+    internal void HidePasswordValues()
+    {
+      for (int i = 0; i < ListDataSource.Count; i++)
+        if (ListDataSource[i].IdType == (int)TypeSetting.Password)
+          ListDataSource[i].SettingValue = Password[ Math.Sign( ListDataSource[i].SettingValue.Length ) ] ;
+    }
+
     internal void RefreshGrid(BindingList<Setting> list)
     {
       if ((list != null) && (list.Count > 0))
+      {
         ListDataSource = list;
+        HidePasswordValues();
+      }
       else
+      {
         ListDataSource = Empty;
+      }
       RefreshGrid();   
     }
 
     internal void RefreshGrid(List<Setting> list)
     {
       if ((list != null) && (list.Count > 0))
+      {
         ListDataSource = new BindingList<Setting>(list);
+        HidePasswordValues();
+      }
       else
+      {
         ListDataSource = Empty;
+      }
       RefreshGrid();     
     }
 

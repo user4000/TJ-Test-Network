@@ -14,7 +14,7 @@ using static TestNetwork.Program;
 
 namespace TestNetwork
 {
-  public class LocalDatabaseOfSettings
+  public class LocalDatabaseOfSettings // TODO: Ability to create a new database //
   {
     public IOutputMessage Debug { get; private set; } = null;
     public string TnFolders { get; } = "FOLDERS";
@@ -397,7 +397,6 @@ namespace TestNetwork
   }
 }
 
-
 /*
     public DataTable GetMsAccessDataTable(string PathToDatabase, string TableName)
     {
@@ -412,7 +411,6 @@ namespace TestNetwork
       }
       return results;
     }
-
 
     public DataTable GetSqliteDataTable(string PathToDatabase, string TableName)
     {
@@ -431,6 +429,5 @@ namespace TestNetwork
       foreach (DataColumn column in table.Columns) if (column.ColumnName == TableFoldersColumnIdParent) column.AllowDBNull = true;
       return table;
     }
-
 */
 
