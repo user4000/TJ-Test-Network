@@ -38,7 +38,6 @@ namespace TestNetwork
     private Size PanelEditSettingsNormalSize { get; set; } = new Size(0, 100);
 
     private int SearchIterator { get; set; } = 0;
-    //public bool FlagGridIsBeingRefreshed { get; private set; } = false;
 
     public FormTreeView()
     {
@@ -91,6 +90,7 @@ namespace TestNetwork
       BxSettingFileSelect.ShowBorder = false;
       BxSettingFolderSelect.ShowBorder = false;
       BxSettingDelete.ShowBorder = false;
+      BxSettingChange.Enabled = false;
 
       SetPropertiesDateTimePicker();
 
@@ -109,12 +109,14 @@ namespace TestNetwork
       PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
       PnEditSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      //PnSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      PanelEditSettingsVisible(false) ; 
+      PanelEditSettingsVisible(false);
       PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
+
+      PgSettingEmpty.Item.Visibility = ElementVisibility.Collapsed;
+      PgSettingMessage.Item.Visibility = ElementVisibility.Collapsed;
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
@@ -129,14 +131,12 @@ namespace TestNetwork
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
 
-      BxSettingChange.Click += EventButtonSettingChange; // Изменить значение переменной //
-      BxSettingChange.Enabled = false;
-      BxSettingCancel.Click += EventButtonSettingCancel; // Отменить Добавление/Изменение переменной //
-      BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s,e);
-      BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s,e); // Rename a setting //
-
-      BxSettingsAdd.Click += EventButtonSettingAdd;
-      BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e);
+      BxSettingsAdd.Click += EventButtonSettingAdd; // Open an editor to INSERT a new setting //
+      BxSettingChange.Click += EventButtonSettingChange; // Open an editor to UPDATE a new setting // //
+      BxSettingCancel.Click += EventButtonSettingCancel; // cancel INSERT or UPDATE //
+      BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e); // SAVE setting (INSERT or UPDATE) //
+      BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
+      BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
 
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
@@ -150,7 +150,28 @@ namespace TestNetwork
       ScSettings.SplitterMoved += EventScSettingsSplitterMoved;
 
       SetNormalSizeOfPanelEditSettings();
-      GvSettings.SelectionChanged += EventGridSelectionChanged;
+      GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
+    }
+
+    private void ShowNotification(bool Success, string Message)
+    {
+      if (Message.Length < 1)
+      {
+        PicSettingMessage.Image = null; LxSettingMessage.Text = string.Empty;
+      }
+      else
+      {
+        if (Success)
+        {
+          PicSettingMessage.Image = PicOk.Image; LxSettingMessage.ForeColor = Color.DarkGreen;
+        }
+        else
+        {
+          PicSettingMessage.Image = PicError.Image; LxSettingMessage.ForeColor = Color.DarkViolet;
+        }
+        LxSettingMessage.Text = Message;
+      }
+      PvSettings.SelectedPage = PgSettingMessage; PgSettingMessage.Select();
     }
 
     private async Task EventButtonSettingRename(object sender, EventArgs e)
@@ -185,19 +206,25 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        await RefreshGridSettingsAdvanced();
-        Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingRename).Offset(TxSettingRename.Width, -2 * TxSettingRename.Height).Ok();
-        PvSettings.Focus(); // <--- Если этого не сделать, то строка грида останется выделенной //
+        await RefreshGridSettingsAndClearSelection();
+        //Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingRename).Offset(TxSettingRename.Width, -2 * TxSettingRename.Height).Ok();
+        //SettingsToolbarSetEmptyPage();
       }
       else
       {
         Ms.Message(ErrorHeader, code.StringValue).Wire(TxSettingRename).Warning();
       }
+      ShowNotification(code.Success, code.StringValue);
+    }
+
+    private void SettingsToolbarSetEmptyPage()
+    {
+      PvSettings.SelectedPage = PgSettingEmpty;
+      try { PgSettingEmpty.Select(); } catch { } // <--- If we do not do that the row of the grid remains selected //
     }
 
     private async Task EventButtonSettingDelete(object sender, EventArgs e)
     {
-      // TODO: EventButtonSettingDelete
       const string ErrorHeader = "Ошибка при попытке удаления переменной";
       ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
       string NameSetting = CurrentIdSetting;
@@ -213,15 +240,15 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        await RefreshGridSettingsAdvanced();
-        Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingDelete).Offset(TxSettingDelete.Width, -2 * TxSettingDelete.Height).Ok();
-        PvSettings.Focus(); // <--- Если этого не сделать, то строка грида останется выделенной //
+        await RefreshGridSettingsAndClearSelection();
+        //Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingDelete).Offset(TxSettingDelete.Width, -2 * TxSettingDelete.Height).Ok();
+        //SettingsToolbarSetEmptyPage();
       }
       else
       {
         Ms.Message(ErrorHeader, code.StringValue).Wire(TxSettingDelete).Warning();
       }
-
+      ShowNotification(code.Success, code.StringValue);
     }
 
     private void EventButtonSettingFolderSelect(object sender, EventArgs e)
@@ -286,7 +313,7 @@ namespace TestNetwork
     }
 
     private void SetNormalSizeOfPanelEditSettings()
-    {    
+    {
       PnEditSettings.SizeInfo.AbsoluteSize = PanelEditSettingsNormalSize;
     }
 
@@ -307,20 +334,22 @@ namespace TestNetwork
       TxSettingDelete.Text = CurrentIdSetting;
       if (PgSettingDelete.Enabled != OneRowSelected) PgSettingDelete.Enabled = OneRowSelected;
       if (PgSettingRename.Enabled != OneRowSelected) PgSettingRename.Enabled = OneRowSelected;
+
+      if ((OneRowSelected) && (PvSettings.SelectedPage == PgSettingMessage))
+      {
+        PvSettings.SelectedPage = PgSettingEmpty;
+      }
     }
 
     private async Task RefreshGridSettings() => VxGridSettings.RefreshGrid(await DbSettings.GetSettings(CurrentIdFolder));
 
-    private async Task RefreshGridSettingsAdvanced() // TODO: test it
+    private async Task RefreshGridSettingsAndClearSelection()
     {
-      //FlagGridIsBeingRefreshed = true;
       await RefreshGridSettings();
       if (PvSettings.Visible == false) PvSettings.Visible = true;
       EventSettingClearSelection();
       VxGridSettings.Grid.HideSelection = true;
       PanelEditSettingsVisible(false);
-      
-      //FlagGridIsBeingRefreshed = false;
     }
 
     private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
@@ -340,15 +369,14 @@ namespace TestNetwork
 
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
       //---- Event ---- Get List of Settings of current folder ----//
-      await RefreshGridSettingsAdvanced();
+      await RefreshGridSettingsAndClearSelection();
 
       TvFolders.HideSelection = false;
     }
 
     private void EventGridSelectionChanged(object sender, EventArgs e)
     {
-      //if (FlagGridIsBeingRefreshed) return;
-      CurrentIdSetting = VxGridSettings.GetIdSetting();   
+      CurrentIdSetting = VxGridSettings.GetIdSetting();
       if (VxGridSettings.Grid.HideSelection) VxGridSettings.Grid.HideSelection = false;
       CurrentSetting = VxGridSettings.GetSetting(CurrentIdSetting);
       EventSettingOneRowSelected();
@@ -362,7 +390,7 @@ namespace TestNetwork
 
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
-      BxSettingChange.Enabled = false; 
+      BxSettingChange.Enabled = false;
       // TODO: do it - we want to update a value of a setting //
       //Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
       PanelEditSettingsVisible(true);
@@ -722,7 +750,7 @@ namespace TestNetwork
         Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
         return;
       }
-      PanelEditSettingsVisible(true); 
+      PanelEditSettingsVisible(true);
       PvEditor.Height = 100; // TODO: refactor this
     }
 
@@ -751,7 +779,7 @@ namespace TestNetwork
         case TypeSetting.Integer64:
           PvEditor.SelectedPage = PgInteger;
           StxLongInteger.Text = StxLongInteger.Text.Trim();
-          if (Manager.CvInt64.IsValid(StxLongInteger.Text)==false)
+          if (Manager.CvInt64.IsValid(StxLongInteger.Text) == false)
           {
             Ms.Message("Ошибка", "Значение не является целым числом").Control(DxTypes).Warning(); return;
           }
@@ -786,14 +814,15 @@ namespace TestNetwork
       if (code.Success)
       {
         TxSettingAdd.Clear();
-        Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
-        await RefreshGridSettingsAdvanced(); // We created a new setting and refreshed the grid //
+        //Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
+        await RefreshGridSettingsAndClearSelection(); // We created a new setting and refreshed the grid //
         // TODO: select a new row
       }
       else
       {
         Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
       }
+      ShowNotification(code.Success, code.StringValue);
       PanelEditSettingsVisible(false);
     }
 

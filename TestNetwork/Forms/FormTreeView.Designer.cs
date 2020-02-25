@@ -30,7 +30,7 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
@@ -95,6 +95,12 @@
       this.PnSettingSave = new Telerik.WinControls.UI.RadPanel();
       this.BxSettingCancel = new Telerik.WinControls.UI.RadButton();
       this.BxSettingSave = new Telerik.WinControls.UI.RadButton();
+      this.PgSettingEmpty = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PgSettingMessage = new Telerik.WinControls.UI.RadPageViewPage();
+      this.PicOk = new System.Windows.Forms.PictureBox();
+      this.PicError = new System.Windows.Forms.PictureBox();
+      this.PicSettingMessage = new System.Windows.Forms.PictureBox();
+      this.LxSettingMessage = new Telerik.WinControls.UI.RadLabel();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -155,6 +161,12 @@
       this.PnSettingSave.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingCancel)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).BeginInit();
+      this.PgSettingEmpty.SuspendLayout();
+      this.PgSettingMessage.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.PicOk)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PicError)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PicSettingMessage)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.LxSettingMessage)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -214,7 +226,7 @@
       this.PvFolders.SelectedPage = this.PgAdd;
       this.PvFolders.Size = new System.Drawing.Size(416, 78);
       this.PvFolders.TabIndex = 0;
-      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
+      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       // 
       // PgAdd
@@ -364,19 +376,21 @@
       // TxDatabaseFile
       // 
       this.TxDatabaseFile.AutoScroll = true;
+      this.TxDatabaseFile.AutoSize = false;
       this.TxDatabaseFile.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.TxDatabaseFile.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxSelectFile});
-      this.TxDatabaseFile.Location = new System.Drawing.Point(105, 11);
+      this.TxDatabaseFile.Location = new System.Drawing.Point(108, 9);
       this.TxDatabaseFile.MaxLength = 500;
       this.TxDatabaseFile.Name = "TxDatabaseFile";
       this.TxDatabaseFile.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxOpenFile});
       this.TxDatabaseFile.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.TxDatabaseFile.Size = new System.Drawing.Size(394, 23);
+      this.TxDatabaseFile.Size = new System.Drawing.Size(394, 25);
       this.TxDatabaseFile.TabIndex = 5;
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).AutoSizeMode = Telerik.WinControls.RadAutoSizeMode.FitToAvailableSize;
       // 
       // BxSelectFile
       // 
@@ -410,7 +424,7 @@
       // radLabel1
       // 
       this.radLabel1.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.radLabel1.Location = new System.Drawing.Point(6, 13);
+      this.radLabel1.Location = new System.Drawing.Point(6, 12);
       this.radLabel1.Name = "radLabel1";
       this.radLabel1.Size = new System.Drawing.Size(95, 19);
       this.radLabel1.TabIndex = 6;
@@ -518,7 +532,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition2;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -532,16 +546,18 @@
       this.PvSettings.Controls.Add(this.PgSettingRename);
       this.PvSettings.Controls.Add(this.PgSettingDelete);
       this.PvSettings.Controls.Add(this.PgSettingChange);
+      this.PvSettings.Controls.Add(this.PgSettingEmpty);
+      this.PvSettings.Controls.Add(this.PgSettingMessage);
       this.PvSettings.Dock = System.Windows.Forms.DockStyle.Top;
       this.PvSettings.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.PvSettings.ItemSize = new System.Drawing.Size(70, 27);
       this.PvSettings.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvSettings.Location = new System.Drawing.Point(0, 0);
       this.PvSettings.Name = "PvSettings";
-      this.PvSettings.SelectedPage = this.PgSettingChange;
+      this.PvSettings.SelectedPage = this.PgSettingEmpty;
       this.PvSettings.Size = new System.Drawing.Size(672, 78);
       this.PvSettings.TabIndex = 1;
-      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvSettings.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.ItemList;
+      ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvSettings.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvSettings.GetChildAt(0))).ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       // 
       // PgSettingAdd
@@ -955,6 +971,70 @@
       this.BxSettingSave.TabIndex = 0;
       this.BxSettingSave.Text = "Save changes";
       // 
+      // PgSettingEmpty
+      // 
+      this.PgSettingEmpty.Controls.Add(this.PicError);
+      this.PgSettingEmpty.Controls.Add(this.PicOk);
+      this.PgSettingEmpty.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingEmpty.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingEmpty.Name = "PgSettingEmpty";
+      this.PgSettingEmpty.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingEmpty.Text = "Empty";
+      // 
+      // PgSettingMessage
+      // 
+      this.PgSettingMessage.Controls.Add(this.LxSettingMessage);
+      this.PgSettingMessage.Controls.Add(this.PicSettingMessage);
+      this.PgSettingMessage.ItemSize = new System.Drawing.SizeF(70F, 27F);
+      this.PgSettingMessage.Location = new System.Drawing.Point(10, 36);
+      this.PgSettingMessage.Name = "PgSettingMessage";
+      this.PgSettingMessage.Size = new System.Drawing.Size(651, 31);
+      this.PgSettingMessage.Text = "Message";
+      // 
+      // PicOk
+      // 
+      this.PicOk.Dock = System.Windows.Forms.DockStyle.Left;
+      this.PicOk.Image = ((System.Drawing.Image)(resources.GetObject("PicOk.Image")));
+      this.PicOk.Location = new System.Drawing.Point(0, 0);
+      this.PicOk.Name = "PicOk";
+      this.PicOk.Size = new System.Drawing.Size(31, 31);
+      this.PicOk.TabIndex = 0;
+      this.PicOk.TabStop = false;
+      this.PicOk.Visible = false;
+      // 
+      // PicError
+      // 
+      this.PicError.Dock = System.Windows.Forms.DockStyle.Left;
+      this.PicError.Image = ((System.Drawing.Image)(resources.GetObject("PicError.Image")));
+      this.PicError.Location = new System.Drawing.Point(31, 0);
+      this.PicError.Name = "PicError";
+      this.PicError.Size = new System.Drawing.Size(31, 31);
+      this.PicError.TabIndex = 1;
+      this.PicError.TabStop = false;
+      this.PicError.Visible = false;
+      // 
+      // PicSettingMessage
+      // 
+      this.PicSettingMessage.Dock = System.Windows.Forms.DockStyle.Left;
+      this.PicSettingMessage.Location = new System.Drawing.Point(0, 0);
+      this.PicSettingMessage.Name = "PicSettingMessage";
+      this.PicSettingMessage.Size = new System.Drawing.Size(31, 31);
+      this.PicSettingMessage.TabIndex = 1;
+      this.PicSettingMessage.TabStop = false;
+      // 
+      // LxSettingMessage
+      // 
+      this.LxSettingMessage.AutoSize = false;
+      this.LxSettingMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.LxSettingMessage.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.LxSettingMessage.ForeColor = System.Drawing.Color.Black;
+      this.LxSettingMessage.Location = new System.Drawing.Point(31, 0);
+      this.LxSettingMessage.Name = "LxSettingMessage";
+      this.LxSettingMessage.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+      this.LxSettingMessage.Size = new System.Drawing.Size(620, 31);
+      this.LxSettingMessage.TabIndex = 2;
+      this.LxSettingMessage.Text = "Настройка успешно создана";
+      // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1036,6 +1116,12 @@
       this.PnSettingSave.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingCancel)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxSettingSave)).EndInit();
+      this.PgSettingEmpty.ResumeLayout(false);
+      this.PgSettingMessage.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.PicOk)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PicError)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.PicSettingMessage)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.LxSettingMessage)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -1106,5 +1192,11 @@
     internal Telerik.WinControls.UI.RadPageView PvEditor;
     private Telerik.WinControls.UI.RadPanel PnSettingSave;
     internal Telerik.WinControls.UI.RadImageButtonElement BxSettingDelete;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingEmpty;
+    private Telerik.WinControls.UI.RadPageViewPage PgSettingMessage;
+    private System.Windows.Forms.PictureBox PicError;
+    private System.Windows.Forms.PictureBox PicOk;
+    private Telerik.WinControls.UI.RadLabel LxSettingMessage;
+    private System.Windows.Forms.PictureBox PicSettingMessage;
   }
 }

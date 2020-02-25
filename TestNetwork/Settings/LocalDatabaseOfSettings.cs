@@ -363,7 +363,7 @@ namespace TestNetwork
 
     public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
     {
-      ReturnCode code = ReturnCodeFactory.Success($"Название переменной изменено");
+      ReturnCode code = ReturnCodeFactory.Success($"Название изменено: {IdSettingNew}");
       if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error("Не указано новое название переменной");
 
       int count = 0;
@@ -373,7 +373,6 @@ namespace TestNetwork
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSettingNew).ZzGetScalarInteger(SqlSettingCount);
         if (count > 0) return ReturnCodeFactory.Error("Переменная с таким именем уже существует");
         command.Parameters.Clear();
-
         count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSettingOld", IdSettingOld).ZzAdd("@IdSettingNew", IdSettingNew).ZzExecuteNonQuery(SqlSettingRename);
         if (count != 1) return ReturnCodeFactory.Error("Не удалось изменить имя переменной");
       }
