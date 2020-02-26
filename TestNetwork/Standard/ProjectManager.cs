@@ -16,6 +16,14 @@ namespace TestNetwork
 
     public UiControlManager UiControl { get; } = new UiControlManager();
 
+    private FormTreeView FxTreeview { get; set; } = null;
+
+    internal void Init(FormTreeView form)
+    {
+      FxTreeview = form;
+      UiControl.Init(form);
+    }
+
     public void OutputMessage(string message, string header = "")
     {
       Ms.Message(message, header).NoAlert().Debug();

@@ -30,12 +30,12 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
       this.PgAdd = new Telerik.WinControls.UI.RadPageViewPage();
-      this.TxFolderName = new Telerik.WinControls.UI.RadButtonTextBox();
+      this.TxFolderAdd = new Telerik.WinControls.UI.RadButtonTextBox();
       this.BxFolderAdd = new Telerik.WinControls.UI.RadImageButtonElement();
       this.PgRename = new Telerik.WinControls.UI.RadPageViewPage();
       this.TxFolderRename = new Telerik.WinControls.UI.RadButtonTextBox();
@@ -108,7 +108,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
       this.PgAdd.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.TxFolderAdd)).BeginInit();
       this.PgRename.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).BeginInit();
       this.PgDelete.SuspendLayout();
@@ -230,7 +230,7 @@
       this.PvFolders.ItemSizeMode = ((Telerik.WinControls.UI.PageViewItemSizeMode)((Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth | Telerik.WinControls.UI.PageViewItemSizeMode.EqualHeight)));
       this.PvFolders.Location = new System.Drawing.Point(0, 0);
       this.PvFolders.Name = "PvFolders";
-      this.PvFolders.SelectedPage = this.PgAdd;
+      this.PvFolders.SelectedPage = this.PgRename;
       this.PvFolders.Size = new System.Drawing.Size(350, 78);
       this.PvFolders.TabIndex = 0;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
@@ -238,7 +238,7 @@
       // 
       // PgAdd
       // 
-      this.PgAdd.Controls.Add(this.TxFolderName);
+      this.PgAdd.Controls.Add(this.TxFolderAdd);
       this.PgAdd.ItemSize = new System.Drawing.SizeF(70F, 27F);
       this.PgAdd.Location = new System.Drawing.Point(10, 36);
       this.PgAdd.Name = "PgAdd";
@@ -249,14 +249,14 @@
       // 
       // TxFolderName
       // 
-      this.TxFolderName.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.TxFolderName.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.TxFolderName.Location = new System.Drawing.Point(5, 5);
-      this.TxFolderName.Name = "TxFolderName";
-      this.TxFolderName.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+      this.TxFolderAdd.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.TxFolderAdd.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxFolderAdd.Location = new System.Drawing.Point(5, 5);
+      this.TxFolderAdd.Name = "TxFolderName";
+      this.TxFolderAdd.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxFolderAdd});
-      this.TxFolderName.Size = new System.Drawing.Size(319, 21);
-      this.TxFolderName.TabIndex = 5;
+      this.TxFolderAdd.Size = new System.Drawing.Size(319, 21);
+      this.TxFolderAdd.TabIndex = 5;
       // 
       // BxFolderAdd
       // 
@@ -271,22 +271,22 @@
       // 
       this.PgRename.Controls.Add(this.TxFolderRename);
       this.PgRename.ItemSize = new System.Drawing.SizeF(70F, 27F);
-      this.PgRename.Location = new System.Drawing.Point(10, 34);
+      this.PgRename.Location = new System.Drawing.Point(10, 36);
       this.PgRename.Name = "PgRename";
       this.PgRename.Padding = new System.Windows.Forms.Padding(5);
-      this.PgRename.Size = new System.Drawing.Size(395, 33);
+      this.PgRename.Size = new System.Drawing.Size(329, 31);
       this.PgRename.Text = "Rename";
       this.PgRename.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // TxFolderRename
+      // TxFolderAdd
       // 
       this.TxFolderRename.Dock = System.Windows.Forms.DockStyle.Fill;
       this.TxFolderRename.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.TxFolderRename.Location = new System.Drawing.Point(5, 5);
-      this.TxFolderRename.Name = "TxFolderRename";
+      this.TxFolderRename.Name = "TxFolderAdd";
       this.TxFolderRename.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxFolderRename});
-      this.TxFolderRename.Size = new System.Drawing.Size(385, 23);
+      this.TxFolderRename.Size = new System.Drawing.Size(319, 21);
       this.TxFolderRename.TabIndex = 6;
       // 
       // BxFolderRename
@@ -539,7 +539,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition2;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -1081,7 +1081,7 @@
       this.PvFolders.ResumeLayout(false);
       this.PgAdd.ResumeLayout(false);
       this.PgAdd.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.TxFolderName)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.TxFolderAdd)).EndInit();
       this.PgRename.ResumeLayout(false);
       this.PgRename.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxFolderRename)).EndInit();
@@ -1163,7 +1163,7 @@
     public Telerik.WinControls.UI.RadTreeView TvFolders;
     public System.Windows.Forms.ImageList ImageListFolders;
     internal Telerik.WinControls.UI.RadOpenFileDialog DialogOpenFile;
-    private Telerik.WinControls.UI.RadButtonTextBox TxFolderName;
+    private Telerik.WinControls.UI.RadButtonTextBox TxFolderAdd;
     private Telerik.WinControls.UI.RadImageButtonElement BxFolderAdd;
     private Telerik.WinControls.UI.RadButtonTextBox TxDatabaseFile;
     private Telerik.WinControls.UI.RadImageButtonElement BxSelectFile;

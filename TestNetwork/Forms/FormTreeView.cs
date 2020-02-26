@@ -45,34 +45,9 @@ namespace TestNetwork
       TvManager = TreeviewManager.Create(this.TvFolders, this.ImageListFolders, Program.ApplicationSettings.TreeViewFont);
     }
 
-    private void ResetView()
+    public void EventStartWork()
     {
-      ResetDataSourceForTreeview();
-      VxGridSettings.ResetView();
-      CurrentIdFolder = -1;
-      NameOfSelectedNode = string.Empty;
-      CurrentIdSetting = string.Empty;
-      CurrentSetting = null;
-      SearchResult = null;
-      SearchIterator = 0;
-      PvSettings.Visible = false;
-    }
-
-    private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
-
-    private void SetDatabaseFile(string PathToDatabaseFile)
-    {
-      ResetView();
-      TxDatabaseFile.Text = PathToDatabaseFile;
-      DbSettings.SavePathToDatabase(PathToDatabaseFile);
-      TxDatabaseFile.SelectionStart = PathToDatabaseFile.Length;
-    }
-
-    private void SetPropertiesDateTimePicker()
-    {
-      StxDatetime.DateTimePickerElement.ShowTimePicker = true;
-      StxDatetime.Format = DateTimePickerFormat.Custom;
-      StxDatetime.CustomFormat = Manager.DatetimeFormat;
+      SetProperties(); SetEvents();
     }
 
     private void SetProperties()
@@ -91,6 +66,8 @@ namespace TestNetwork
       BxSettingFolderSelect.ShowBorder = false;
       BxSettingDelete.ShowBorder = false;
       BxSettingChange.Enabled = false;
+      BxSettingSave.Enabled = false;
+      BxSettingCancel.Enabled = false;
 
       SetPropertiesDateTimePicker();
 
@@ -134,6 +111,7 @@ namespace TestNetwork
 
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
+      Manager.Init(this);
     }
 
     private void SetEvents()
@@ -163,8 +141,6 @@ namespace TestNetwork
       PvFolders.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       
-
-
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
 
@@ -178,6 +154,36 @@ namespace TestNetwork
 
       SetNormalSizeOfPanelEditSettings();
       GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
+    }
+
+    private void ResetView()
+    {
+      ResetDataSourceForTreeview();
+      VxGridSettings.ResetView();
+      CurrentIdFolder = -1;
+      NameOfSelectedNode = string.Empty;
+      CurrentIdSetting = string.Empty;
+      CurrentSetting = null;
+      SearchResult = null;
+      SearchIterator = 0;
+      PvSettings.Visible = false;
+    }
+
+    private void ResetDataSourceForTreeview() => TvFolders.DataSource = null;
+
+    private void SetDatabaseFile(string PathToDatabaseFile)
+    {
+      ResetView();
+      TxDatabaseFile.Text = PathToDatabaseFile;
+      DbSettings.SavePathToDatabase(PathToDatabaseFile);
+      TxDatabaseFile.SelectionStart = PathToDatabaseFile.Length;
+    }
+
+    private void SetPropertiesDateTimePicker()
+    {
+      StxDatetime.DateTimePickerElement.ShowTimePicker = true;
+      StxDatetime.Format = DateTimePickerFormat.Custom;
+      StxDatetime.CustomFormat = Manager.DatetimeFormat;
     }
 
     private void EventForAllPageViewSelectedPageChanging(object sender, RadPageViewCancelEventArgs e)
@@ -337,11 +343,6 @@ namespace TestNetwork
       return TypeSettingConverter.FromInteger(integerValue);
     }
 
-    public void EventStartWork()
-    {
-      SetProperties(); SetEvents();
-    }
-
     private void EventScMainSplitterMoved(object sender, SplitterEventArgs e)
     {
       if (PnTreeview.SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
@@ -440,19 +441,33 @@ namespace TestNetwork
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
       BxSettingChange.Enabled = false;
+      BxSettingSave.Enabled = true;
+      BxSettingCancel.Enabled = true;
       Manager.UiControl.AllowChangeSelectedItem(false);
-
-
+      TxDatabaseFile.Enabled = false;
+      TxFolderDelete.Enabled = false;
+      TxFolderSearch.Enabled = false;
+      TxFolderRename.Enabled = false;
+      TxFolderAdd.Enabled = false;
+      
       if (PvEditor.Parent != PnSettingChangeTool) PvEditor.Parent = PnSettingChangeTool;
       await Task.Delay(100);
       PanelSettingsChangeSizeBySettingType((TypeSetting)CurrentSetting.IdType);
     }
 
-    private void EventButtonSettingCancel(object sender, EventArgs e)
+    private void EventButtonSettingCancel(object sender, EventArgs e) => EventButtonSettingCancel();
+ 
+    private void EventButtonSettingCancel()
     {
       BxSettingChange.Enabled = true;
+      BxSettingSave.Enabled = false;
+      BxSettingCancel.Enabled = false;
       Manager.UiControl.AllowChangeSelectedItem(true);
-
+      TxDatabaseFile.Enabled = true;
+      TxFolderDelete.Enabled = true;
+      TxFolderSearch.Enabled = true;
+      TxFolderRename.Enabled = true;
+      TxFolderAdd.Enabled = true;
       PanelSettingsChangeSizeBySettingType(TypeSetting.Unknown);
     }
 
@@ -477,7 +492,7 @@ namespace TestNetwork
 
       if (parent == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderName).Create();
+        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderAdd).Create();
         return;
       }
 
@@ -487,23 +502,23 @@ namespace TestNetwork
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderName).Create();
+        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderAdd).Create();
         return;
       }
 
-      string NameFolderDraft = TxFolderName.Text.Trim();
+      string NameFolderDraft = TxFolderAdd.Text.Trim();
       string NameFolder = Manager.RemoveSpecialCharacters(NameFolderDraft);
-      TxFolderName.Text = NameFolder;
+      TxFolderAdd.Text = NameFolder;
 
       if (NameFolder.Length < 1)
         if (NameFolderDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderName).Create();
+          Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderAdd).Create();
           return;
         }
         else
         {
-          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxFolderName).Create();
+          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxFolderAdd).Create();
           return;
         }
 
@@ -516,7 +531,7 @@ namespace TestNetwork
       catch (Exception ex)
       {
         Error = true;
-        Ms.Error(ErrorHeader, ex).Control(TxFolderName).Create();
+        Ms.Error(ErrorHeader, ex).Control(TxFolderAdd).Create();
         IdNewFolder = -1;
       }
 
@@ -524,25 +539,25 @@ namespace TestNetwork
 
       if (code.Error)
       {
-        if (Error == false) Ms.Message(ErrorHeader, code.StringValue, TxFolderName).Fail();
+        if (Error == false) Ms.Message(ErrorHeader, code.StringValue, TxFolderAdd).Fail();
       }
 
       if (IdNewFolder <= 0)
       {
-        if ((Error == false) && (code.Success)) Ms.Message(ErrorHeader, code.StringValue, TxFolderName).Fail();
+        if ((Error == false) && (code.Success)) Ms.Message(ErrorHeader, code.StringValue, TxFolderAdd).Fail();
       }
       else // Give out SUCCESS MESSAGE //
       {
         if (NameFolderDraft.Length == NameFolder.Length)
         {
-          Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderName)
-            .Offset(new Point(TxFolderName.Width, -5 * TxFolderName.Height))
+          Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderAdd)
+            .Offset(new Point(TxFolderAdd.Width, -5 * TxFolderAdd.Height))
             .Create();
         }
         else
         {
           Ms.Message("Некоторые указанные вами символы\nбыли исключены из названия", code.StringValue)
-            .Control(TxFolderName).Offset(new Point(200, 0)).Delay(7)
+            .Control(TxFolderAdd).Offset(new Point(200, 0)).Delay(7)
             .Info();
           Ms.Message("В названии папки были указаны запрещённые символы:", NameFolderDraft).NoAlert().Warning();
           Ms.Message("Название было исправлено:", NameFolder).NoAlert().Warning();
@@ -554,14 +569,14 @@ namespace TestNetwork
         if (parent == null)
         {
           Ms.Message(MsgType.Error, "Ошибка!", $"Метод TvFolders.GetNodeByPath(ParentFullPath) вернул значение null. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
-          Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderName).NoTable().Create();
+          Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderAdd).NoTable().Create();
         }
         else
         {
           TvManager.TryToSelectFolderAfterCreating(parent, NameFolder);
         }
       }
-      TxFolderName.Clear();
+      TxFolderAdd.Clear();
     }
 
     private void EventButtonRenameFolder(object sender, EventArgs e)
@@ -677,6 +692,13 @@ namespace TestNetwork
       string NameFolder = TxFolderSearch.Text;
       if (SearchResult?.Length > 0) ClearArraySearchResult();
 
+      Point offset = new Point(PvFolders.Width, -1 * PvFolders.Height);
+
+      if (NameFolder.Length < 1)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Не заданы символы для поиска", 250, PvFolders).Offset(offset).NoTable().Create(); return;        
+      }
+
       if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.StartWith)
         SearchResult = TvFolders.FindNodes(x => x.Name.StartsWith(NameFolder));
 
@@ -685,9 +707,7 @@ namespace TestNetwork
 
       if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.WholeWord)
         SearchResult = TvFolders.FindNodes(x => x.Name == NameFolder);
-
-      Point offset = new Point(PvFolders.Width, -1 * PvFolders.Height);
-
+   
       SearchIterator = 0;
       if (SearchResult.Length > 0) SelectOneNode(SearchResult[0]);
 
@@ -911,11 +931,9 @@ namespace TestNetwork
       PvSettings.Height = height;
     }
 
-
     private void EventSettingTypeChanged(object sender, EventArgs e)
     {
       PanelSettingsChangeSizeBySettingType(GetCurrentType());
-      // Ms.Message("aaa", $"{type.ToString()}").Pos(MsgPos.TopCenter).Debug();
     }
 
     public void EventEndWork()

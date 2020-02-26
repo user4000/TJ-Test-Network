@@ -82,7 +82,6 @@ namespace TestNetwork
 
     public string SqlFolderDelete { get; private set; } = string.Empty;
 
-
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
@@ -105,15 +104,18 @@ namespace TestNetwork
       return table;
     }
 
-    private bool FlagInitVariables { get; set; } = false;
+    private bool FlagInitVariablesHasBeenAlreadyExecuted { get; set; } = false;
 
     public void InitVariables(IOutputMessage OutputMessageDevice)
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
 
-      if (FlagInitVariables) return;
-      FlagInitVariables = true;
+      if (FlagInitVariablesHasBeenAlreadyExecuted) return;
+
+      // This block will be executed only ONE TIME //
+
+      FlagInitVariablesHasBeenAlreadyExecuted = true;
 
       Debug = OutputMessageDevice;
 
@@ -157,7 +159,6 @@ namespace TestNetwork
       SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
       SqlCountChildSettings = $"SELECT COUNT(*) FROM SETTINGS WHERE {CnFoldersIdFolder} = @IdFolder";
       SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
-
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
