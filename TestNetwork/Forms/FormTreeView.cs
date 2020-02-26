@@ -109,6 +109,8 @@ namespace TestNetwork
       PnSettingChangeTool.Padding = new Padding(0, 0, 0, 0);
       PnSettingChangeTool.Margin = new Padding(0, 0, 0, 0);
 
+      StxDatetime.Value = DateTime.Today;
+
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
       Manager.Init(this);
     }
@@ -321,7 +323,7 @@ namespace TestNetwork
     private void SettingEditorResetAllInputControls()
     {
       StxBoolean.Value = false;
-      StxDatetime.Text = string.Empty;
+      StxDatetime.Value = DateTime.Today;
       StxFile.Clear();
       StxFolder.Clear();
       StxLongInteger.Clear();
@@ -413,8 +415,40 @@ namespace TestNetwork
       EventSettingOneRowSelected();
     }
 
+    private void PutValueOfCurrentSettingToInputControl()
+    {
+      switch ((TypeSetting)CurrentSetting.IdType)
+      {
+        case TypeSetting.Boolean:
+          StxBoolean.Value = Manager.CvBoolean.FromString(CurrentSetting.SettingValue);
+          break;
+        case TypeSetting.Datetime:
+          StxDatetime.Value = Manager.CvDatetime.FromString(CurrentSetting.SettingValue);
+          break;
+        case TypeSetting.Integer64:
+          StxLongInteger.Text = Manager.CvInt64.FromString(CurrentSetting.SettingValue).ToString();
+          break;
+        case TypeSetting.Text:
+          StxText.Text = CurrentSetting.SettingValue;
+          break;
+        case TypeSetting.Password:
+          StxPassword.Text = string.Empty;
+          break;
+        case TypeSetting.File:
+          StxFile.Text = string.Empty;
+          break;
+        case TypeSetting.Folder:
+          StxFolder.Text = string.Empty;
+          break;
+        default:
+          break;
+      }
+    }
+
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
+      PutValueOfCurrentSettingToInputControl();
+
       BxSettingChange.Enabled = false;
       BxSettingSave.Enabled = true;
       BxSettingCancel.Enabled = true;
@@ -426,7 +460,7 @@ namespace TestNetwork
       TxFolderAdd.Enabled = false;
       
       if (PvEditor.Parent != PnSettingChangeTool) PvEditor.Parent = PnSettingChangeTool;
-      await Task.Delay(100);
+      await Task.Delay(100);       
       PanelSettingsChangeSizeBySettingType((TypeSetting)CurrentSetting.IdType);
     }
 
@@ -822,7 +856,6 @@ namespace TestNetwork
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
           code = DbSettings.SaveSettingDatetime(AddNewSetting, CurrentIdFolder, IdSetting, StxDatetime.Value);
-          //StxDatetime.Text = string.Empty;
           break;
         case TypeSetting.Integer64:
           PvEditor.SelectedPage = PgInteger;
@@ -885,7 +918,6 @@ namespace TestNetwork
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
-          StxDatetime.Value = DateTime.Today;
           break;
         case TypeSetting.Integer64:
           PvEditor.SelectedPage = PgInteger;
