@@ -100,6 +100,7 @@
     <Compile Include="Settings\CxApplicationSettings.cs" />
     <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
     <Compile Include="Settings\XxSQLiteCommand.cs" />
+    <Compile Include="Standard\UiControlManager.cs" />
     <EmbeddedResource Include="Forms\FormServer.resx">
       <DependentUpon>FormServer.cs</DependentUpon>
     </EmbeddedResource>

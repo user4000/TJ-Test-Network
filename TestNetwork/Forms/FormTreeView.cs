@@ -110,9 +110,12 @@ namespace TestNetwork
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
       PnEditSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PanelEditSettingsVisible(false);
-      PnSettingSave.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
-      PnSettingAdd.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+      
+      PnSettingAddTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingAddTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+      PnSettingChangeTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+      PnSettingAddTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+      PnSettingChangeTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
@@ -126,8 +129,9 @@ namespace TestNetwork
       PnSettingAddTool.Padding = new Padding(0, 0, 0, 0);
       PnSettingAddTool.Margin = new Padding(0, 0, 0, 0);
 
-      //PgSettingAdd.Padding = new Padding(5);
-      //PgSettingAdd.Margin = new Padding(3);
+      PnSettingChangeTool.Padding = new Padding(0, 0, 0, 0);
+      PnSettingChangeTool.Margin = new Padding(0, 0, 0, 0);
+
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
     }
@@ -149,11 +153,17 @@ namespace TestNetwork
       //BxSettingChange.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
       //BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e); 
 
-      BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
-      BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
-      BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
+      this.BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
+      this.BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
+      this.BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
+      this.BxSettingChange.Click += EventButtonSettingChange; // Change value of setting // it is async method and await works inside it //
+      this.BxSettingCancel.Click += EventButtonSettingCancel; // Cancel changing setting //
 
-      //BxTest.Click += EventTest;
+      PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
+      PvFolders.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
+      PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
+      
+
 
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
@@ -168,6 +178,11 @@ namespace TestNetwork
 
       SetNormalSizeOfPanelEditSettings();
       GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
+    }
+
+    private void EventForAllPageViewSelectedPageChanging(object sender, RadPageViewCancelEventArgs e)
+    {
+      e.Cancel = !Manager.UiControl.FlagAllowChangeSelectedItem;
     }
 
     private void EventTest(object sender, EventArgs e)
@@ -291,10 +306,14 @@ namespace TestNetwork
 
     private void EventSettingsSelectedPageChanged(object sender, EventArgs e)
     {
-      //if (PvSettings.SelectedPage!=PgAdd)
+      if ((PvSettings.SelectedPage == PgSettingAdd) && (PvEditor.Parent != PnSettingAddTool))
+      {
+        PanelSettingsChangeSizeBySettingType(TypeSetting.Unknown);
+        PvEditor.Parent = PnSettingAddTool;
+      }
       DxTypes.SelectedIndex = (int)(TypeSetting.Unknown); // Unknown //
       PanelEditSettingsVisible(false);
-      SettingEditorResetAllInputControls();
+      SettingEditorResetAllInputControls();      
     }
 
     private void SettingEditorResetAllInputControls()
@@ -421,20 +440,20 @@ namespace TestNetwork
     private async void EventButtonSettingChange(object sender, EventArgs e)
     {
       BxSettingChange.Enabled = false;
-      // TODO: do it - we want to update a value of a setting //
-      //Ms.Message($"folder={CurrentIdFolder}", $"setting={CurrentIdSetting}").Pos(MsgPos.TopCenter).Debug();
-      PanelEditSettingsVisible(true);
-      VxGridSettings.Grid.Enabled = false;
+      Manager.UiControl.AllowChangeSelectedItem(false);
+
+
+      if (PvEditor.Parent != PnSettingChangeTool) PvEditor.Parent = PnSettingChangeTool;
       await Task.Delay(100);
-      //BxSettingChange.Enabled = true;
+      PanelSettingsChangeSizeBySettingType((TypeSetting)CurrentSetting.IdType);
     }
 
     private void EventButtonSettingCancel(object sender, EventArgs e)
     {
-      VxGridSettings.Grid.Enabled = true;
-      SetNormalSizeOfPanelEditSettings();
-      PanelEditSettingsVisible(false);
       BxSettingChange.Enabled = true;
+      Manager.UiControl.AllowChangeSelectedItem(true);
+
+      PanelSettingsChangeSizeBySettingType(TypeSetting.Unknown);
     }
 
     private void SelectOneNode(RadTreeNode node)
@@ -856,10 +875,10 @@ namespace TestNetwork
       PanelEditSettingsVisible(false);
     }
 
-    private void EventSettingTypeChanged(object sender, EventArgs e)
+    private void PanelSettingsChangeSizeBySettingType(TypeSetting type)
     {
-      int height = 122;
-      switch (GetCurrentType())
+      int height = 122; // TODO: Magic constant detected. Refactor it !
+      switch (type)
       {
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
@@ -873,7 +892,7 @@ namespace TestNetwork
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
-          height = 200;
+          height = 200; // TODO: Magic constant detected. Refactor it !
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
@@ -886,10 +905,16 @@ namespace TestNetwork
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
-          height = 78;
+          height = 78; // TODO: Magic constant detected. Refactor it !
           break;
       }
       PvSettings.Height = height;
+    }
+
+
+    private void EventSettingTypeChanged(object sender, EventArgs e)
+    {
+      PanelSettingsChangeSizeBySettingType(GetCurrentType());
       // Ms.Message("aaa", $"{type.ToString()}").Pos(MsgPos.TopCenter).Debug();
     }
 

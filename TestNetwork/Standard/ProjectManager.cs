@@ -14,6 +14,8 @@ namespace TestNetwork
 
     public ConverterInt64 CvInt64 { get; } = new ConverterInt64();
 
+    public UiControlManager UiControl { get; } = new UiControlManager();
+
     public void OutputMessage(string message, string header = "")
     {
       Ms.Message(message, header).NoAlert().Debug();

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using ProjectStandard;
 using Telerik.WinControls.UI;
+using static TestNetwork.Program;
 
 namespace TestNetwork
 {
@@ -47,9 +48,15 @@ namespace TestNetwork
       Grid.CurrentColumnChanged += GridCurrentColumnChanged;
       Grid.SelectionMode = GridViewSelectionMode.FullRowSelect;
       Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
+      Grid.CurrentRowChanging += new CurrentRowChangingEventHandler(EventCurrentRowChanging);
       //Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
       //Grid.CellValueChanged += EventCellValueChanged;
       //SetThemeForGrid();
+    }
+  
+    private void EventCurrentRowChanging(object sender, CurrentRowChangingEventArgs e)
+    {
+      e.Cancel = !Manager.UiControl.FlagAllowChangeSelectedItem;
     }
 
     private void GridCurrentColumnChanged(object sender, CurrentColumnChangedEventArgs e)

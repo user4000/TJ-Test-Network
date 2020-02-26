@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Telerik.WinControls.UI;
+using static TestNetwork.Program;
 
 namespace TestNetwork
 {
@@ -15,7 +17,20 @@ namespace TestNetwork
 
     private TreeviewManager(RadTreeView treeview, ImageList images, Font font)
     {
-      Treeview = treeview; Treeview.ImageList = images; FontOfNode = font;
+      Treeview = treeview;
+      Treeview.ImageList = images;
+      FontOfNode = font;
+      SetEvents();
+    }
+
+    private void SetEvents()
+    {
+      Treeview.SelectedNodeChanging += EventSelectedNodeChanging;
+    }
+
+    private void EventSelectedNodeChanging(object sender, RadTreeViewCancelEventArgs e)
+    {
+      e.Cancel = !Manager.UiControl.FlagAllowChangeSelectedItem;
     }
 
     internal static TreeviewManager Create(RadTreeView treeview, ImageList images, Font font) => new TreeviewManager(treeview, images, font);
