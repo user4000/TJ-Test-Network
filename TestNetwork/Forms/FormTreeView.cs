@@ -139,6 +139,9 @@ namespace TestNetwork
       this.BxSettingChange.Click += EventButtonSettingChange; // Change value of setting // it is async method and await works inside it //
       this.BxSettingCancel.Click += EventButtonSettingCancel; // Cancel changing setting //
 
+      BxSettingUp.Click += async (s, e) => await EventButtonSettingUp(s, e);
+      BxSettingDown.Click += async (s, e) => await EventButtonSettingDown(s, e);
+
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvFolders.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
@@ -946,6 +949,43 @@ namespace TestNetwork
     private void EventSettingTypeChanged(object sender, EventArgs e)
     {
       PanelSettingsChangeSizeBySettingType(GetTypeFromDropDownList());
+    }
+
+    private async Task EventButtonSettingDown(object sender, EventArgs e)
+    {
+      BxSettingDown.Enabled = false;
+      string IdSetting = CurrentIdSetting;
+      Setting sibling = VxGridSettings.LowerSibling(CurrentSetting);
+      //Ms.Message(sibling.IdSetting, sibling.Rank.ToString()).Pos(MsgPos.TopCenter).Debug();
+      ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
+      await Task.Delay(500);
+      BxSettingDown.Enabled = true;
+      /*if (code.Success)
+      {
+        VxGridSettings.Grid.DataSource = null;
+        VxGridSettings.ListDataSource = await DbSettings.GetSettings(CurrentIdFolder);
+        VxGridSettings.Grid.DataSource = VxGridSettings.ListDataSource;
+        VxGridSettings.SelectRow(IdSetting);
+      }*/
+      //if (code.Success) VxGridSettings.SwapRank(CurrentSetting, sibling);
+    }
+
+    private async Task EventButtonSettingUp(object sender, EventArgs e)
+    {
+      BxSettingUp.Enabled = false;
+      string IdSetting = CurrentIdSetting;
+      Setting sibling = VxGridSettings.UpperSibling(CurrentSetting);
+      ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
+      await Task.Delay(500);
+      BxSettingUp.Enabled = true;
+      /*if (code.Success)
+      {
+        VxGridSettings.Grid.DataSource = null;
+        VxGridSettings.ListDataSource = await DbSettings.GetSettings(CurrentIdFolder);
+        VxGridSettings.Grid.DataSource = VxGridSettings.ListDataSource;
+        VxGridSettings.SelectRow(IdSetting);
+      }*/
+      //if (code.Success) VxGridSettings.SwapRank(CurrentSetting, sibling);
     }
 
     public void EventEndWork()

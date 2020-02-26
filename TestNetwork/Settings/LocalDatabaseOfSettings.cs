@@ -38,6 +38,8 @@ namespace TestNetwork
     public string CnTypesIdType { get; } = "IdType";
     public string CnTypesNameType { get; } = "NameType";
 
+    public char SingleQuote { get; } = '\'';
+
     internal DataTable TableTypes { get; private set; } = null;
 
     public string SqliteDatabase { get; private set; } = string.Empty;
@@ -81,6 +83,10 @@ namespace TestNetwork
     public string SqlCountChildSettings { get; private set; } = string.Empty;
 
     public string SqlFolderDelete { get; private set; } = string.Empty;
+
+    public string SqlSetRank { get; private set; } = string.Empty;
+
+    public string SqlDuplicatedRank { get; private set; } = string.Empty;
 
     public DataTable GetTable(string TableName)
     {
@@ -159,6 +165,10 @@ namespace TestNetwork
       SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
       SqlCountChildSettings = $"SELECT COUNT(*) FROM SETTINGS WHERE {CnFoldersIdFolder} = @IdFolder";
       SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
+
+      SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+
+      SqlDuplicatedRank = $"SELECT COUNT(*) FROM (SELECT * FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder GROUP BY {CnSettingsRank} HAVING COUNT(*) > 1)";
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
@@ -281,8 +291,30 @@ namespace TestNetwork
                 Rank: reader.GetInt32(5),
                 BooleanValue: reader.GetString(6)
               );
+
+        if (ListHasDuplicatedRank(list))
+        {
+          string sql = SqlSetRank.Replace("@IdFolder", IdFolder.ToString());
+          string temp = string.Empty;
+          
+          for (int i=0;i<list.Count;i++)
+          {
+            list[i].Rank = i + 1;
+            temp += sql.Replace("@Rank", list[i].Rank.ToString()).Replace("@IdSetting", SingleQuote + list[i].IdSetting + SingleQuote) + "; \n";
+          }
+          command.Parameters.Clear();
+          command.ZzExecuteNonQuery(temp);
+        }
       }
       return list;
+    }
+
+    public bool ListHasDuplicatedRank(BindingList<Setting> list)
+    {      
+      var duplicates = list.GroupBy(x => x.Rank).Where(item => item.Count() > 1);
+      int count = 0;
+      foreach (var duplicate in duplicates) foreach (var item in duplicate) count++;
+      return count > 0;   
     }
 
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
@@ -392,6 +424,23 @@ namespace TestNetwork
         if (count != 1) return ReturnCodeFactory.Error("Переменная не найдена");
         count = command.ZzExecuteNonQuery(SqlSettingDelete);
         if (count != 1) return ReturnCodeFactory.Error("Не удалось удалить переменную");
+      }
+      return code;
+    }
+
+    public ReturnCode SwapRank(int IdFolder, Setting settingOne, Setting settingTwo)
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Обмен рангов переменных выполнен");
+      if ((settingOne==null) || (settingTwo==null)) return ReturnCodeFactory.Error("Не менее одного параметра имеет значение null");
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingOne.IdSetting).ZzAdd("@Rank", settingTwo.Rank).ZzExecuteNonQuery(SqlSetRank);
+        if (count != 1) return ReturnCodeFactory.Error("Ошибка при попытке изменить ранг для сортировки");
+        command.Parameters.Clear(); 
+        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingTwo.IdSetting).ZzAdd("@Rank", settingOne.Rank).ZzExecuteNonQuery(SqlSetRank);
+        if (count != 1) return ReturnCodeFactory.Error("Ошибка при попытке изменить ранг для сортировки");
       }
       return code;
     }

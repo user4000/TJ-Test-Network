@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls.UI;
 using static TestNetwork.Program;
@@ -53,7 +55,7 @@ namespace TestNetwork
       //Grid.CellValueChanged += EventCellValueChanged;
       //SetThemeForGrid();
     }
-  
+
     private void EventCurrentRowChanging(object sender, CurrentRowChangingEventArgs e)
     {
       e.Cancel = !Manager.UiControl.FlagAllowChangeSelectedItem;
@@ -78,19 +80,19 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdFolder), "IdFolder hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "setting", true, typeof(string), 300);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdSetting), "setting", true, typeof(string), 200);
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      var CnSettingIdType = AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType hidden", true, typeof(int));      
+      var CnSettingIdType = AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 110);
+      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 50);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 500);
+      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 50);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int));
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int),100);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "boolean value hidden", true, typeof(string)) ;
+      var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "boolean value hidden", true, typeof(string));
       //----------------------------------------------------------------------------------------------------------------------------------------
-   
+
       ExpressionFormattingObject obj = new ExpressionFormattingObject("Boolean_Value_False", $"{CnBooleanValue.Name} = '0'", false);
       obj.CellBackColor = Color.LightPink;
       CnSettingValue.ConditionalFormattingObjectList.Add(obj);
@@ -128,7 +130,7 @@ namespace TestNetwork
     {
       for (int i = 0; i < ListDataSource.Count; i++)
         if (ListDataSource[i].IdType == (int)TypeSetting.Password)
-          ListDataSource[i].SettingValue = Password[ Math.Sign( ListDataSource[i].SettingValue.Length ) ] ;
+          ListDataSource[i].SettingValue = Password[Math.Sign(ListDataSource[i].SettingValue.Length)];
     }
 
     internal void RefreshGrid(BindingList<Setting> list)
@@ -142,7 +144,7 @@ namespace TestNetwork
       {
         ListDataSource = Empty;
       }
-      RefreshGrid();   
+      RefreshGrid();
     }
 
     internal void RefreshGrid(List<Setting> list)
@@ -156,7 +158,7 @@ namespace TestNetwork
       {
         ListDataSource = Empty;
       }
-      RefreshGrid();     
+      RefreshGrid();
     }
 
     internal string GetIdSetting() => this.GetStringValue(nameof(Setting.IdSetting));
@@ -167,6 +169,49 @@ namespace TestNetwork
         foreach (var item in ListDataSource)
           if (item.IdSetting == IdSetting) return item;
       return null;
+    }
+
+    internal int GetRank(Setting setting) => setting == null ? -1 : setting.Rank;
+
+    internal Setting UpperSibling(Setting setting)
+    {
+      Setting found = null;
+      foreach (var item in ListDataSource)
+        if (item.Rank < setting.Rank)
+          if (item.Rank > GetRank(found))
+            found = item;
+      return found;
+    }
+
+    internal Setting LowerSibling(Setting setting)
+    {
+      Setting found = null;
+      foreach (var item in ListDataSource)
+        if (item.Rank > setting.Rank)
+          if (item.Rank < (GetRank(found) < 0 ? int.MaxValue : GetRank(found)))
+            found = item;
+      return found;
+    }
+
+    internal void SwapRank(Setting SelectedSetting, Setting Sibling)
+    {
+      if ((SelectedSetting == null) || (Sibling == null)) return;
+
+    }
+
+    internal void SelectRow(string IdSetting)
+    {
+      string columnName = Standard.GetGridColumnName(nameof(Setting.IdSetting));
+      for (int i = 0; i < Grid.Rows.Count; i++)
+      {
+        if (Grid.Rows[i].Cells[columnName].Value.ToString() == IdSetting)
+          if (!Grid.Rows[i].IsSelected)
+          {
+            Grid.Rows[i].IsSelected = true;
+            Grid.Rows[i].IsCurrent = true;
+            break;
+          }
+      }
     }
   }
 }
