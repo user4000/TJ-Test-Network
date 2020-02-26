@@ -85,8 +85,8 @@
     <Compile Include="Forms\FormClient.Designer.cs">
       <DependentUpon>FormClient.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\GridSettings.cs" />
-    <Compile Include="Forms\TreeviewManager.cs" />
+    <Compile Include="Settings\GridSettings.cs" />
+    <Compile Include="Settings\TreeviewManager.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\TypeSetting.cs" />
     <Compile Include="Models\TypeSettingConverter.cs" />

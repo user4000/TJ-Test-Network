@@ -60,7 +60,7 @@ namespace TestNetwork
       BxFolderSearch.ShowBorder = false;
       BxFolderSearchGotoNext.ShowBorder = false;
       BxFolderSearchGotoNext.Visibility = ElementVisibility.Collapsed;
-      BxSettingsAdd.ShowBorder = false;
+      BxSettingAddNew.ShowBorder = false;
       BxSettingRename.ShowBorder = false;
       BxSettingFileSelect.ShowBorder = false;
       BxSettingFolderSelect.ShowBorder = false;
@@ -77,22 +77,22 @@ namespace TestNetwork
       PvEditor.SelectedPage = PgEmpty;
       PvEditor.ZzPagesVisibility(ElementVisibility.Collapsed);
 
-      PvFolders.Pages.ChangeIndex(PgSearch, 0);
-      PvFolders.SelectedPage = PgSearch;
+      PvFolders.Pages.ChangeIndex(PgSearch, 1);
+      PvFolders.Pages.ChangeIndex(PgDatabase, 0);
+      PvFolders.SelectedPage = PgDatabase;
 
       PvSettings.Pages.ChangeIndex(PgSettingChange, 0);
       PvSettings.SelectedPage = PgSettingChange;
 
       PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
-      PnEditSettings.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
-      PanelEditSettingsVisible(false);
-      
-      PnSettingAddTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+    
       PnSettingAddTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingChangeTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingAddTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingChangeTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
+
+      StxLongInteger.ZzSetIntegerNumberOnly();
 
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
@@ -108,7 +108,6 @@ namespace TestNetwork
 
       PnSettingChangeTool.Padding = new Padding(0, 0, 0, 0);
       PnSettingChangeTool.Margin = new Padding(0, 0, 0, 0);
-
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
       Manager.Init(this);
@@ -131,7 +130,8 @@ namespace TestNetwork
       //BxSettingChange.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
       //BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e); 
 
-      this.BxSettingsAdd.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
+      this.BxSettingAddNew.Click += async (s, e) => await EventButtonSettingAddNew(s, e); // SAVE setting (INSERT) //
+      this.BxSettingSave.Click += async (s, e) => await EventButtonSettingUpdateExisting(s, e); // SAVE setting (UPDATE) //
       this.BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
       this.BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
       this.BxSettingChange.Click += EventButtonSettingChange; // Change value of setting // it is async method and await works inside it //
@@ -150,9 +150,6 @@ namespace TestNetwork
 
       TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
-      ScSettings.SplitterMoved += EventScSettingsSplitterMoved;
-
-      SetNormalSizeOfPanelEditSettings();
       GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
     }
 
@@ -318,7 +315,6 @@ namespace TestNetwork
         PvEditor.Parent = PnSettingAddTool;
       }
       DxTypes.SelectedIndex = (int)(TypeSetting.Unknown); // Unknown //
-      PanelEditSettingsVisible(false);
       SettingEditorResetAllInputControls();      
     }
 
@@ -335,7 +331,7 @@ namespace TestNetwork
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
 
-    internal TypeSetting GetCurrentType()
+    internal TypeSetting GetTypeFromDropDownList()
     {
       int integerValue = 0;
       try { integerValue = DxTypes.ZzGetIntegerValue(); } catch { integerValue = -1; };
@@ -347,20 +343,6 @@ namespace TestNetwork
     {
       if (PnTreeview.SizeInfo.AbsoluteSize.Width > (2 * PnUpper.Width) / 3)
         PnTreeview.SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
-    }
-
-    private void EventScSettingsSplitterMoved(object sender, SplitterEventArgs e)
-    {
-      if (PnEditSettings.SizeInfo.AbsoluteSize.Height > 39 * MainForm.Height / 100)
-        PnEditSettings.SizeInfo.AbsoluteSize = new Size(0, 39 * MainForm.Height / 100);
-
-      if (PnEditSettings.SizeInfo.AbsoluteSize.Height < 100)
-        SetNormalSizeOfPanelEditSettings();
-    }
-
-    private void SetNormalSizeOfPanelEditSettings()
-    {
-      PnEditSettings.SizeInfo.AbsoluteSize = PanelEditSettingsNormalSize;
     }
 
     private void EventSettingClearSelection()
@@ -399,7 +381,6 @@ namespace TestNetwork
       if (PvSettings.Visible == false) PvSettings.Visible = true;
       EventSettingClearSelection();
       VxGridSettings.Grid.HideSelection = true;
-      PanelEditSettingsVisible(false);
     }
 
     private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
@@ -430,12 +411,6 @@ namespace TestNetwork
       if (VxGridSettings.Grid.HideSelection) VxGridSettings.Grid.HideSelection = false;
       CurrentSetting = VxGridSettings.GetSetting(CurrentIdSetting);
       EventSettingOneRowSelected();
-    }
-
-    private void PanelEditSettingsVisible(bool Show)
-    {
-      if ((Show == false) && (PnEditSettings.Collapsed == false)) SettingEditorResetAllInputControls();
-      if (PnEditSettings.Collapsed == Show) PnEditSettings.Collapsed = !Show;
     }
 
     private async void EventButtonSettingChange(object sender, EventArgs e)
@@ -811,38 +786,42 @@ namespace TestNetwork
       Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
     }
 
-    private void EventButtonSettingAdd(object sender, EventArgs e)
+    private async Task EventButtonSettingAddNew(object sender, EventArgs e)
     {
-      TypeSetting type = TypeSettingConverter.FromInteger(DxTypes.ZzGetIntegerValue());
-      if (type == TypeSetting.Unknown)
-      {
-        Ms.Message("Ошибка!", "Нельзя добавлять переменную неизвестного типа").Control(TxSettingAdd).Warning();
-        return;
-      }
-      PanelEditSettingsVisible(true);
-      PvEditor.Height = 100; // TODO: refactor this
+      await EventSettingSave(true);
     }
 
-    private async Task EventButtonSettingSave(object sender, EventArgs e)
+    private async Task EventButtonSettingUpdateExisting(object sender, EventArgs e)
     {
-      ReturnCode code = ReturnCodeFactory.Error("Не удалось создать переменную");
-      string IdSetting = Manager.RemoveSpecialCharacters(TxSettingAdd.Text);
-      TxSettingAdd.Text = IdSetting;
+      await EventSettingSave(false);
+      EventButtonSettingCancel();
+      BxSettingChange.Enabled = false;
+    }
+
+    private async Task EventSettingSave(bool AddNewSetting)
+    {
+      string ErrorHeader = AddNewSetting ? "Не удалось создать переменную" : "Не удалось изменить значение переменной";
+      ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
+      string IdSetting = AddNewSetting ? Manager.RemoveSpecialCharacters(TxSettingAdd.Text) : CurrentIdSetting ;
+      TxSettingAdd.Text = AddNewSetting ? IdSetting : string.Empty;
+
       if (IdSetting.Length < 1)
       {
         Ms.Message("Ошибка", "Не указано имя переменной").Control(DxTypes).Warning(); return;
       }
-      // TODO: we need MODE variable. MODE = ADD NEW or UPDATE EXISTING settings //
-      switch (GetCurrentType())
+
+      TypeSetting type = AddNewSetting ? GetTypeFromDropDownList() : (TypeSetting)CurrentSetting.IdType;
+
+      switch (type)
       {
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
-          code = DbSettings.SaveSettingBoolean(true, CurrentIdFolder, IdSetting, StxBoolean.Value);
+          code = DbSettings.SaveSettingBoolean(AddNewSetting, CurrentIdFolder, IdSetting, StxBoolean.Value);
           //StxBoolean.Value = false;
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
-          code = DbSettings.SaveSettingDatetime(true, CurrentIdFolder, IdSetting, StxDatetime.Value);
+          code = DbSettings.SaveSettingDatetime(AddNewSetting, CurrentIdFolder, IdSetting, StxDatetime.Value);
           //StxDatetime.Text = string.Empty;
           break;
         case TypeSetting.Integer64:
@@ -852,27 +831,27 @@ namespace TestNetwork
           {
             Ms.Message("Ошибка", "Значение не является целым числом").Control(DxTypes).Warning(); return;
           }
-          code = DbSettings.SaveSettingLong(true, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
+          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
           //StxLongInteger.Clear();
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
-          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Text, StxText.Text);
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Text, StxText.Text);
           //StxText.Clear();
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
-          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Password, StxPassword.Text);
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Password, StxPassword.Text);
           //StxPassword.Clear();
           break;
         case TypeSetting.File:
           PvEditor.SelectedPage = PgFile;
-          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.File, StxFile.Text);
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.File, StxFile.Text);
           //StxFile.Clear();
           break;
         case TypeSetting.Folder:
           PvEditor.SelectedPage = PgFolder;
-          code = DbSettings.SaveSettingText(true, CurrentIdFolder, IdSetting, TypeSetting.Folder, StxFolder.Text);
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Folder, StxFolder.Text);
           //StxFolder.Clear();
           break;
         default:
@@ -880,19 +859,20 @@ namespace TestNetwork
           break;
       }
 
+      Manager.UiControl.AllowChangeSelectedItem(true);
+
       if (code.Success)
       {
         TxSettingAdd.Clear();
         //Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
         await RefreshGridSettingsAndClearSelection(); // We created a new setting and refreshed the grid //
-        // TODO: select a new row
       }
       else
       {
         Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
       }
+      
       ShowNotification(code.Success, code.StringValue);
-      PanelEditSettingsVisible(false);
     }
 
     private void PanelSettingsChangeSizeBySettingType(TypeSetting type)
@@ -933,13 +913,15 @@ namespace TestNetwork
 
     private void EventSettingTypeChanged(object sender, EventArgs e)
     {
-      PanelSettingsChangeSizeBySettingType(GetCurrentType());
+      PanelSettingsChangeSizeBySettingType(GetTypeFromDropDownList());
     }
 
     public void EventEndWork()
     {
       Program.ApplicationSettings.TreeViewSize = PnTreeview.SizeInfo.AbsoluteSize;
     }
+
+
   }
 }
 
