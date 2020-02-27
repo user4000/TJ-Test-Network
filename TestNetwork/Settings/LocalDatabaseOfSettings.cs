@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SQLite;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,7 +12,7 @@ using static TestNetwork.Program;
 
 namespace TestNetwork
 {
-  public class LocalDatabaseOfSettings // TODO: Ability to create a new database //
+  public class LocalDatabaseOfSettings
   {
     public IOutputMessage Debug { get; private set; } = null;
     public string TnFolders { get; } = "FOLDERS";
@@ -169,6 +167,7 @@ namespace TestNetwork
       SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
       SqlDuplicatedRank = $"SELECT COUNT(*) FROM (SELECT * FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder GROUP BY {CnSettingsRank} HAVING COUNT(*) > 1)";
+
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
@@ -274,7 +273,6 @@ namespace TestNetwork
     public async Task<BindingList<Setting>> GetSettings(int IdFolder)
     {
       BindingList<Setting> list = new BindingList<Setting>();
-
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(SqlSettingSelect, connection))
       {
@@ -296,8 +294,8 @@ namespace TestNetwork
         {
           string sql = SqlSetRank.Replace("@IdFolder", IdFolder.ToString());
           string temp = string.Empty;
-          
-          for (int i=0;i<list.Count;i++)
+
+          for (int i = 0; i < list.Count; i++)
           {
             list[i].Rank = i + 1;
             temp += sql.Replace("@Rank", list[i].Rank.ToString()).Replace("@IdSetting", SingleQuote + list[i].IdSetting + SingleQuote) + "; \n";
@@ -310,11 +308,11 @@ namespace TestNetwork
     }
 
     public bool ListHasDuplicatedRank(BindingList<Setting> list)
-    {      
+    {
       var duplicates = list.GroupBy(x => x.Rank).Where(item => item.Count() > 1);
       int count = 0;
       foreach (var duplicate in duplicates) foreach (var item in duplicate) count++;
-      return count > 0;   
+      return count > 0;
     }
 
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
@@ -431,53 +429,104 @@ namespace TestNetwork
     public ReturnCode SwapRank(int IdFolder, Setting settingOne, Setting settingTwo)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Обмен рангов переменных выполнен");
-      if ((settingOne==null) || (settingTwo==null)) return ReturnCodeFactory.Error("Не менее одного параметра имеет значение null");
+      if ((settingOne == null) || (settingTwo == null)) return ReturnCodeFactory.Error("Не менее одного параметра имеет значение null");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingOne.IdSetting).ZzAdd("@Rank", settingTwo.Rank).ZzExecuteNonQuery(SqlSetRank);
         if (count != 1) return ReturnCodeFactory.Error("Ошибка при попытке изменить ранг для сортировки");
-        command.Parameters.Clear(); 
+        command.Parameters.Clear();
         count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingTwo.IdSetting).ZzAdd("@Rank", settingOne.Rank).ZzExecuteNonQuery(SqlSetRank);
         if (count != 1) return ReturnCodeFactory.Error("Ошибка при попытке изменить ранг для сортировки");
       }
       return code;
     }
+
+    public ReturnCode CreateNewDatabase(string FileName)
+    {
+      string sql = string.Empty;
+      ReturnCode code = ReturnCodeFactory.Success();
+      try
+      {
+        SQLiteConnection.CreateFile(FileName);
+        SQLiteConnection connection = new SQLiteConnection($"Data Source={FileName};Version=3;");
+        connection.Open();
+        SQLiteCommand command = new SQLiteCommand(connection);
+
+        sql = @"CREATE TABLE FOLDERS 
+        (
+        IdFolder INTEGER CONSTRAINT PK_FOLDERS PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT NOT NULL ON CONFLICT ROLLBACK, 
+        IdParent INTEGER NOT NULL ON CONFLICT ROLLBACK CONSTRAINT FK_FOLDERS REFERENCES FOLDERS (IdFolder) 
+        ON DELETE RESTRICT ON UPDATE CASCADE, NameFolder TEXT (255) NOT NULL
+        );";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"
+        INSERT INTO FOLDERS VALUES(0, 0, 'Application root folder');
+        INSERT INTO FOLDERS VALUES(1, 0, 'Local database');";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"
+        CREATE TABLE TYPES (IdType INTEGER PRIMARY KEY NOT NULL, NameType TEXT (255) NOT NULL, Note TEXT (4000));";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"
+        INSERT INTO TYPES VALUES(0,'unknown',NULL);
+        INSERT INTO TYPES VALUES(1,'boolean',NULL);
+        INSERT INTO TYPES VALUES(2,'datetime',NULL);
+        INSERT INTO TYPES VALUES(3,'integer',NULL);
+        INSERT INTO TYPES VALUES(4,'text','');
+        INSERT INTO TYPES VALUES(5,'password',NULL);
+        INSERT INTO TYPES VALUES(6,'folder name',NULL);
+        INSERT INTO TYPES VALUES(7,'file name',NULL);";
+        command.ZzExecuteNonQuery(sql);
+
+
+        sql = @"CREATE TABLE SETTINGS (
+        IdFolder INTEGER NOT NULL, 
+        IdSetting TEXT NOT NULL, 
+        IdType INTEGER NOT NULL, 
+        SettingValue TEXT, 
+        Rank INTEGER NOT NULL, 
+        CONSTRAINT PK_SETTINGS PRIMARY KEY (IdFolder, IdSetting) 
+        ON CONFLICT ROLLBACK, CONSTRAINT FK_SETTINGS_FOLDERS FOREIGN KEY (IdFolder) 
+        REFERENCES FOLDERS (IdFolder) ON DELETE RESTRICT ON UPDATE CASCADE, 
+        CONSTRAINT FK_SETTINGS_TYPES FOREIGN KEY (IdType) REFERENCES TYPES (IdType) 
+        ON DELETE RESTRICT ON UPDATE CASCADE);";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"DELETE FROM sqlite_sequence;";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"INSERT INTO sqlite_sequence VALUES('FOLDERS',2);";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"CREATE UNIQUE INDEX UX_NameFolder ON FOLDERS(IdParent, NameFolder);";
+        command.ZzExecuteNonQuery(sql);
+
+        sql = @"CREATE VIEW V_SETTINGS AS
+            SELECT A.IdFolder,
+                   A.IdSetting,
+                   A.IdType,
+                   B.NameType,
+                   A.SettingValue,
+                   A.Rank,
+                   CASE WHEN A.IdType = 1 THEN A.SettingValue ELSE '' END AS BooleanValue
+              FROM SETTINGS A
+              LEFT JOIN TYPES B
+              ON A.IdType = B.IdType
+              ORDER BY A.Rank, A.IdSetting;";
+        command.ZzExecuteNonQuery(sql);
+
+        connection.Close();
+      }
+      catch (Exception ex)
+      {
+        code = ReturnCodeFactory.Error(ex.Message, "Could not create a new database");
+      }
+      return code;
+    }
   }
 }
-
-/*
-    public DataTable GetMsAccessDataTable(string PathToDatabase, string TableName)
-    {
-      string connString = $"Provider=Microsoft.Jet.OLEDB.4.0;data source={PathToDatabase}";
-      DataTable results = new DataTable();
-      using (OleDbConnection conn = new OleDbConnection(connString))
-      {
-        OleDbCommand cmd = new OleDbCommand($"SELECT * FROM {TableName}", conn);
-        conn.Open();
-        OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-        adapter.Fill(results);
-      }
-      return results;
-    }
-
-    public DataTable GetSqliteDataTable(string PathToDatabase, string TableName)
-    {
-      DataTable table = new DataTable();
-      using (SQLiteConnection connection = new SQLiteConnection($"Data Source={PathToDatabase}"))
-      {
-        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {TableName}", connection))
-        {
-          connection.Open();
-          using (SQLiteDataReader reader = command.ExecuteReader())
-          {
-            table.Load(reader);
-          }
-        }
-      }
-      foreach (DataColumn column in table.Columns) if (column.ColumnName == TableFoldersColumnIdParent) column.AllowDBNull = true;
-      return table;
-    }
-*/
 

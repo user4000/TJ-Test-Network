@@ -11,33 +11,25 @@ using TJFramework;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestNetwork
+namespace TestNetwork // TODO: Translate all messages to English
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
   {
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
-
     private TreeviewManager TvManager { get; set; } = null;
-
     private GridSettings VxGridSettings { get; set; } = null;
-
     private DataTable TableFolders { get; set; } = null;
-
     private string NameOfSelectedNode { get; set; } = string.Empty;
-
     private RadTreeNode[] SearchResult { get; set; } = null;
-
     private Setting CurrentSetting { get; set; } = null;
     private string CurrentIdSetting { get; set; } = string.Empty;
     private int CurrentIdFolder { get; set; } = -1;
-
-    private Size PanelEditSettingsNormalSize { get; set; } = new Size(0, 100);
-
     private int SearchIterator { get; set; } = 0;
 
     public FormTreeView()
     {
-      InitializeComponent(); // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
+      InitializeComponent();
+      // https://docs.telerik.com/devtools/winforms/controls/treeview/data-binding/binding-to-self-referencing-data //
       TvManager = TreeviewManager.Create(this.TvFolders, this.ImageListFolders, Program.ApplicationSettings.TreeViewFont);
     }
 
@@ -64,6 +56,8 @@ namespace TestNetwork
       BxSettingChange.Enabled = false;
       BxSettingSave.Enabled = false;
       BxSettingCancel.Enabled = false;
+      BxNewFileName.ShowBorder = false;
+      BxCreateNewDatabase.ShowBorder = false;
 
       SetPropertiesDateTimePicker();
 
@@ -79,7 +73,7 @@ namespace TestNetwork
       PvFolders.Pages.ChangeIndex(PgSearch, 1);
       PvFolders.Pages.ChangeIndex(PgDatabase, 0);
       PvFolders.SelectedPage = PgDatabase;
- 
+
       BxSettingUp.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 2 * BxSettingUp.Size.Width;
       BxSettingDown.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 4 * BxSettingUp.Size.Width;
 
@@ -88,7 +82,7 @@ namespace TestNetwork
 
       PnTreeview.SizeInfo.SizeMode = SplitPanelSizeMode.Absolute;
       PnTreeview.SizeInfo.AbsoluteSize = Program.ApplicationSettings.TreeViewSize;
-    
+
       PnSettingAddTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingChangeTool.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
       PnSettingAddTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
@@ -136,10 +130,13 @@ namespace TestNetwork
       this.BxSettingUp.Click += async (s, e) => await EventButtonSettingUp(s, e); // Change Rank - go up //
       this.BxSettingDown.Click += async (s, e) => await EventButtonSettingDown(s, e); // Change Rank - go down //
 
+      BxNewFileName.Click += EventButtonNewFileName;
+      BxCreateNewDatabase.Click += EventButtonCreateNewDatabase;
+
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvFolders.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
-      
+
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
 
@@ -149,7 +146,7 @@ namespace TestNetwork
 
       TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e);
       ScMain.SplitterMoved += EventScMainSplitterMoved;
-      GvSettings.SelectionChanged += EventGridSelectionChanged; // Выделена новая строка Setting //
+      GvSettings.SelectionChanged += EventGridSelectionChanged; // User has selected a new row //
     }
 
     private void ResetView()
@@ -300,7 +297,7 @@ namespace TestNetwork
         PvEditor.Parent = PnSettingAddTool;
       }
       DxTypes.SelectedIndex = (int)(TypeSetting.Unknown); // Unknown //
-      SettingEditorResetAllInputControls();      
+      SettingEditorResetAllInputControls();
     }
 
     private void SettingEditorResetAllInputControls()
@@ -450,7 +447,7 @@ namespace TestNetwork
       BxSettingUp.Enabled = false;
 
       if (PvEditor.Parent != PnSettingChangeTool) PvEditor.Parent = PnSettingChangeTool;
-      await Task.Delay(100);       
+      await Task.Delay(100);
       PanelSettingsChangeSizeBySettingType((TypeSetting)CurrentSetting.IdType);
     }
 
@@ -460,7 +457,7 @@ namespace TestNetwork
       BxSettingDown.Enabled = true;
       BxSettingUp.Enabled = true;
     }
- 
+
     private void EventButtonSettingCancel()
     {
       BxSettingChange.Enabled = true;
@@ -647,10 +644,16 @@ namespace TestNetwork
         return;
       }
 
+      if (node.Level==0)
+      {
+        Ms.ShortMessage(MsgType.Warning, "Ошибка! Нельзя удалять основную корневую папку", 450, TxFolderDelete).Create();
+        return;
+      }
+
       RadTreeNode parent = node.Parent;
       if (parent == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не найдена папка, содержащая удаляемую папку", 380, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не найдена папка, содержащая удаляемую папку", 450, TxFolderDelete).Create();
         return;
       }
 
@@ -700,7 +703,7 @@ namespace TestNetwork
 
       if (NameFolder.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не заданы символы для поиска", 250, PvFolders).Offset(offset).NoTable().Create(); return;        
+        Ms.ShortMessage(MsgType.Fail, "Не заданы символы для поиска", 250, PvFolders).Offset(offset).NoTable().Create(); return;
       }
 
       if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.StartWith)
@@ -711,7 +714,7 @@ namespace TestNetwork
 
       if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.WholeWord)
         SearchResult = TvFolders.FindNodes(x => x.Name == NameFolder);
-   
+
       SearchIterator = 0;
       if (SearchResult.Length > 0) SelectOneNode(SearchResult[0]);
 
@@ -831,7 +834,7 @@ namespace TestNetwork
     {
       string ErrorHeader = AddNewSetting ? "Не удалось создать переменную" : "Не удалось изменить значение переменной";
       ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
-      string IdSetting = AddNewSetting ? Manager.RemoveSpecialCharacters(TxSettingAdd.Text) : CurrentIdSetting ;
+      string IdSetting = AddNewSetting ? Manager.RemoveSpecialCharacters(TxSettingAdd.Text) : CurrentIdSetting;
       TxSettingAdd.Text = AddNewSetting ? IdSetting : string.Empty;
 
       if (IdSetting.Length < 1)
@@ -898,7 +901,7 @@ namespace TestNetwork
       else
       {
         Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
-      }  
+      }
       ShowNotification(code.Success, code.StringValue);
     }
 
@@ -951,13 +954,41 @@ namespace TestNetwork
       {
         ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
         await this.RefreshGridSettingsAndClearSelection(); // Setting: rank changed //
-        PnUpper.Select(); 
+        PnUpper.Select();
       }
     }
 
     private async Task EventButtonSettingDown(object sender, EventArgs e) => await SettingChangeRank(false);
 
     private async Task EventButtonSettingUp(object sender, EventArgs e) => await SettingChangeRank(true);
+
+    private void EventButtonNewFileName(object sender, EventArgs e)
+    {
+      RadSaveFileDialog DxNewFile = new RadSaveFileDialog();
+      DxNewFile.InitialDirectory = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
+      DxNewFile.FileName = "settings.db";
+      DialogResult result = DxNewFile.ShowDialog();
+      if (result == DialogResult.OK)
+      {
+        TxCreateDatabase.Text = DxNewFile.FileName;
+      }
+    }
+
+    private void EventButtonCreateNewDatabase(object sender, EventArgs e)
+    {
+      ReturnCode code = DbSettings.CreateNewDatabase(TxCreateDatabase.Text);
+      if (code.Success)
+      {
+        PvFolders.SelectedPage = PgDatabase;
+        SetDatabaseFile(TxCreateDatabase.Text);
+        TxCreateDatabase.Clear();
+        Ms.Message("Новая база данных создана", "Нажмите кнопку справа чтобы открыть новую базу данных").Control(TxDatabaseFile).Ok();
+      }
+      else
+      {
+        Ms.Message("Не удалось создать новую базу данных", code.StringValue + " " + code.StringNote).Control(TxDatabaseFile).Error();
+      }
+    }
 
     public void EventEndWork()
     {

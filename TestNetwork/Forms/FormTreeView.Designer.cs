@@ -30,7 +30,7 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition3 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition2 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
@@ -103,6 +103,10 @@
       this.PgSettingMessage = new Telerik.WinControls.UI.RadPageViewPage();
       this.LxSettingMessage = new Telerik.WinControls.UI.RadLabel();
       this.PicSettingMessage = new System.Windows.Forms.PictureBox();
+      this.PgCreateDatabase = new Telerik.WinControls.UI.RadPageViewPage();
+      this.TxCreateDatabase = new Telerik.WinControls.UI.RadButtonTextBox();
+      this.BxNewFileName = new Telerik.WinControls.UI.RadImageButtonElement();
+      this.BxCreateNewDatabase = new Telerik.WinControls.UI.RadImageButtonElement();
       ((System.ComponentModel.ISupportInitialize)(this.TvFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PvFolders)).BeginInit();
       this.PvFolders.SuspendLayout();
@@ -169,6 +173,8 @@
       this.PgSettingMessage.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.LxSettingMessage)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.PicSettingMessage)).BeginInit();
+      this.PgCreateDatabase.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxCreateDatabase)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -220,13 +226,14 @@
       this.PvFolders.Controls.Add(this.PgDelete);
       this.PvFolders.Controls.Add(this.PgSearch);
       this.PvFolders.Controls.Add(this.PgDatabase);
+      this.PvFolders.Controls.Add(this.PgCreateDatabase);
       this.PvFolders.Dock = System.Windows.Forms.DockStyle.Top;
       this.PvFolders.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.PvFolders.ItemSize = new System.Drawing.Size(80, 25);
       this.PvFolders.ItemSizeMode = Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth;
       this.PvFolders.Location = new System.Drawing.Point(0, 0);
       this.PvFolders.Name = "PvFolders";
-      this.PvFolders.SelectedPage = this.PgSearch;
+      this.PvFolders.SelectedPage = this.PgCreateDatabase;
       this.PvFolders.Size = new System.Drawing.Size(375, 82);
       this.PvFolders.TabIndex = 0;
       ((Telerik.WinControls.UI.RadPageViewStripElement)(this.PvFolders.GetChildAt(0))).StripButtons = Telerik.WinControls.UI.StripViewButtons.None;
@@ -350,7 +357,7 @@
       this.TxFolderSearch.Name = "TxFolderSearch";
       this.TxFolderSearch.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxFolderSearch});
-      this.TxFolderSearch.Size = new System.Drawing.Size(344, 23);
+      this.TxFolderSearch.Size = new System.Drawing.Size(344, 21);
       this.TxFolderSearch.TabIndex = 7;
       // 
       // BxFolderSearchGotoNext
@@ -376,10 +383,10 @@
       // 
       this.PgDatabase.Controls.Add(this.TxDatabaseFile);
       this.PgDatabase.ItemSize = new System.Drawing.SizeF(72F, 31F);
-      this.PgDatabase.Location = new System.Drawing.Point(10, 36);
+      this.PgDatabase.Location = new System.Drawing.Point(10, 40);
       this.PgDatabase.Name = "PgDatabase";
       this.PgDatabase.Padding = new System.Windows.Forms.Padding(5);
-      this.PgDatabase.Size = new System.Drawing.Size(329, 31);
+      this.PgDatabase.Size = new System.Drawing.Size(354, 31);
       this.PgDatabase.Text = "Database";
       // 
       // TxDatabaseFile
@@ -395,7 +402,7 @@
       this.TxDatabaseFile.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxOpenFile});
       this.TxDatabaseFile.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.TxDatabaseFile.Size = new System.Drawing.Size(319, 21);
+      this.TxDatabaseFile.Size = new System.Drawing.Size(344, 21);
       this.TxDatabaseFile.TabIndex = 5;
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxDatabaseFile.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
@@ -502,7 +509,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition3;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition2;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -1036,6 +1043,59 @@
       this.PicSettingMessage.TabIndex = 1;
       this.PicSettingMessage.TabStop = false;
       // 
+      // PgCreateDatabase
+      // 
+      this.PgCreateDatabase.Controls.Add(this.TxCreateDatabase);
+      this.PgCreateDatabase.ItemSize = new System.Drawing.SizeF(72F, 31F);
+      this.PgCreateDatabase.Location = new System.Drawing.Point(10, 40);
+      this.PgCreateDatabase.Name = "PgCreateDatabase";
+      this.PgCreateDatabase.Padding = new System.Windows.Forms.Padding(5);
+      this.PgCreateDatabase.Size = new System.Drawing.Size(354, 31);
+      this.PgCreateDatabase.Text = "Create";
+      this.PgCreateDatabase.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+      // 
+      // TxCreateDatabase
+      // 
+      this.TxCreateDatabase.AutoScroll = true;
+      this.TxCreateDatabase.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.TxCreateDatabase.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.TxCreateDatabase.LeftButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxNewFileName});
+      this.TxCreateDatabase.Location = new System.Drawing.Point(5, 5);
+      this.TxCreateDatabase.MaxLength = 500;
+      this.TxCreateDatabase.Name = "TxCreateDatabase";
+      this.TxCreateDatabase.ReadOnly = true;
+      this.TxCreateDatabase.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
+            this.BxCreateNewDatabase});
+      this.TxCreateDatabase.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.TxCreateDatabase.Size = new System.Drawing.Size(344, 21);
+      this.TxCreateDatabase.TabIndex = 6;
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxCreateDatabase.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxCreateDatabase.GetChildAt(0).GetChildAt(2).GetChildAt(2))).Margin = new System.Windows.Forms.Padding(0);
+      ((Telerik.WinControls.UI.RadTextBoxItem)(this.TxCreateDatabase.GetChildAt(0).GetChildAt(2).GetChildAt(2))).AutoSizeMode = Telerik.WinControls.RadAutoSizeMode.WrapAroundChildren;
+      // 
+      // BxNewFileName
+      // 
+      this.BxNewFileName.Image = ((System.Drawing.Image)(resources.GetObject("BxNewFileName.Image")));
+      this.BxNewFileName.ImageIndexClicked = 0;
+      this.BxNewFileName.ImageIndexHovered = 0;
+      this.BxNewFileName.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxNewFileName.Name = "BxNewFileName";
+      this.BxNewFileName.Text = "";
+      this.BxNewFileName.ToolTipText = "Type name of a new database file";
+      this.BxNewFileName.UseCompatibleTextRendering = false;
+      // 
+      // BxCreateNewDatabase
+      // 
+      this.BxCreateNewDatabase.Image = ((System.Drawing.Image)(resources.GetObject("BxCreateNewDatabase.Image")));
+      this.BxCreateNewDatabase.ImageIndexClicked = 0;
+      this.BxCreateNewDatabase.ImageIndexHovered = 0;
+      this.BxCreateNewDatabase.Margin = new System.Windows.Forms.Padding(2, 0, 0, 0);
+      this.BxCreateNewDatabase.Name = "BxCreateNewDatabase";
+      this.BxCreateNewDatabase.Text = "";
+      this.BxCreateNewDatabase.ToolTipText = "Click here to create a new database";
+      this.BxCreateNewDatabase.UseCompatibleTextRendering = false;
+      // 
       // FormTreeView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1123,6 +1183,9 @@
       this.PgSettingMessage.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.LxSettingMessage)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.PicSettingMessage)).EndInit();
+      this.PgCreateDatabase.ResumeLayout(false);
+      this.PgCreateDatabase.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.TxCreateDatabase)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -1201,5 +1264,9 @@
     private Telerik.WinControls.UI.RadPageViewPage PgDatabase;
     private Telerik.WinControls.UI.RadButton BxSettingDown;
     private Telerik.WinControls.UI.RadButton BxSettingUp;
+    private Telerik.WinControls.UI.RadPageViewPage PgCreateDatabase;
+    private Telerik.WinControls.UI.RadButtonTextBox TxCreateDatabase;
+    private Telerik.WinControls.UI.RadImageButtonElement BxNewFileName;
+    private Telerik.WinControls.UI.RadImageButtonElement BxCreateNewDatabase;
   }
 }
