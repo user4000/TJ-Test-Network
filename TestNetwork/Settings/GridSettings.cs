@@ -84,21 +84,21 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------    
       var CnSettingIdType = AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 50);
+      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 100);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 50);
+      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 300);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank", true, typeof(int),100);
+      AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------
       var CnBooleanValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.BooleanValue), "boolean value hidden", true, typeof(string));
       //----------------------------------------------------------------------------------------------------------------------------------------
 
       ExpressionFormattingObject obj = new ExpressionFormattingObject("Boolean_Value_False", $"{CnBooleanValue.Name} = '0'", false);
-      obj.CellBackColor = Color.LightPink;
+      obj.CellBackColor = Color.FromArgb(255, 229, 229);
       CnSettingValue.ConditionalFormattingObjectList.Add(obj);
 
       obj = new ExpressionFormattingObject("Boolean_Value_True", $"{CnBooleanValue.Name} = '1'", false);
-      obj.CellBackColor = Color.LightGreen;
+      obj.CellBackColor = Color.FromArgb(209, 255, 209); ;
       CnSettingValue.ConditionalFormattingObjectList.Add(obj);
 
       obj = new ExpressionFormattingObject("Integer", $"{CnSettingIdType.Name} = {(int)(TypeSetting.Integer64)}", false);
@@ -117,7 +117,7 @@ namespace TestNetwork
       RefreshGrid(Empty);
     }
 
-    internal void RefreshGrid()
+    private void RefreshGrid()
     {
       Grid.DataSource = ListDataSource;
       if (Grid.Rows.Count > 0)
@@ -135,6 +135,7 @@ namespace TestNetwork
 
     internal void RefreshGrid(BindingList<Setting> list)
     {
+      Grid.DataSource = null;
       if ((list != null) && (list.Count > 0))
       {
         ListDataSource = list;
@@ -147,7 +148,7 @@ namespace TestNetwork
       RefreshGrid();
     }
 
-    internal void RefreshGrid(List<Setting> list)
+    private void RefreshGrid(List<Setting> list)
     {
       if ((list != null) && (list.Count > 0))
       {

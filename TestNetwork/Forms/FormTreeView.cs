@@ -77,9 +77,16 @@ namespace TestNetwork
       PvEditor.SelectedPage = PgEmpty;
       PvEditor.ZzPagesVisibility(ElementVisibility.Collapsed);
 
+      PvFolders.Pages.ChangeIndex(PgDelete, 4);
+      PvFolders.Pages.ChangeIndex(PgRename, 3);
+      PvFolders.Pages.ChangeIndex(PgAdd, 2);
       PvFolders.Pages.ChangeIndex(PgSearch, 1);
       PvFolders.Pages.ChangeIndex(PgDatabase, 0);
       PvFolders.SelectedPage = PgDatabase;
+      PvFolders.ItemSize = new Size(80, 27);
+
+      BxSettingUp.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 2 * BxSettingUp.Size.Width;
+      BxSettingDown.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 4 * BxSettingUp.Size.Width;
 
       PvSettings.Pages.ChangeIndex(PgSettingChange, 0);
       PvSettings.SelectedPage = PgSettingChange;
@@ -125,22 +132,14 @@ namespace TestNetwork
       BxFolderSearch.Click += EventButtonSearchFolder;
       BxFolderSearchGotoNext.Click += EventButtonSearchFolderGotoNext;
 
-      //BxSettingsAdd.Click += EventButtonSettingAdd; // Open an editor to INSERT a new setting //
-      //BxSettingChange.Click += EventButtonSettingChange; // Open an editor to UPDATE a new setting // //
-      //BxSettingCancel.Click += EventButtonSettingCancel; // cancel INSERT or UPDATE //
-
-      //BxSettingChange.Click += async (s, e) => await EventButtonSettingSave(s, e);// SAVE setting (INSERT or UPDATE) //
-      //BxSettingSave.Click += async (s, e) => await EventButtonSettingSave(s, e); 
-
       this.BxSettingAddNew.Click += async (s, e) => await EventButtonSettingAddNew(s, e); // SAVE setting (INSERT) //
       this.BxSettingSave.Click += async (s, e) => await EventButtonSettingUpdateExisting(s, e); // SAVE setting (UPDATE) //
       this.BxSettingDelete.Click += async (s, e) => await EventButtonSettingDelete(s, e); // Delete setting //
       this.BxSettingRename.Click += async (s, e) => await EventButtonSettingRename(s, e); // Rename setting //
       this.BxSettingChange.Click += EventButtonSettingChange; // Change value of setting // it is async method and await works inside it //
       this.BxSettingCancel.Click += EventButtonSettingCancel; // Cancel changing setting //
-
-      BxSettingUp.Click += async (s, e) => await EventButtonSettingUp(s, e);
-      BxSettingDown.Click += async (s, e) => await EventButtonSettingDown(s, e);
+      this.BxSettingUp.Click += async (s, e) => await EventButtonSettingUp(s, e); // Change Rank - go up //
+      this.BxSettingDown.Click += async (s, e) => await EventButtonSettingDown(s, e); // Change Rank - go down //
 
       PvSettings.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
       PvFolders.SelectedPageChanging += EventForAllPageViewSelectedPageChanging;
@@ -196,7 +195,7 @@ namespace TestNetwork
     private void EventTest(object sender, EventArgs e)
     {
       if (PvSettings.Height < 100) PvSettings.Height = 300;
-      else PvSettings.Height = 78;
+      else PvSettings.Height = 82; // TODO: Magic constant 
     }
 
     private void ShowNotification(bool Success, string Message)
@@ -253,7 +252,7 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        await RefreshGridSettingsAndClearSelection();
+        await RefreshGridSettingsAndClearSelection(); // Setting was renamed //
         //Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingRename).Offset(TxSettingRename.Width, -2 * TxSettingRename.Height).Ok();
         //SettingsToolbarSetEmptyPage();
       }
@@ -287,7 +286,7 @@ namespace TestNetwork
 
       if (code.Success)
       {
-        await RefreshGridSettingsAndClearSelection();
+        await RefreshGridSettingsAndClearSelection(); // Setting was deleted //
         //Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingDelete).Offset(TxSettingDelete.Width, -2 * TxSettingDelete.Height).Ok();
         //SettingsToolbarSetEmptyPage();
       }
@@ -357,18 +356,24 @@ namespace TestNetwork
       BxSettingChange.Enabled = false;
       PgSettingDelete.Enabled = false;
       PgSettingRename.Enabled = false;
+      BxSettingUp.Enabled = false;
+      BxSettingDown.Enabled = false;
     }
 
-    private void EventSettingOneRowSelected()
+    private void EventSettingOneRowSelected() // Event - user selected a setting in the grid //
     {
       bool OneRowSelected = CurrentIdSetting.Length > 0;
+
       BxSettingChange.Enabled = OneRowSelected;
+      BxSettingUp.Enabled = OneRowSelected;
+      BxSettingDown.Enabled = OneRowSelected;
+
       TxSettingRename.Text = CurrentIdSetting;
       TxSettingDelete.Text = CurrentIdSetting;
       if (PgSettingDelete.Enabled != OneRowSelected) PgSettingDelete.Enabled = OneRowSelected;
       if (PgSettingRename.Enabled != OneRowSelected) PgSettingRename.Enabled = OneRowSelected;
 
-      if ((OneRowSelected) && (PvSettings.SelectedPage == PgSettingMessage))
+      if (OneRowSelected && (PvSettings.SelectedPage == PgSettingMessage))
       {
         PvSettings.SelectedPage = PgSettingEmpty;
       }
@@ -386,6 +391,7 @@ namespace TestNetwork
       if (PvSettings.Visible == false) PvSettings.Visible = true;
       EventSettingClearSelection();
       VxGridSettings.Grid.HideSelection = true;
+      VxGridSettings.Grid.GridNavigator.ClearSelection();
     }
 
     private async Task EventTreeviewSelectedNodeChanged(object sender, RadTreeViewEventArgs e)
@@ -405,7 +411,7 @@ namespace TestNetwork
 
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
       //---- Event ---- Get List of Settings of current folder ----//
-      await RefreshGridSettingsAndClearSelection();
+      await RefreshGridSettingsAndClearSelection(); // current treeview node was changed //
 
       TvFolders.HideSelection = false;
     }
@@ -461,13 +467,20 @@ namespace TestNetwork
       TxFolderSearch.Enabled = false;
       TxFolderRename.Enabled = false;
       TxFolderAdd.Enabled = false;
-      
+      BxSettingDown.Enabled = false;
+      BxSettingUp.Enabled = false;
+
       if (PvEditor.Parent != PnSettingChangeTool) PvEditor.Parent = PnSettingChangeTool;
       await Task.Delay(100);       
       PanelSettingsChangeSizeBySettingType((TypeSetting)CurrentSetting.IdType);
     }
 
-    private void EventButtonSettingCancel(object sender, EventArgs e) => EventButtonSettingCancel();
+    private void EventButtonSettingCancel(object sender, EventArgs e)
+    {
+      EventButtonSettingCancel();
+      BxSettingDown.Enabled = true;
+      BxSettingUp.Enabled = true;
+    }
  
     private void EventButtonSettingCancel()
     {
@@ -901,19 +914,18 @@ namespace TestNetwork
       {
         TxSettingAdd.Clear();
         //Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
-        await RefreshGridSettingsAndClearSelection(); // We created a new setting and refreshed the grid //
+        await RefreshGridSettingsAndClearSelection(); // Setting: INSERT or UPDATE //
       }
       else
       {
         Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
-      }
-      
+      }  
       ShowNotification(code.Success, code.StringValue);
     }
 
     private void PanelSettingsChangeSizeBySettingType(TypeSetting type)
     {
-      int height = 122; // TODO: Magic constant detected. Refactor it !
+      int height = 126; // TODO: Magic constant detected. Refactor it !
       switch (type)
       {
         case TypeSetting.Boolean:
@@ -940,7 +952,7 @@ namespace TestNetwork
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
-          height = 78; // TODO: Magic constant detected. Refactor it !
+          height = 82; // TODO: Magic constant detected. Refactor it !
           break;
       }
       PvSettings.Height = height;
@@ -951,42 +963,23 @@ namespace TestNetwork
       PanelSettingsChangeSizeBySettingType(GetTypeFromDropDownList());
     }
 
-    private async Task EventButtonSettingDown(object sender, EventArgs e)
+    private async Task SettingChangeRank(bool GotoUp)
     {
-      BxSettingDown.Enabled = false;
+      if (GotoUp) { BxSettingUp.Enabled = false; } else { BxSettingDown.Enabled = false; }
       string IdSetting = CurrentIdSetting;
-      Setting sibling = VxGridSettings.LowerSibling(CurrentSetting);
-      //Ms.Message(sibling.IdSetting, sibling.Rank.ToString()).Pos(MsgPos.TopCenter).Debug();
-      ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
-      await Task.Delay(500);
-      BxSettingDown.Enabled = true;
-      /*if (code.Success)
+      Setting sibling = GotoUp ? VxGridSettings.UpperSibling(CurrentSetting) : VxGridSettings.LowerSibling(CurrentSetting);
+      if (sibling != null)
       {
-        VxGridSettings.Grid.DataSource = null;
-        VxGridSettings.ListDataSource = await DbSettings.GetSettings(CurrentIdFolder);
-        VxGridSettings.Grid.DataSource = VxGridSettings.ListDataSource;
-        VxGridSettings.SelectRow(IdSetting);
-      }*/
-      //if (code.Success) VxGridSettings.SwapRank(CurrentSetting, sibling);
+        //Ms.Message($"{IdSetting}", $"sibling DOWN = {sibling.IdSetting}").Pos(MsgPos.TopRight).Info();
+        ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
+        await this.RefreshGridSettingsAndClearSelection(); // Setting: rank changed //
+        PnUpper.Select(); 
+      }
     }
 
-    private async Task EventButtonSettingUp(object sender, EventArgs e)
-    {
-      BxSettingUp.Enabled = false;
-      string IdSetting = CurrentIdSetting;
-      Setting sibling = VxGridSettings.UpperSibling(CurrentSetting);
-      ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
-      await Task.Delay(500);
-      BxSettingUp.Enabled = true;
-      /*if (code.Success)
-      {
-        VxGridSettings.Grid.DataSource = null;
-        VxGridSettings.ListDataSource = await DbSettings.GetSettings(CurrentIdFolder);
-        VxGridSettings.Grid.DataSource = VxGridSettings.ListDataSource;
-        VxGridSettings.SelectRow(IdSetting);
-      }*/
-      //if (code.Success) VxGridSettings.SwapRank(CurrentSetting, sibling);
-    }
+    private async Task EventButtonSettingDown(object sender, EventArgs e) => await SettingChangeRank(false);
+
+    private async Task EventButtonSettingUp(object sender, EventArgs e) => await SettingChangeRank(true);
 
     public void EventEndWork()
     {
