@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 using ProjectStandard;
 using Telerik.WinControls.UI;
 using static TestNetwork.Program;
@@ -84,9 +82,9 @@ namespace TestNetwork
       //----------------------------------------------------------------------------------------------------------------------------------------    
       var CnSettingIdType = AddColumn<GridViewTextBoxColumn>(nameof(Setting.IdType), "IdType hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------    
-      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 100);
+      var CnSettingTypeName = AddColumn<GridViewTextBoxColumn>(nameof(Setting.NameType), "type", true, typeof(string), 90);
       //----------------------------------------------------------------------------------------------------------------------------------------
-      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 300);
+      var CnSettingValue = AddColumn<GridViewTextBoxColumn>(nameof(Setting.SettingValue), "value", true, typeof(string), 400);
       //----------------------------------------------------------------------------------------------------------------------------------------
       AddColumn<GridViewTextBoxColumn>(nameof(Setting.Rank), "rank hidden", true, typeof(int));
       //----------------------------------------------------------------------------------------------------------------------------------------

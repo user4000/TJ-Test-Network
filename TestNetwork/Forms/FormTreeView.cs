@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProjectStandard;
@@ -83,8 +79,7 @@ namespace TestNetwork
       PvFolders.Pages.ChangeIndex(PgSearch, 1);
       PvFolders.Pages.ChangeIndex(PgDatabase, 0);
       PvFolders.SelectedPage = PgDatabase;
-      PvFolders.ItemSize = new Size(80, 27);
-
+ 
       BxSettingUp.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 2 * BxSettingUp.Size.Width;
       BxSettingDown.Left = BxSettingCancel.Location.X + BxSettingCancel.Size.Width + 4 * BxSettingUp.Size.Width;
 
@@ -192,12 +187,6 @@ namespace TestNetwork
       e.Cancel = !Manager.UiControl.FlagAllowChangeSelectedItem;
     }
 
-    private void EventTest(object sender, EventArgs e)
-    {
-      if (PvSettings.Height < 100) PvSettings.Height = 300;
-      else PvSettings.Height = 82; // TODO: Magic constant 
-    }
-
     private void ShowNotification(bool Success, string Message)
     {
       if (Message.Length < 1)
@@ -263,12 +252,6 @@ namespace TestNetwork
       ShowNotification(code.Success, code.StringValue);
     }
 
-    private void SettingsToolbarSetEmptyPage()
-    {
-      PvSettings.SelectedPage = PgSettingEmpty;
-      try { PgSettingEmpty.Select(); } catch { } // <--- If we do not do that the row of the grid remains selected //
-    }
-
     private async Task EventButtonSettingDelete(object sender, EventArgs e)
     {
       const string ErrorHeader = "Ошибка при попытке удаления переменной";
@@ -287,8 +270,6 @@ namespace TestNetwork
       if (code.Success)
       {
         await RefreshGridSettingsAndClearSelection(); // Setting was deleted //
-        //Ms.Message($"{NameSetting}", code.StringValue).Wire(TxSettingDelete).Offset(TxSettingDelete.Width, -2 * TxSettingDelete.Height).Ok();
-        //SettingsToolbarSetEmptyPage();
       }
       else
       {
@@ -408,9 +389,7 @@ namespace TestNetwork
       }
       TxFolderRename.Text = NameOfSelectedNode;
       TxFolderDelete.Text = NameOfSelectedNode;
-
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
-      //---- Event ---- Get List of Settings of current folder ----//
       await RefreshGridSettingsAndClearSelection(); // current treeview node was changed //
 
       TvFolders.HideSelection = false;
@@ -970,7 +949,6 @@ namespace TestNetwork
       Setting sibling = GotoUp ? VxGridSettings.UpperSibling(CurrentSetting) : VxGridSettings.LowerSibling(CurrentSetting);
       if (sibling != null)
       {
-        //Ms.Message($"{IdSetting}", $"sibling DOWN = {sibling.IdSetting}").Pos(MsgPos.TopRight).Info();
         ReturnCode code = DbSettings.SwapRank(CurrentIdFolder, CurrentSetting, sibling);
         await this.RefreshGridSettingsAndClearSelection(); // Setting: rank changed //
         PnUpper.Select(); 
@@ -985,7 +963,6 @@ namespace TestNetwork
     {
       Program.ApplicationSettings.TreeViewSize = PnTreeview.SizeInfo.AbsoluteSize;
     }
-
 
   }
 }
