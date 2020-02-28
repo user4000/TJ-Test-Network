@@ -35,11 +35,11 @@ namespace TestNetwork
     [DisplayName("Default new database file name")]
     public string NewFileName { get; set; } = "settings.db";
 
-    [Category("Appearance")]
+    [Category("User interface")]
     [DisplayName("Orientation tabs of the main form")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 
-    [Category("Appearance")]
+    [Category("User interface")]
     [DisplayName("Font of a hierarchy folder list")]
     public Font TreeViewFont { get; set; } = new Font("Verdana", 9.75F);
 
@@ -78,9 +78,7 @@ namespace TestNetwork
   [Serializable]
   public class ExampleOfApplicationSettings : TJStandardApplicationSettings
   {
-
-
-    [Category("Внешний вид")]
+    [Category("Appearance")]
     [DisplayName("Ориентация вкладок главной формы")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 

@@ -113,7 +113,7 @@ namespace TestNetwork
 
     private void SetEvents()
     {
-      BxOpenFile.Click += EventButtonLoadData;
+      BxOpenFile.Click += async (s, e) => await EventButtonLoadData(s, e);
       BxSelectFile.Click += EventButtonChooseFile;
       BxFolderAdd.Click += EventButtonAddFolder;
       BxFolderRename.Click += EventButtonRenameFolder;
@@ -515,7 +515,7 @@ namespace TestNetwork
       if (NameFolder.Length < 1)
         if (NameFolderDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 350, TxFolderAdd).Create();
+          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 300, TxFolderAdd).Offset(200,-60).Create();
           return;
         }
         else
@@ -598,7 +598,7 @@ namespace TestNetwork
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "The folder you want to rename is not specified", 380, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder you want to rename is not specified", 350, TxFolderRename).Create();
         return;
       }
 
@@ -643,13 +643,13 @@ namespace TestNetwork
 
       if (node == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "The folder you want to delete is not specified", 420, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder you want to delete is not specified", 350, TxFolderDelete).Create();
         return;
       }
 
       if (node.Level==0)
       {
-        Ms.ShortMessage(MsgType.Warning, "It is not allowed to delete a root folder", 450, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Warning, "It is not allowed to delete a root folder", 350, TxFolderDelete).Create();
         return;
       }
 
@@ -766,7 +766,13 @@ namespace TestNetwork
       if (DialogOpenFile.ShowDialog() == DialogResult.OK) SetDatabaseFile(DialogOpenFile.FileName);
     }
 
-    private void EventButtonLoadData(object sender, EventArgs e) => EventLoadDataFromDatabaseFile(true);
+    private async Task EventButtonLoadData(object sender, EventArgs e)
+    {
+      BxOpenFile.Enabled = false; BxOpenFile.Visibility = ElementVisibility.Collapsed;
+      EventLoadDataFromDatabaseFile(true);
+      await Task.Delay(3000);
+      BxOpenFile.Enabled = true; BxOpenFile.Visibility = ElementVisibility.Visible;
+    }
 
     private void EventRefreshDataFromDatabaseFile() => EventLoadDataFromDatabaseFile(false);
 
@@ -818,7 +824,7 @@ namespace TestNetwork
     {
       DbSettings.InitVariables(Manager);
       DbSettings.FillDropDownListForTableTypes(DxTypes);
-      Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
+      Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height).Create();
     }
 
     private async Task EventButtonSettingAddNew(object sender, EventArgs e)
