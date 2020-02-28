@@ -11,7 +11,7 @@ namespace TestNetwork
 {
   static class Program
   {
-    const string ApplicationUniqueName = "Test Network";
+    public static string ApplicationUniqueName { get; } = "Application settings editor";
 
     private static Mutex AxMutex = null;
 
@@ -53,10 +53,10 @@ namespace TestNetwork
       TJFrameworkManager.Service.StartPage<FormTreeView>();
       //TJFrameworkManager.Service.SetMainPageViewOrientation(StripViewAlignment.Left);
 
-      FrameworkSettings.HeaderFormSettings = "Настройки";
-      FrameworkSettings.HeaderFormLog = "Сообщения";
-      FrameworkSettings.HeaderFormExit = "Выход";
-      //FrameworkSettings.ConfirmExitButtonText = "Подтвердите выход";
+      FrameworkSettings.HeaderFormSettings = "Settings";
+      FrameworkSettings.HeaderFormLog = "Message log";
+      FrameworkSettings.HeaderFormExit = "Exit";
+      //FrameworkSettings.ConfirmExitButtonText = "Confirm exit";
 
       FrameworkSettings.MainFormMinimizeToTray = false;
       FrameworkSettings.VisualEffectOnStart = true;
@@ -86,7 +86,6 @@ namespace TestNetwork
         FrameworkSettings.PropertyGridPadding = new Padding(155, 100, 45, 25);
 
         // Привязка различных событий фреймворка к методам класса CxManager //
-
         //TJFrameworkManager.Service.EventPageChanged = Manager.EventPageChanged;
         //TJFrameworkManager.Service.EventBeforeMainFormClose = Manager.EventBeforeMainFormClose;
         //TJFrameworkManager.Service.EventBeforeMainFormCloseAsync = Manager.EventBeforeMainFormCloseAsync();

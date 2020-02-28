@@ -16,33 +16,31 @@ namespace TestNetwork
     WholeWord = 2
   }
 
-  // Пример использования настроек. 
-  // В самом низу текста события:
-  // public override void PropertyValueChanged(string PropertyName)
-  // public override void EventBeforeSaving()
-  // public override void EventAfterSaving()
-
   [Serializable]
   public class CxApplicationSettings : TJStandardApplicationSettings
   {
-    [Category("База данных настроек")]
+    [Category("Settings Database")]
     [Editor(typeof(PropertyGridBrowseEditor), typeof(BaseInputEditor))] // File name dialog //
     public string SettingsDatabaseLocation { get; set; }
 
-    [Category("База данных настроек")]
-    [DisplayName("Режим поиска папки по названию")]
+    [Category("Settings Database")]
+    [DisplayName("Folder search mode")]
     public TextSearchMode FolderNameSearchMode { get; set; } = TextSearchMode.StartWith;
 
-    [Category("База данных настроек")]
-    [DisplayName("Выделять новую папку после создания")]
+    [Category("Settings Database")]
+    [DisplayName("Select a new folder after creation")]
     public bool SelectNewFolderAfterCreating { get; set; } = false;
 
-    [Category("Внешний вид")]
-    [DisplayName("Ориентация вкладок главной формы")]
+    [Category("Settings Database")]
+    [DisplayName("Default new database file name")]
+    public string NewFileName { get; set; } = "settings.db";
+
+    [Category("Appearance")]
+    [DisplayName("Orientation tabs of the main form")]
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 
-    [Category("Внешний вид")]
-    [DisplayName("Шрифт иерархического списка папок")]
+    [Category("Appearance")]
+    [DisplayName("Font of a hierarchy folder list")]
     public Font TreeViewFont { get; set; } = new Font("Verdana", 9.75F);
 
     [Browsable(false)]

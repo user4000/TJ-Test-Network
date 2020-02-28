@@ -11,7 +11,7 @@ using TJFramework;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestNetwork // TODO: Translate all messages to English
+namespace TestNetwork 
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
   {
@@ -208,7 +208,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
     private async Task EventButtonSettingRename(object sender, EventArgs e)
     {
-      ReturnCode code = ReturnCodeFactory.Error("Ошибка при попытке изменения названия переменной");
+      ReturnCode code = ReturnCodeFactory.Error("An error occurred while trying to change the setting name");
       string NameSettingDraft = TxSettingRename.Text.Trim();
       string NameSetting = Manager.RemoveSpecialCharacters(NameSettingDraft);
       TxSettingRename.Text = NameSetting;
@@ -216,16 +216,16 @@ namespace TestNetwork // TODO: Translate all messages to English
       if (NameSetting.Length < 1)
         if (NameSettingDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "Не указано новое название", 350, TxSettingRename).Create();
+          Ms.ShortMessage(MsgType.Fail, "Missing new setting name", 350, TxSettingRename).Create();
           return;
         }
         else
         {
-          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxSettingRename).Create();
+          Ms.ShortMessage(MsgType.Fail, "You have specified characters that cannot be used in the name of setting", 400, TxSettingRename).Create();
           return;
         }
 
-      const string ErrorHeader = "Не удалось изменить название переменной";
+      const string ErrorHeader = "Failed to change setting name";
       try
       {
         code = DbSettings.SettingRename(CurrentIdFolder, CurrentIdSetting, NameSetting);
@@ -251,7 +251,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
     private async Task EventButtonSettingDelete(object sender, EventArgs e)
     {
-      const string ErrorHeader = "Ошибка при попытке удаления переменной";
+      const string ErrorHeader = "Error trying to delete a setting";
       ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
       string NameSetting = CurrentIdSetting;
       try
@@ -488,12 +488,13 @@ namespace TestNetwork // TODO: Translate all messages to English
 
     private void EventButtonAddFolder(object sender, EventArgs e)
     {
+      const string ErrorHeader = "Error trying to add a new folder";
       RadTreeNode parent = TvFolders.SelectedNode;
-      ReturnCode code = ReturnCodeFactory.Error("Ошибка при добавлении папки");
+      ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
 
       if (parent == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderAdd).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder where the new one is added is not specified", 400, TxFolderAdd).Create();
         return;
       }
 
@@ -503,7 +504,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не указана папка, в которую добавляется новая", 380, TxFolderAdd).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder where the new one is added is not specified", 400, TxFolderAdd).Create();
         return;
       }
 
@@ -514,17 +515,17 @@ namespace TestNetwork // TODO: Translate all messages to English
       if (NameFolder.Length < 1)
         if (NameFolderDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "Не указано название новой папки", 350, TxFolderAdd).Create();
+          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 350, TxFolderAdd).Create();
           return;
         }
         else
         {
-          Ms.ShortMessage(MsgType.Fail, "Вы указали символы, которые нельзя использовать в названии", 400, TxFolderAdd).Create();
+          Ms.ShortMessage(MsgType.Fail, "You have specified characters that cannot be used in the folder name", 450, TxFolderAdd).Create();
           return;
         }
 
       int IdNewFolder = -1;
-      const string ErrorHeader = "Не удалось добавить новую папку";
+      
       try
       {
         code = DbSettings.FolderInsert(IdFolder, NameFolder);
@@ -557,11 +558,11 @@ namespace TestNetwork // TODO: Translate all messages to English
         }
         else
         {
-          Ms.Message("Некоторые указанные вами символы\nбыли исключены из названия", code.StringValue)
+          Ms.Message("Some characters you specify\nhave been excluded from the name", code.StringValue)
             .Control(TxFolderAdd).Offset(new Point(200, 0)).Delay(7)
             .Info();
-          Ms.Message("В названии папки были указаны запрещённые символы:", NameFolderDraft).NoAlert().Warning();
-          Ms.Message("Название было исправлено:", NameFolder).NoAlert().Warning();
+          Ms.Message("The folder name contained forbidden characters:", NameFolderDraft).NoAlert().Warning();
+          Ms.Message("The name has been corrected:", NameFolder).NoAlert().Warning();
         }
 
         EventRefreshDataFromDatabaseFile();
@@ -569,8 +570,8 @@ namespace TestNetwork // TODO: Translate all messages to English
         parent = TvFolders.GetNodeByPath(ParentFullPath);
         if (parent == null)
         {
-          Ms.Message(MsgType.Error, "Ошибка!", $"Метод TvFolders.GetNodeByPath(ParentFullPath) вернул значение null. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
-          Ms.ShortMessage(MsgType.Warning, $"Ошибка! Подробности в жунале сообщений", 300, TxFolderAdd).NoTable().Create();
+          Ms.Message(MsgType.Error, "Error!", $"Method TvFolders.GetNodeByPath(ParentFullPath) has returned [null]. ParentFullPath={ParentFullPath}", null, MsgPos.Unknown, 0).NoAlert().Create();
+          Ms.ShortMessage(MsgType.Warning, $"Error! Details in the message log", 300, TxFolderAdd).NoTable().Create();
         }
         else
         {
@@ -582,12 +583,13 @@ namespace TestNetwork // TODO: Translate all messages to English
 
     private void EventButtonRenameFolder(object sender, EventArgs e)
     {
+      const string ErrorHeader = "Failed to rename folder";
       RadTreeNode node = TvFolders.SelectedNode;
-      ReturnCode code = ReturnCodeFactory.Error("Ошибка!");
+      ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
 
       if (node == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно переименовать.", 380, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder you want to rename is not specified", 380, TxFolderRename).Create();
         return;
       }
 
@@ -596,7 +598,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
       if (IdFolder < 0)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно переименовать.", 380, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder you want to rename is not specified", 380, TxFolderRename).Create();
         return;
       }
 
@@ -605,7 +607,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
       if (NameFolder.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указано новое название папки.", 350, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Fail, "No new folder name specified", 350, TxFolderRename).Create();
         return;
       }
 
@@ -615,7 +617,7 @@ namespace TestNetwork // TODO: Translate all messages to English
       }
       catch (Exception ex)
       {
-        Ms.Error("Не удалось переименовать папку", ex).Control(TxFolderRename).Create();
+        Ms.Error(ErrorHeader, ex).Control(TxFolderRename).Create();
         return;
       }
 
@@ -629,31 +631,32 @@ namespace TestNetwork // TODO: Translate all messages to English
       }
       else
       {
-        Ms.Message("Не удалось переименовать папку.", code.StringValue, TxFolderRename).Fail();
+        Ms.Message(ErrorHeader, code.StringValue, TxFolderRename).Fail();
       }
     }
 
     private void EventButtonDeleteFolder(object sender, EventArgs e)
     {
+      const string ErrorHeader = "Failed to delete folder";
       RadTreeNode node = TvFolders.SelectedNode;
-      ReturnCode code = ReturnCodeFactory.Error("Ошибка!");
+      ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
 
       if (node == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не указана папка, которую нужно удалить.", 380, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder you want to delete is not specified", 420, TxFolderDelete).Create();
         return;
       }
 
       if (node.Level==0)
       {
-        Ms.ShortMessage(MsgType.Warning, "Ошибка! Нельзя удалять основную корневую папку", 450, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Warning, "It is not allowed to delete a root folder", 450, TxFolderDelete).Create();
         return;
       }
 
       RadTreeNode parent = node.Parent;
       if (parent == null)
       {
-        Ms.ShortMessage(MsgType.Fail, "Ошибка! Не найдена папка, содержащая удаляемую папку", 450, TxFolderDelete).Create();
+        Ms.ShortMessage(MsgType.Fail, "The folder containing the folder to be deleted was not found", 450, TxFolderDelete).Create();
         return;
       }
 
@@ -666,7 +669,7 @@ namespace TestNetwork // TODO: Translate all messages to English
       }
       catch (Exception ex)
       {
-        Ms.Error("Не удалось удалить папку", ex).Control(TxFolderDelete).Create();
+        Ms.Error(ErrorHeader, ex).Control(TxFolderDelete).Create();
         return;
       }
 
@@ -680,7 +683,7 @@ namespace TestNetwork // TODO: Translate all messages to English
       }
       else
       {
-        Ms.Message("Не удалось удалить папку.", code.StringValue, TxFolderDelete).Fail();
+        Ms.Message(ErrorHeader, code.StringValue, TxFolderDelete).Fail();
       }
     }
 
@@ -703,7 +706,7 @@ namespace TestNetwork // TODO: Translate all messages to English
 
       if (NameFolder.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "Не заданы символы для поиска", 250, PvFolders).Offset(offset).NoTable().Create(); return;
+        Ms.ShortMessage(MsgType.Fail, "No characters to search", 250, PvFolders).Offset(offset).NoTable().Create(); return;
       }
 
       if (Program.ApplicationSettings.FolderNameSearchMode == TextSearchMode.StartWith)
@@ -722,17 +725,17 @@ namespace TestNetwork // TODO: Translate all messages to English
 
       if (SearchResult.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "Поиск не дал результатов", 200, PvFolders).Offset(offset).NoTable().Create();
+        Ms.ShortMessage(MsgType.Fail, "The search has not given any results", 200, PvFolders).Offset(offset).NoTable().Create();
       }
 
       if (SearchResult.Length == 1)
       {
-        Ms.ShortMessage(MsgType.Debug, "Найдена 1 папка", 200, PvFolders).Offset(offset).NoTable().Create();
+        Ms.ShortMessage(MsgType.Debug, "One folder has been found", 220, PvFolders).Offset(offset).NoTable().Create();
       }
 
       if (SearchResult.Length > 1)
       {
-        Ms.ShortMessage(MsgType.Info, $"Найдено элементов: {SearchResult.Length}", 200, PvFolders).Offset(offset).NoTable().Create();
+        Ms.ShortMessage(MsgType.Info, $"Number of folders found: {SearchResult.Length}", 220, PvFolders).Offset(offset).NoTable().Create();
         SearchIterator = 1;
         BxFolderSearchGotoNext.Visibility = ElementVisibility.Visible;
       }
@@ -747,7 +750,7 @@ namespace TestNetwork // TODO: Translate all messages to English
         SearchIterator++;
         if (SearchResult.Length == SearchIterator)
         {
-          Ms.ShortMessage(MsgType.Ok, "Поиск завершён", 200, TxFolderSearch).Offset(new Point(TxFolderSearch.Width, 0)).NoTable().Create();
+          Ms.ShortMessage(MsgType.Ok, "Search completed", 200, TxFolderSearch).Offset(new Point(TxFolderSearch.Width, 0)).NoTable().Create();
         }
       }
       else
@@ -779,11 +782,11 @@ namespace TestNetwork // TODO: Translate all messages to English
         Error = true;
         if (ex.Message.Contains("not a database"))
         {
-          Ms.Message("Не удалось прочитать данные\nиз указанного вами файла.", "Указанный вами файл не является базой данных заданного типа").Control(TxDatabaseFile).Error();
+          Ms.Message("Failed to read data from\nthe file you specified", "The file you specified is not a database of the specified type").Control(TxDatabaseFile).Error();
         }
         else
         {
-          Ms.Error("Не удалось прочитать данные\nиз указанного вами файла.", ex).Control(TxDatabaseFile).Create();
+          Ms.Error("Failed to read data from\nthe file you specified", ex).Control(TxDatabaseFile).Create();
         }
       }
 
@@ -801,7 +804,7 @@ namespace TestNetwork // TODO: Translate all messages to English
         catch (Exception ex)
         {
           Error = true;
-          Ms.Error("Ошибка при попытке чтения структуры настроек из файла.", ex).Control(TxDatabaseFile).Create();
+          Ms.Error("An error occurred while trying to read the settings structure from the file", ex).Control(TxDatabaseFile).Create();
         }
 
       if (Error == false)
@@ -815,7 +818,7 @@ namespace TestNetwork // TODO: Translate all messages to English
     {
       DbSettings.InitVariables(Manager);
       DbSettings.FillDropDownListForTableTypes(DxTypes);
-      Ms.ShortMessage(MsgType.Debug, "Данные прочитаны.", 190, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
+      Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(new Point(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height)).Create();
     }
 
     private async Task EventButtonSettingAddNew(object sender, EventArgs e)
@@ -832,14 +835,14 @@ namespace TestNetwork // TODO: Translate all messages to English
 
     private async Task EventSettingSave(bool AddNewSetting)
     {
-      string ErrorHeader = AddNewSetting ? "Не удалось создать переменную" : "Не удалось изменить значение переменной";
+      string ErrorHeader = AddNewSetting ? "Failed to create a new setting" : "Failed to change setting value";
       ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
       string IdSetting = AddNewSetting ? Manager.RemoveSpecialCharacters(TxSettingAdd.Text) : CurrentIdSetting;
       TxSettingAdd.Text = AddNewSetting ? IdSetting : string.Empty;
 
       if (IdSetting.Length < 1)
       {
-        Ms.Message("Ошибка", "Не указано имя переменной").Control(DxTypes).Warning(); return;
+        Ms.Message("Error", "Setting name not specified").Control(DxTypes).Warning(); return;
       }
 
       TypeSetting type = AddNewSetting ? GetTypeFromDropDownList() : (TypeSetting)CurrentSetting.IdType;
@@ -860,7 +863,7 @@ namespace TestNetwork // TODO: Translate all messages to English
           StxLongInteger.Text = StxLongInteger.Text.Trim();
           if (Manager.CvInt64.IsValid(StxLongInteger.Text) == false)
           {
-            Ms.Message("Ошибка", "Значение не является целым числом").Control(DxTypes).Warning(); return;
+            Ms.Message("Error", "Value is not an integer").Control(DxTypes).Warning(); return;
           }
           code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
           //StxLongInteger.Clear();
@@ -900,7 +903,7 @@ namespace TestNetwork // TODO: Translate all messages to English
       }
       else
       {
-        Ms.Message("Произошла ошибка", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
+        Ms.Message("Error", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
       }
       ShowNotification(code.Success, code.StringValue);
     }
@@ -966,7 +969,7 @@ namespace TestNetwork // TODO: Translate all messages to English
     {
       RadSaveFileDialog DxNewFile = new RadSaveFileDialog();
       DxNewFile.InitialDirectory = System.IO.Path.GetDirectoryName(Application.ExecutablePath);
-      DxNewFile.FileName = "settings.db";
+      DxNewFile.FileName = Program.ApplicationSettings.NewFileName;
       DialogResult result = DxNewFile.ShowDialog();
       if (result == DialogResult.OK)
       {
@@ -982,11 +985,11 @@ namespace TestNetwork // TODO: Translate all messages to English
         PvFolders.SelectedPage = PgDatabase;
         SetDatabaseFile(TxCreateDatabase.Text);
         TxCreateDatabase.Clear();
-        Ms.Message("Новая база данных создана", "Нажмите кнопку справа чтобы открыть новую базу данных").Control(TxDatabaseFile).Ok();
+        Ms.Message("New database created", "Click the button on the right to open a new database").Control(TxDatabaseFile).Ok();
       }
       else
       {
-        Ms.Message("Не удалось создать новую базу данных", code.StringValue + " " + code.StringNote).Control(TxDatabaseFile).Error();
+        Ms.Message("Failed to create a new database", code.StringValue + " " + code.StringNote).Control(TxDatabaseFile).Error();
       }
     }
 

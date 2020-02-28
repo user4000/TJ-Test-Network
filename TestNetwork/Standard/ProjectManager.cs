@@ -1,11 +1,12 @@
 ﻿using ProjectStandard;
-using TJFramework;
 using static TJFramework.TJFrameworkManager;
 
 namespace TestNetwork
 {
   public class ProjectManager: IOutputMessage
   {
+    public const string Empty = "";
+
     public string DatetimeFormat { get; } = "yyyy-MM-dd HH:mm:ss";
 
     public ConverterDatetime CvDatetime { get; } = new ConverterDatetime();
@@ -24,7 +25,7 @@ namespace TestNetwork
       UiControl.Init(form);
     }
 
-    public void OutputMessage(string message, string header = "")
+    public void OutputMessage(string message, string header = Empty)
     {
       Ms.Message(message, header).NoAlert().Debug();
     }
