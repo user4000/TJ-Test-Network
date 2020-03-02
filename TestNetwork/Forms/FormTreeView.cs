@@ -10,10 +10,7 @@ using Telerik.WinControls.UI.Docking;
 using TJFramework;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
-
-// TODO: Add new setting type = FONT
-// TODO: Add new setting type = COLOR
-
+// TODO: Создать 2 новых проекта - "менеджер настроек" и "потребитель настроек" где потребитель работает с настройками через менеджера //
 namespace TestNetwork
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
@@ -76,10 +73,10 @@ namespace TestNetwork
       PvEditor.SelectedPage = PgEmpty;
       PvEditor.ZzPagesVisibility(ElementVisibility.Collapsed);
 
-      PvFolders.Pages.ChangeIndex(PgDelete, 4);
-      PvFolders.Pages.ChangeIndex(PgRename, 3);
-      PvFolders.Pages.ChangeIndex(PgAdd, 2);
-      PvFolders.Pages.ChangeIndex(PgSearch, 1);
+      PvFolders.Pages.ChangeIndex(PgFolderDelete, 4);
+      PvFolders.Pages.ChangeIndex(PgFolderRename, 3);
+      PvFolders.Pages.ChangeIndex(PgFolderAdd, 2);
+      PvFolders.Pages.ChangeIndex(PgFolderSearch, 1);
       PvFolders.Pages.ChangeIndex(PgDatabase, 0);
       PvFolders.SelectedPage = PgDatabase;
 
@@ -418,6 +415,8 @@ namespace TestNetwork
       CurrentIdFolder = DbSettings.GetIdFolder(e.Node);
       await RefreshGridSettingsAndClearSelection(); // current treeview node was changed //
 
+      if ((PvSettings.SelectedPage == PgSettingRename) || (PvSettings.SelectedPage == PgSettingDelete)) PvSettings.SelectedPage = PgSettingEmpty;
+
       TvFolders.HideSelection = false;
     }
 
@@ -543,6 +542,12 @@ namespace TestNetwork
         return;
       }
 
+      if (parent.Level > 14)
+      {
+        Ms.ShortMessage(MsgType.Fail, "Hierarchical nesting too deep", 280, TxFolderAdd).Create();
+        return;
+      }
+
       string NameFolderDraft = TxFolderAdd.Text.Trim();
       string NameFolder = Manager.RemoveSpecialCharacters(NameFolderDraft);
       TxFolderAdd.Text = NameFolder;
@@ -588,14 +593,12 @@ namespace TestNetwork
         if (NameFolderDraft.Length == NameFolder.Length)
         {
           Ms.ShortMessage(MsgType.Debug, code.StringValue, GetMessageBoxWidth(code.StringValue), TxFolderAdd)
-            .Offset(new Point(TxFolderAdd.Width, -5 * TxFolderAdd.Height))
-            .Create();
+            .Offset(TxFolderAdd.Width, -5 * TxFolderAdd.Height).Create();
         }
         else
         {
           Ms.Message("Some characters you specify\nhave been excluded from the name", code.StringValue)
-            .Control(TxFolderAdd).Offset(new Point(200, 0)).Delay(7)
-            .Info();
+            .Control(TxFolderAdd).Offset(200, 0).Delay(7) .Info();
           Ms.Message("The folder name contained forbidden characters:", NameFolderDraft).NoAlert().Warning();
           Ms.Message("The name has been corrected:", NameFolder).NoAlert().Warning();
         }
@@ -955,7 +958,6 @@ namespace TestNetwork
       if (code.Success)
       {
         TxSettingAdd.Clear();
-        //Ms.Message("Данные записаны", code.StringValue).Control(DxTypes).Offset(30, -150).Ok();
         await RefreshGridSettingsAndClearSelection(); // Setting: INSERT or UPDATE //
       }
       else

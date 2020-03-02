@@ -22,26 +22,7 @@ namespace TestNetwork
 
     public void EventStartWork()
     {
-      BxSetFont.Click += EventSetFont;
-    }
-
-    private void EventSetFont(object sender, EventArgs e)
-    {
-      FontDialog dialog = new FontDialog();
-      Font font = null;
-
-      if (TxFontAsString.TextLength > 0)
-      {
-        font = CxConvert.JsonToObject<Font>(TxFontAsString.Text);
-      }
-      dialog.Font = font;
-
-      DialogResult result = dialog.ShowDialog();
-      if (result == DialogResult.OK)
-      {
-        //TxFontAsString.Text = dialog.Font.Name + " " + dialog.Font.Size + " " + dialog.Font.Style.ToString();
-        TxFontAsString.Text = CxConvert.ObjectToJson(dialog.Font);
-      }
+      
     }
   }
 }

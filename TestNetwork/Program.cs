@@ -7,7 +7,7 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
 
-namespace TestNetwork
+namespace TestNetwork // TODO: Создать иерархию DLL-сборок - от стандартов до их потребителей //
 {
   static class Program
   {
