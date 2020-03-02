@@ -44,7 +44,7 @@ namespace TestNetwork
     {
       node.ImageIndex = node.Nodes.Count == 0 ? 0 : node.Level + 1;
       node.Font = FontOfNode; // node.Text = node.Text + " => " + node.Level;
-      //if (node.Level < 1) node.Expand();
+      if (node.Level < 1) node.Expand();
       foreach (var item in node.Nodes) SetFontAndImageForOneNode(item);
     }
 
