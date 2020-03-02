@@ -11,6 +11,9 @@ using TJFramework;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 
+// TODO: Add new setting type = FONT
+// TODO: Add new setting type = COLOR
+
 namespace TestNetwork 
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
@@ -89,6 +92,7 @@ namespace TestNetwork
       PnSettingChangeTop.PanelElement.PanelBorder.Visibility = ElementVisibility.Hidden;
 
       StxLongInteger.ZzSetIntegerNumberOnly();
+      StxDatetime.CalendarSize = new Size(400, 350);
 
       VxGridSettings = new GridSettings(this);
       VxGridSettings.InitializeGrid(this.GvSettings);
@@ -515,12 +519,12 @@ namespace TestNetwork
       if (NameFolder.Length < 1)
         if (NameFolderDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 300, TxFolderAdd).Offset(200,-60).Create();
+          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 230, TxFolderAdd).Offset(-100+TxFolderAdd.Size.Width,-70).Create();
           return;
         }
         else
         {
-          Ms.ShortMessage(MsgType.Fail, "You have specified characters that cannot be used in the folder name", 450, TxFolderAdd).Create();
+          Ms.ShortMessage(MsgType.Fail, "You have specified characters that cannot be used in the folder name", 470, TxFolderAdd).Create();
           return;
         }
 
@@ -607,7 +611,13 @@ namespace TestNetwork
 
       if (NameFolder.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "No new folder name specified", 350, TxFolderRename).Create();
+        Ms.ShortMessage(MsgType.Fail, "No new folder name specified", 340, TxFolderRename).Create();
+        return;
+      }
+
+      if (node.Text == NameFolder)
+      {
+        Ms.ShortMessage(MsgType.Fail, "The new name is no different from the previous one", 400, TxFolderRename).Create();
         return;
       }
 
