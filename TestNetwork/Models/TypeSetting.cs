@@ -9,6 +9,8 @@
     Text = 4,
     Password = 5,
     Folder = 6,
-    File = 7
+    File = 7,
+    Font = 8,
+    Color = 9
   }
 }

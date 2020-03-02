@@ -14,10 +14,14 @@ using static TJFramework.TJFrameworkManager;
 // TODO: Add new setting type = FONT
 // TODO: Add new setting type = COLOR
 
-namespace TestNetwork 
+namespace TestNetwork
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
   {
+    private int HeightCollapsed { get; } = 82;
+    private int HeightExpanded { get; } = 126;
+    private int HeightForLongText { get; } = 200;
+
     private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
     private TreeviewManager TvManager { get; set; } = null;
     private GridSettings VxGridSettings { get; set; } = null;
@@ -54,6 +58,8 @@ namespace TestNetwork
       BxSettingAddNew.ShowBorder = false;
       BxSettingRename.ShowBorder = false;
       BxSettingFileSelect.ShowBorder = false;
+      BxSettingColorSelect.ShowBorder = false;
+      BxSettingFontSelect.ShowBorder = false;
       BxSettingFolderSelect.ShowBorder = false;
       BxSettingDelete.ShowBorder = false;
       BxSettingChange.Enabled = false;
@@ -143,6 +149,8 @@ namespace TestNetwork
 
       BxSettingFileSelect.Click += EventButtonSettingFileSelect;
       BxSettingFolderSelect.Click += EventButtonSettingFolderSelect;
+      BxSettingColorSelect.Click += EventButtonSettingColorSelect;
+      BxSettingFontSelect.Click += EventButtonSettingFontSelect;
 
       DxTypes.SelectedValueChanged += EventSettingTypeChanged; // Select TYPE of a NEW variable //
 
@@ -279,6 +287,21 @@ namespace TestNetwork
       ShowNotification(code.Success, code.StringValue);
     }
 
+    private void EventButtonSettingFontSelect(object sender, EventArgs e)
+    {
+      FontDialog dialog = new FontDialog();
+      DialogResult result = dialog.ShowDialog();
+      if (result == DialogResult.OK) StxFont.Text = Manager.CvFont.ToString(dialog.Font);
+    }
+
+    private void EventButtonSettingColorSelect(object sender, EventArgs e)
+    {
+      RadColorDialog dialog = new RadColorDialog();
+      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage==PgSettingChange)) dialog.SelectedColor = Manager.CvColor.FromString(StxColor.Text);
+      DialogResult result = dialog.ShowDialog();
+      if (result == DialogResult.OK) StxColor.Text = Manager.CvColor.ToString(dialog.SelectedColor);
+    }
+
     private void EventButtonSettingFolderSelect(object sender, EventArgs e)
     {
       RadOpenFolderDialog dialog = new RadOpenFolderDialog();
@@ -313,6 +336,8 @@ namespace TestNetwork
       StxLongInteger.Clear();
       StxPassword.Clear();
       StxText.Clear();
+      StxFont.Clear();
+      StxColor.Clear();
     }
 
     private int GetMessageBoxWidth(string message) => Math.Min(message.Length * 9, 500);
@@ -429,6 +454,12 @@ namespace TestNetwork
         case TypeSetting.Folder:
           StxFolder.Text = string.Empty;
           break;
+        case TypeSetting.Font:
+          StxFont.Text = CurrentSetting.SettingValue;
+          break;
+        case TypeSetting.Color:
+          StxColor.Text = CurrentSetting.SettingValue;
+          break;
         default:
           break;
       }
@@ -519,7 +550,7 @@ namespace TestNetwork
       if (NameFolder.Length < 1)
         if (NameFolderDraft.Length < 1)
         {
-          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 230, TxFolderAdd).Offset(-100+TxFolderAdd.Size.Width,-70).Create();
+          Ms.ShortMessage(MsgType.Fail, "New folder name not specified", 230, TxFolderAdd).Offset(-100 + TxFolderAdd.Size.Width, -70).Create();
           return;
         }
         else
@@ -529,7 +560,7 @@ namespace TestNetwork
         }
 
       int IdNewFolder = -1;
-      
+
       try
       {
         code = DbSettings.FolderInsert(IdFolder, NameFolder);
@@ -657,7 +688,7 @@ namespace TestNetwork
         return;
       }
 
-      if (node.Level==0)
+      if (node.Level == 0)
       {
         Ms.ShortMessage(MsgType.Warning, "It is not allowed to delete a root folder", 350, TxFolderDelete).Create();
         return;
@@ -868,7 +899,6 @@ namespace TestNetwork
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
           code = DbSettings.SaveSettingBoolean(AddNewSetting, CurrentIdFolder, IdSetting, StxBoolean.Value);
-          //StxBoolean.Value = false;
           break;
         case TypeSetting.Datetime:
           PvEditor.SelectedPage = PgDatetime;
@@ -882,27 +912,38 @@ namespace TestNetwork
             Ms.Message("Error", "Value is not an integer").Control(DxTypes).Warning(); return;
           }
           code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
-          //StxLongInteger.Clear();
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
           code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Text, StxText.Text);
-          //StxText.Clear();
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
           code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Password, StxPassword.Text);
-          //StxPassword.Clear();
           break;
         case TypeSetting.File:
           PvEditor.SelectedPage = PgFile;
           code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.File, StxFile.Text);
-          //StxFile.Clear();
           break;
         case TypeSetting.Folder:
           PvEditor.SelectedPage = PgFolder;
           code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Folder, StxFolder.Text);
-          //StxFolder.Clear();
+          break;
+        case TypeSetting.Font:
+          PvEditor.SelectedPage = PgFont;
+          if (StxFont.Text.Length < 1)
+          {
+            Ms.Message("Error", "You did not select a font").Control(DxTypes).Warning(); return;
+          }
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Font, StxFont.Text);
+          break;
+        case TypeSetting.Color:
+          PvEditor.SelectedPage = PgColor;
+          if (StxColor.Text.Length < 1)
+          {
+            Ms.Message("Error", "You did not select a color").Control(DxTypes).Warning(); return;
+          }
+          code = DbSettings.SaveSettingText(AddNewSetting, CurrentIdFolder, IdSetting, TypeSetting.Color, StxColor.Text);
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
@@ -926,7 +967,7 @@ namespace TestNetwork
 
     private void PanelSettingsChangeSizeBySettingType(TypeSetting type)
     {
-      int height = 126; // TODO: Magic constant detected. Refactor it !
+      int height = HeightExpanded;
       switch (type)
       {
         case TypeSetting.Boolean:
@@ -940,7 +981,7 @@ namespace TestNetwork
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
-          height = 200; // TODO: Magic constant detected. Refactor it !
+          height = HeightForLongText; 
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
@@ -951,9 +992,15 @@ namespace TestNetwork
         case TypeSetting.Folder:
           PvEditor.SelectedPage = PgFolder;
           break;
+        case TypeSetting.Font:
+          PvEditor.SelectedPage = PgFont;
+          break;
+        case TypeSetting.Color:
+          PvEditor.SelectedPage = PgColor;
+          break;
         default:
           PvEditor.SelectedPage = PgEmpty;
-          height = 82; // TODO: Magic constant detected. Refactor it !
+          height = HeightCollapsed; 
           break;
       }
       PvSettings.Height = height;
@@ -1013,7 +1060,6 @@ namespace TestNetwork
     {
       Program.ApplicationSettings.TreeViewSize = PnTreeview.SizeInfo.AbsoluteSize;
     }
-
   }
 }
 

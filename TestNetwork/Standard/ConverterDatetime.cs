@@ -6,7 +6,7 @@ namespace TestNetwork
   public class ConverterDatetime
   {
     public string ToString(DateTime value)
-    {    
+    {
       return value.ToString(Program.Manager.DatetimeFormat);
     }
 

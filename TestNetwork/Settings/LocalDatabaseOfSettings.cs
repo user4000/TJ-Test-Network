@@ -480,7 +480,9 @@ namespace TestNetwork
         INSERT INTO TYPES VALUES(4,'text','');
         INSERT INTO TYPES VALUES(5,'password',NULL);
         INSERT INTO TYPES VALUES(6,'folder name',NULL);
-        INSERT INTO TYPES VALUES(7,'file name',NULL);";
+        INSERT INTO TYPES VALUES(7,'file name',NULL);
+        INSERT INTO TYPES VALUES(8,'font',NULL);
+        INSERT INTO TYPES VALUES(9,'color',NULL);";
         command.ZzExecuteNonQuery(sql);
 
         sql = @"CREATE TABLE SETTINGS (

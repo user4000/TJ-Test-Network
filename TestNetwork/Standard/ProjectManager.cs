@@ -15,6 +15,10 @@ namespace TestNetwork
 
     public ConverterInt64 CvInt64 { get; } = new ConverterInt64();
 
+    public ConverterFont CvFont { get; } = new ConverterFont();
+
+    public ConverterColor CvColor { get; } = new ConverterColor();
+
     public UiControlManager UiControl { get; } = new UiControlManager();
 
     private FormTreeView FxTreeview { get; set; } = null;
