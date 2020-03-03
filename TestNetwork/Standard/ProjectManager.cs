@@ -1,4 +1,4 @@
-﻿using ProjectStandard;
+﻿using TJStandard;
 using static TJFramework.TJFrameworkManager;
 
 namespace TestNetwork

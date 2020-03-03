@@ -148,9 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <!--sirinie -->
-    <ProjectReference Include="..\ProjectStandard\ProjectStandard.csproj">
-      <Project>{27ce72e7-b6cf-42a2-a5c1-f45435fedef6}</Project>
-      <Name>ProjectStandard</Name>
+    <ProjectReference Include="..\TJStandard\TJStandard.csproj">
+      <Project>{0f47e67e-5150-4a22-a6ba-5240f208050e}</Project>
+      <Name>TJStandard</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

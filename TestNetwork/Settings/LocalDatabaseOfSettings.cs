@@ -6,7 +6,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ProjectStandard;
+using TJStandard;
 using Telerik.WinControls.UI;
 using static TestNetwork.Program;
 
