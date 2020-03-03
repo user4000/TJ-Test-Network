@@ -880,7 +880,7 @@ namespace TestNetwork
     {
       await EventSettingSave(false);
       EventButtonSettingCancel();
-      if (VxGridSettings.Grid.SelectedRows.Count < 1)  BxSettingChange.Enabled = false;
+      if (VxGridSettings.Grid.SelectedRows.Count < 1) BxSettingChange.Enabled = false;
     }
 
     private async Task EventSettingSave(bool AddNewSetting)
@@ -899,6 +899,10 @@ namespace TestNetwork
 
       switch (type)
       {
+        case TypeSetting.Unknown:
+          PvEditor.SelectedPage = PgEmpty;
+          code = ReturnCodeFactory.Error("Setting type not specified");
+          break;
         case TypeSetting.Boolean:
           PvEditor.SelectedPage = PgBoolean;
           code = DbSettings.SaveSettingBoolean(AddNewSetting, CurrentIdFolder, IdSetting, StxBoolean.Value);
@@ -962,7 +966,7 @@ namespace TestNetwork
       }
       else
       {
-        Ms.Message("Error", code.StringValue).Control(DxTypes).Offset(30, -150).Warning();
+        Ms.Message("Error", code.StringValue).Control(DxTypes).Offset(30, -100).Warning();
       }
       ShowNotification(code.Success, code.StringValue);
     }
