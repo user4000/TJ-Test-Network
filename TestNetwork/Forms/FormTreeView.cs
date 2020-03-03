@@ -6,8 +6,8 @@ using System.Windows.Forms;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
-using TJStandard;
 using TJFramework;
+using TJStandard;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 // TODO: Создать 2 новых проекта - "менеджер настроек" и "потребитель настроек" где потребитель работает с настройками через менеджера //
@@ -294,7 +294,7 @@ namespace TestNetwork
     private void EventButtonSettingColorSelect(object sender, EventArgs e)
     {
       RadColorDialog dialog = new RadColorDialog();
-      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage==PgSettingChange)) dialog.SelectedColor = Manager.CvColor.FromString(StxColor.Text);
+      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage == PgSettingChange)) dialog.SelectedColor = Manager.CvColor.FromString(StxColor.Text);
       DialogResult result = dialog.ShowDialog();
       if (result == DialogResult.OK) StxColor.Text = Manager.CvColor.ToString(dialog.SelectedColor);
     }
@@ -598,7 +598,7 @@ namespace TestNetwork
         else
         {
           Ms.Message("Some characters you specify\nhave been excluded from the name", code.StringValue)
-            .Control(TxFolderAdd).Offset(200, 0).Delay(7) .Info();
+            .Control(TxFolderAdd).Offset(200, 0).Delay(7).Info();
           Ms.Message("The folder name contained forbidden characters:", NameFolderDraft).NoAlert().Warning();
           Ms.Message("The name has been corrected:", NameFolder).NoAlert().Warning();
         }
@@ -880,7 +880,7 @@ namespace TestNetwork
     {
       await EventSettingSave(false);
       EventButtonSettingCancel();
-      BxSettingChange.Enabled = false;
+      if (VxGridSettings.Grid.SelectedRows.Count < 1)  BxSettingChange.Enabled = false;
     }
 
     private async Task EventSettingSave(bool AddNewSetting)
@@ -912,7 +912,7 @@ namespace TestNetwork
           StxLongInteger.Text = StxLongInteger.Text.Trim();
           if (Manager.CvInt64.IsValid(StxLongInteger.Text) == false)
           {
-            Ms.Message("Error", "Value is not an integer").Control(DxTypes).Warning(); return;
+            Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width,-100).Warning(); return;
           }
           code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
           break;
@@ -983,7 +983,7 @@ namespace TestNetwork
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
-          height = HeightForLongText; 
+          height = HeightForLongText;
           break;
         case TypeSetting.Password:
           PvEditor.SelectedPage = PgPassword;
@@ -1002,7 +1002,7 @@ namespace TestNetwork
           break;
         default:
           PvEditor.SelectedPage = PgEmpty;
-          height = HeightCollapsed; 
+          height = HeightCollapsed;
           break;
       }
       PvSettings.Height = height;
