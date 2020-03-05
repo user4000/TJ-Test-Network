@@ -13,9 +13,11 @@ namespace TestNetwork
 
     public UiControlManager UiControl { get; } = new UiControlManager();
 
+    public LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
+
     private FormTreeView FxTreeview { get; set; } = null;
 
-    internal void Init(FormTreeView form)
+    internal void InitVariables(FormTreeView form)
     {
       FxTreeview = form;
       UiControl.Init(form);

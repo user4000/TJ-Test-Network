@@ -11,7 +11,7 @@ using TJStandard;
 using TJSettings;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
-// TODO: Создать 2 новых проекта - "менеджер настроек" и "потребитель настроек" где потребитель работает с настройками через менеджера //
+
 namespace TestNetwork
 {
   public partial class FormTreeView : RadForm, IEventStartWork, IEventEndWork
@@ -20,7 +20,8 @@ namespace TestNetwork
     private int HeightExpanded { get; } = 126;
     private int HeightForLongText { get; } = 200;
 
-    private LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
+    private LocalDatabaseOfSettings DbSettings { get => Manager.DbSettings; }
+
     private TreeviewManager TvManager { get; set; } = null;
     private GridSettings VxGridSettings { get; set; } = null;
     private DataTable TableFolders { get; set; } = null;
@@ -116,7 +117,7 @@ namespace TestNetwork
       StxDatetime.Value = DateTime.Today;
 
       SetDatabaseFile(Program.ApplicationSettings.SettingsDatabaseLocation);
-      Manager.Init(this);
+      Manager.InitVariables(this);
     }
 
     private void SetEvents()
@@ -178,7 +179,7 @@ namespace TestNetwork
     {
       ResetView();
       TxDatabaseFile.Text = PathToDatabaseFile;
-      DbSettings.SavePathToDatabase(PathToDatabaseFile);
+      DbSettings.SetPathToDatabase(PathToDatabaseFile);
       TxDatabaseFile.SelectionStart = PathToDatabaseFile.Length;
     }
 

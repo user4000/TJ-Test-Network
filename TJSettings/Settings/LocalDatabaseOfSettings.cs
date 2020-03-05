@@ -23,6 +23,10 @@ namespace TJSettings
 
     public string TnSettings { get; } = "SETTINGS";
 
+    public RadTreeView VxTreeview { get; private set; } = new RadTreeView();
+
+    public DataTable VxFolders { get; private set; } = null;
+
     public string CnSettingsIdFolder { get; } = "IdFolder";
     public string CnSettingsIdSetting { get; } = "IdSetting";
     public string CnSettingsIdType { get; } = "IdType";
@@ -39,13 +43,17 @@ namespace TJSettings
 
     public char SingleQuote { get; } = '\'';
 
+    public string FolderPathSeparator { get; } = @"\";
+
     public Converter CvManager { get; } = new Converter();
 
     internal DataTable TableTypes { get; private set; } = null;
 
+    public List<Folder> ListFolders { get; private set; } = new List<Folder>();
+
     public string SqliteDatabase { get; private set; } = string.Empty;
 
-    public void SavePathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
+    public void SetPathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
 
     public string GetSqliteConnectionString(string PathToDatabase) => $"Data Source={PathToDatabase}";
 
@@ -118,12 +126,14 @@ namespace TJSettings
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
 
+      FillListFolders();
+
       if (FlagInitVariablesHasBeenAlreadyExecuted) return;
 
       // This block will be executed only ONE TIME //
 
       FlagInitVariablesHasBeenAlreadyExecuted = true;
-     
+
       SqlSettingSelect = $"SELECT " +
         $"{CnSettingsIdFolder}," +
         $"{CnSettingsIdSetting}," +
@@ -261,6 +271,12 @@ namespace TJSettings
         }
         catch { }
       return Id;
+    }
+
+    public int GetIdFolder(string FullPath)
+    {
+      foreach (var item in ListFolders) if (item.FullPath == FullPath) return item.IdFolder;
+      return -1;
     }
 
     private async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
@@ -462,8 +478,8 @@ namespace TJSettings
         command.ZzExecuteNonQuery(sql);
 
         sql = @"
-        INSERT INTO FOLDERS VALUES(0, 0, 'Application root folder');
-        INSERT INTO FOLDERS VALUES(1, 0, 'Local database');";
+        INSERT INTO FOLDERS VALUES(0, 0, 'application_root_folder');
+        INSERT INTO FOLDERS VALUES(1, 0, 'local_database');";
         command.ZzExecuteNonQuery(sql);
 
         sql = @"
@@ -475,7 +491,7 @@ namespace TJSettings
         INSERT INTO TYPES VALUES(1,'boolean',NULL);
         INSERT INTO TYPES VALUES(2,'datetime',NULL);
         INSERT INTO TYPES VALUES(3,'integer',NULL);
-        INSERT INTO TYPES VALUES(4,'text','');
+        INSERT INTO TYPES VALUES(4,'text',NULL);
         INSERT INTO TYPES VALUES(5,'password',NULL);
         INSERT INTO TYPES VALUES(6,'folder name',NULL);
         INSERT INTO TYPES VALUES(7,'file name',NULL);
@@ -526,6 +542,22 @@ namespace TJSettings
         code = ReturnCodeFactory.Error(ex.Message, "Could not create a new database");
       }
       return code;
+    }
+
+    public void FillListFolders()
+    {
+      void ProcessOneNode(RadTreeNode node)
+      {
+        ListFolders.Add(Folder.Create(GetIdFolder(node), node.Text, node.FullPath, node.Level));
+        foreach (var item in node.Nodes) ProcessOneNode(item);
+      }
+      ListFolders.Clear();
+      VxFolders = GetTableFolders();
+      FxTreeView form = new FxTreeView();
+      form.Visible = false;
+      FillTreeView(form.TvFolders, VxFolders);      
+      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
+      form.Close();
     }
   }
 }

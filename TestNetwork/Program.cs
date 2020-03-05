@@ -7,7 +7,7 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
 
-namespace TestNetwork // TODO: Создать иерархию DLL-сборок - от стандартов до их потребителей //
+namespace TestNetwork 
 {
   static class Program
   {
@@ -49,6 +49,7 @@ namespace TestNetwork // TODO: Создать иерархию DLL-сборок 
       TJFrameworkManager.Service.AddForm<FormServer>("Server");
       TJFrameworkManager.Service.AddForm<FormClient>("Client");
       TJFrameworkManager.Service.AddForm<FormTreeView>("TreeView");
+      TJFrameworkManager.Service.AddForm<FormTest>("Test");
       TJFrameworkManager.Service.SetMainFormCaption("Application setting editor");
       TJFrameworkManager.Service.StartPage<FormTreeView>();
       //TJFrameworkManager.Service.SetMainPageViewOrientation(StripViewAlignment.Left);
