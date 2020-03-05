@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TestNetwork
+namespace TJSettings
 {
   public static class XxListSetting
   {

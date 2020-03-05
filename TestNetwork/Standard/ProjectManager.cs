@@ -1,4 +1,6 @@
 ﻿using TJStandard;
+using TJSettings;
+
 using static TJFramework.TJFrameworkManager;
 
 namespace TestNetwork
@@ -7,17 +9,7 @@ namespace TestNetwork
   {
     public const string Empty = "";
 
-    public string DatetimeFormat { get; } = "yyyy-MM-dd HH:mm:ss";
-
-    public ConverterDatetime CvDatetime { get; } = new ConverterDatetime();
-
-    public ConverterBoolean CvBoolean { get; } = new ConverterBoolean();
-
-    public ConverterInt64 CvInt64 { get; } = new ConverterInt64();
-
-    public ConverterFont CvFont { get; } = new ConverterFont();
-
-    public ConverterColor CvColor { get; } = new ConverterColor();
+    public Converter CvManager { get; } = new Converter();
 
     public UiControlManager UiControl { get; } = new UiControlManager();
 

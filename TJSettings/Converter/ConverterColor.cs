@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using TJStandard;
 
-namespace TestNetwork
+namespace TJSettings
 {
   public class ConverterColor
   {

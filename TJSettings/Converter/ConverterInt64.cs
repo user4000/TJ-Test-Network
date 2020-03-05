@@ -1,6 +1,6 @@
 ﻿using TJStandard;
 
-namespace TestNetwork
+namespace TJSettings
 {
   public class ConverterInt64
   {

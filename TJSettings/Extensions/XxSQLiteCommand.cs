@@ -1,7 +1,7 @@
 ﻿using System.Data.SQLite;
 using TJStandard;
 
-namespace TestNetwork
+namespace TJSettings
 {
   public static class XxSQLiteCommand
   {

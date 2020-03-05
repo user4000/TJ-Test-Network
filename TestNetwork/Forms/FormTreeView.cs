@@ -8,6 +8,7 @@ using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
 using TJFramework;
 using TJStandard;
+using TJSettings;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 // TODO: Создать 2 новых проекта - "менеджер настроек" и "потребитель настроек" где потребитель работает с настройками через менеджера //
@@ -185,7 +186,7 @@ namespace TestNetwork
     {
       StxDatetime.DateTimePickerElement.ShowTimePicker = true;
       StxDatetime.Format = DateTimePickerFormat.Custom;
-      StxDatetime.CustomFormat = Manager.DatetimeFormat;
+      StxDatetime.CustomFormat = Manager.CvManager.CvDatetime.DatetimeFormat;
     }
 
     private void EventForAllPageViewSelectedPageChanging(object sender, RadPageViewCancelEventArgs e)
@@ -288,15 +289,15 @@ namespace TestNetwork
     {
       FontDialog dialog = new FontDialog();
       DialogResult result = dialog.ShowDialog();
-      if (result == DialogResult.OK) StxFont.Text = Manager.CvFont.ToString(dialog.Font);
+      if (result == DialogResult.OK) StxFont.Text = Manager.CvManager.CvFont.ToString(dialog.Font);
     }
 
     private void EventButtonSettingColorSelect(object sender, EventArgs e)
     {
       RadColorDialog dialog = new RadColorDialog();
-      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage == PgSettingChange)) dialog.SelectedColor = Manager.CvColor.FromString(StxColor.Text);
+      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage == PgSettingChange)) dialog.SelectedColor = Manager.CvManager.CvColor.FromString(StxColor.Text);
       DialogResult result = dialog.ShowDialog();
-      if (result == DialogResult.OK) StxColor.Text = Manager.CvColor.ToString(dialog.SelectedColor);
+      if (result == DialogResult.OK) StxColor.Text = Manager.CvManager.CvColor.ToString(dialog.SelectedColor);
     }
 
     private void EventButtonSettingFolderSelect(object sender, EventArgs e)
@@ -433,13 +434,13 @@ namespace TestNetwork
       switch ((TypeSetting)CurrentSetting.IdType)
       {
         case TypeSetting.Boolean:
-          StxBoolean.Value = Manager.CvBoolean.FromString(CurrentSetting.SettingValue);
+          StxBoolean.Value = Manager.CvManager.CvBoolean.FromString(CurrentSetting.SettingValue);
           break;
         case TypeSetting.Datetime:
-          StxDatetime.Value = Manager.CvDatetime.FromString(CurrentSetting.SettingValue);
+          StxDatetime.Value = Manager.CvManager.CvDatetime.FromString(CurrentSetting.SettingValue);
           break;
         case TypeSetting.Integer64:
-          StxLongInteger.Text = Manager.CvInt64.FromString(CurrentSetting.SettingValue).ToString();
+          StxLongInteger.Text = Manager.CvManager.CvInt64.FromString(CurrentSetting.SettingValue).ToString();
           break;
         case TypeSetting.Text:
           StxText.Text = CurrentSetting.SettingValue;
@@ -866,7 +867,7 @@ namespace TestNetwork
 
     private void EventLoadDataFromFileFirstTime()
     {
-      DbSettings.InitVariables(Manager);
+      DbSettings.InitVariables();
       DbSettings.FillDropDownListForTableTypes(DxTypes);
       Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height).Create();
     }
@@ -914,11 +915,11 @@ namespace TestNetwork
         case TypeSetting.Integer64:
           PvEditor.SelectedPage = PgInteger;
           StxLongInteger.Text = StxLongInteger.Text.Trim();
-          if (Manager.CvInt64.IsValid(StxLongInteger.Text) == false)
+          if (Manager.CvManager.CvInt64.IsValid(StxLongInteger.Text) == false)
           {
             Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width,-100).Warning(); return;
           }
-          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvInt64.FromString(StxLongInteger.Text));
+          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text));
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;

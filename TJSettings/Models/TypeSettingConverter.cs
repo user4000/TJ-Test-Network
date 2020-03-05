@@ -1,4 +1,4 @@
-﻿namespace TestNetwork
+﻿namespace TJSettings
 {
   public class TypeSettingConverter
   {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using TJStandard;
+using TJSettings;
 using Telerik.WinControls.UI;
 using static TestNetwork.Program;
 

@@ -87,21 +87,9 @@
     </Compile>
     <Compile Include="Settings\GridSettings.cs" />
     <Compile Include="Settings\TreeviewManager.cs" />
-    <Compile Include="Models\Setting.cs" />
-    <Compile Include="Models\TypeSetting.cs" />
-    <Compile Include="Models\TypeSettingConverter.cs" />
-    <Compile Include="Models\XxListSetting.cs" />
-    <Compile Include="Standard\ConverterBoolean.cs" />
-    <Compile Include="Standard\ConverterColor.cs" />
-    <Compile Include="Standard\ConverterDatetime.cs" />
-    <Compile Include="Standard\ConverterFont.cs" />
-    <Compile Include="Standard\ConverterInt32.cs" />
-    <Compile Include="Standard\ConverterInt64.cs" />
     <Compile Include="Standard\ProjectManager.cs" />
     <Compile Include="Standard\ProjectManagerFactory.cs" />
     <Compile Include="Settings\CxApplicationSettings.cs" />
-    <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
-    <Compile Include="Settings\XxSQLiteCommand.cs" />
     <Compile Include="Standard\UiControlManager.cs" />
     <EmbeddedResource Include="Forms\FormServer.resx">
       <DependentUpon>FormServer.cs</DependentUpon>
@@ -148,6 +136,10 @@
   </ItemGroup>
   <ItemGroup>
     <!--sirinie -->
+    <ProjectReference Include="..\TJSettings\TJSettings.csproj">
+      <Project>{7e503db5-3803-49e5-82a6-444394864634}</Project>
+      <Name>TJSettings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TJStandard\TJStandard.csproj">
       <Project>{0f47e67e-5150-4a22-a6ba-5240f208050e}</Project>
       <Name>TJStandard</Name>

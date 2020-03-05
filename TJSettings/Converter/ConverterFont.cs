@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using TJStandard;
 
-namespace TestNetwork
+namespace TJSettings
 {
   public class ConverterFont
   {

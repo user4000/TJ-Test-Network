@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TJStandard;
 using Telerik.WinControls.UI;
-using static TestNetwork.Program;
 
-namespace TestNetwork
+namespace TJSettings
 {
   // TODO: Create COMMON public method to READ a VARIABLE
   // TODO: Create COMMON public method to CHANGE a VARIABLE
   // TODO: Consider a hierarchical system of folder names for accessing variables without a numerical folder identifier
   public class LocalDatabaseOfSettings
   {
-    public IOutputMessage Debug { get; private set; } = null;
     public string TnFolders { get; } = "FOLDERS";
     public string CnFoldersIdParent { get; } = "IdParent";
     public string CnFoldersIdFolder { get; } = "IdFolder";
@@ -40,6 +38,8 @@ namespace TestNetwork
     public string CnTypesNameType { get; } = "NameType";
 
     public char SingleQuote { get; } = '\'';
+
+    public Converter CvManager { get; } = new Converter();
 
     internal DataTable TableTypes { get; private set; } = null;
 
@@ -113,7 +113,7 @@ namespace TestNetwork
 
     private bool FlagInitVariablesHasBeenAlreadyExecuted { get; set; } = false;
 
-    public void InitVariables(IOutputMessage OutputMessageDevice)
+    public void InitVariables()
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(TnTypes);
@@ -123,9 +123,7 @@ namespace TestNetwork
       // This block will be executed only ONE TIME //
 
       FlagInitVariablesHasBeenAlreadyExecuted = true;
-
-      Debug = OutputMessageDevice;
-
+     
       SqlSettingSelect = $"SELECT " +
         $"{CnSettingsIdFolder}," +
         $"{CnSettingsIdSetting}," +
@@ -318,7 +316,7 @@ namespace TestNetwork
 
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
     {
-      string StringValue = Manager.CvDatetime.ToString(value);
+      string StringValue = CvManager.CvDatetime.ToString(value);
       return
         AddNewSetting
         ?
@@ -329,7 +327,7 @@ namespace TestNetwork
 
     public ReturnCode SaveSettingBoolean(bool AddNewSetting, int IdFolder, string IdSetting, bool value)
     {
-      string StringValue = Manager.CvBoolean.ToString(value);
+      string StringValue = CvManager.CvBoolean.ToString(value);
       return
         AddNewSetting
         ?
@@ -340,7 +338,7 @@ namespace TestNetwork
 
     public ReturnCode SaveSettingLong(bool AddNewSetting, int IdFolder, string IdSetting, long value)
     {
-      string StringValue = Manager.CvInt64.ToString(value);
+      string StringValue = CvManager.CvInt64.ToString(value);
       return
         AddNewSetting
         ?
