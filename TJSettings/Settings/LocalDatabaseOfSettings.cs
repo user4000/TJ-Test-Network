@@ -11,6 +11,14 @@ using TJStandard;
 
 namespace TJSettings
 {
+
+  public enum Errors : int
+  {
+    Unknown = 100,
+    FolderAlreadyExists = 101
+  }
+
+
   public class LocalDatabaseOfSettings
   {
     internal DatabaseStructureManager DbManager = new DatabaseStructureManager();
@@ -28,7 +36,7 @@ namespace TJSettings
 
     internal DataTable TableTypes { get; private set; } = null;
 
-    public List<Folder> ListFolders { get; private set; } = new List<Folder>();
+    public List<Folder> ListFolders { get; private set; } = new List<Folder>(); // TODO: Transform it to ConcurrentDictionary //
 
     public string SqliteDatabase { get; private set; } = string.Empty;
 
@@ -85,6 +93,19 @@ namespace TJSettings
       combobox.ZzSetStandardVisualStyle();
     }
 
+
+    private Folder GetFolder(int IdFolder)
+    {
+      return ListFolders.SingleOrDefault(f => f.IdFolder == IdFolder);
+    }
+
+    private void FolderInsert(int IdParent, string NameFolder, bool UpdateListFolders)
+    {
+      Folder folder = GetFolder(IdParent); if (folder == null) return;
+    }
+
+    public ReturnCode FolderInsert(string Parent, string NameFolder) => FolderInsert(GetIdFolder(Parent), NameFolder);
+
     public ReturnCode FolderInsert(int IdParent, string NameFolder)
     {
       ReturnCode code = ReturnCodeFactory.Success($"New folder has been created: {NameFolder}");
@@ -94,9 +115,9 @@ namespace TJSettings
       {
         command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountByIdParent).ZzAdd("@IdParent", IdParent).ZzAdd("@NameFolder", NameFolder);
         int count = command.ZzGetScalarInteger();
-        if (count != 0) return ReturnCodeFactory.Error("A folder with the same name already exists");
+        if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderAlreadyExists, "A folder with the same name already exists");
         count = command.ZzExecuteNonQuery(DbManager.SqlFolderInsert);
-        if (count != 1) return ReturnCodeFactory.Error("Error trying to add a new folder");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to add a new folder");
         IdNewFolder = command.ZzGetScalarInteger(DbManager.SqlGetIdFolder);
         if (IdNewFolder > 0)
         {
@@ -104,7 +125,7 @@ namespace TJSettings
         }
         else
         {
-          return ReturnCodeFactory.Error("Error trying to add a new folder");
+          return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to add a new folder");
         }
       }
       return code;

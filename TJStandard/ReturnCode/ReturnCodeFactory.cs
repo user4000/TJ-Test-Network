@@ -16,6 +16,11 @@ namespace TJStandard
 
     public const string Empty = "";
 
+    public static ReturnCode Error(int numericValue, string stringValue = Empty, string stringNote = Empty)
+    {
+      return Create(numericValue, NcIdObjectError, stringValue, stringNote);
+    }
+
     public static ReturnCode Error(string stringValue = Empty, string stringNote = Empty, int numericValue = ConstError)
     {
       return Create(numericValue, NcIdObjectError, stringValue, stringNote);
