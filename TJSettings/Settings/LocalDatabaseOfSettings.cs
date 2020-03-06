@@ -6,40 +6,19 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TJStandard;
 using Telerik.WinControls.UI;
+using TJStandard;
 
 namespace TJSettings
 {
-  // TODO: Create COMMON public method to READ a VARIABLE
-  // TODO: Create COMMON public method to CHANGE a VARIABLE
-  // TODO: Consider a hierarchical system of folder names for accessing variables without a numerical folder identifier
   public class LocalDatabaseOfSettings
   {
-    public string TnFolders { get; } = "FOLDERS";
-    public string CnFoldersIdParent { get; } = "IdParent";
-    public string CnFoldersIdFolder { get; } = "IdFolder";
-    public string CnFoldersNameFolder { get; } = "NameFolder";
+    internal DatabaseStructureManager DbManager = new DatabaseStructureManager();
 
-    public string TnSettings { get; } = "SETTINGS";
-
+    public string RootFolderName { get; private set; } = string.Empty;
     public RadTreeView VxTreeview { get; private set; } = new RadTreeView();
 
     public DataTable VxFolders { get; private set; } = null;
-
-    public string CnSettingsIdFolder { get; } = "IdFolder";
-    public string CnSettingsIdSetting { get; } = "IdSetting";
-    public string CnSettingsIdType { get; } = "IdType";
-    public string CnSettingsSettingValue { get; } = "SettingValue";
-    public string CnSettingsRank { get; } = "Rank";
-
-    public string VnSettings { get; } = "V_SETTINGS";
-    public string VnSettingsBooleanValue { get; } = "BooleanValue";
-    public string VnSettingsNameType { get; } = "NameType";
-
-    public string TnTypes { get; } = "TYPES";
-    public string CnTypesIdType { get; } = "IdType";
-    public string CnTypesNameType { get; } = "NameType";
 
     public char SingleQuote { get; } = '\'';
 
@@ -63,40 +42,6 @@ namespace TJSettings
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
-    public string SqlSettingSelect { get; private set; } = string.Empty;
-
-    public string SqlSettingInsert { get; private set; } = string.Empty;
-
-    public string SqlSettingUpdate { get; private set; } = string.Empty;
-
-    public string SqlSettingRename { get; private set; } = string.Empty;
-
-    public string SqlSettingDelete { get; private set; } = string.Empty;
-
-    public string SqlSettingCount { get; private set; } = string.Empty;
-
-    public string SqlFolderCountByIdParent { get; private set; } = string.Empty;
-
-    public string SqlFolderInsert { get; private set; } = string.Empty;
-
-    public string SqlGetIdFolder { get; private set; } = string.Empty;
-
-    public string SqlFolderCountByIdFolder { get; private set; } = string.Empty;
-
-    public string SqlFolderRename { get; private set; } = string.Empty;
-
-    public string SqlFolderCountSimple { get; private set; } = string.Empty;
-
-    public string SqlCountChildFolder { get; private set; } = string.Empty;
-
-    public string SqlCountChildSettings { get; private set; } = string.Empty;
-
-    public string SqlFolderDelete { get; private set; } = string.Empty;
-
-    public string SqlSetRank { get; private set; } = string.Empty;
-
-    public string SqlDuplicatedRank { get; private set; } = string.Empty;
-
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
@@ -114,8 +59,8 @@ namespace TJSettings
 
     public DataTable GetTableFolders()
     {
-      DataTable table = GetTable(TnFolders);
-      foreach (DataColumn column in table.Columns) if (column.ColumnName == CnFoldersIdParent) column.AllowDBNull = true;
+      DataTable table = GetTable(DbManager.TnFolders);
+      foreach (DataColumn column in table.Columns) if (column.ColumnName == DbManager.CnFoldersIdParent) column.AllowDBNull = true;
       return table;
     }
 
@@ -124,66 +69,19 @@ namespace TJSettings
     public void InitVariables()
     {
       if (TableTypes != null) TableTypes.Clear();
-      TableTypes = GetTable(TnTypes);
-
+      TableTypes = GetTable(DbManager.TnTypes);
       FillListFolders();
-
       if (FlagInitVariablesHasBeenAlreadyExecuted) return;
-
       // This block will be executed only ONE TIME //
-
       FlagInitVariablesHasBeenAlreadyExecuted = true;
-
-      SqlSettingSelect = $"SELECT " +
-        $"{CnSettingsIdFolder}," +
-        $"{CnSettingsIdSetting}," +
-        $"{CnSettingsIdType}," +
-        $"{VnSettingsNameType}," +
-        $"{CnSettingsSettingValue}," +
-        $"{CnSettingsRank}," +
-        $"{VnSettingsBooleanValue} " +
-        $"FROM {VnSettings} WHERE {CnSettingsIdFolder}=@IdFolder";
-
-      SqlSettingCount = $"SELECT COUNT(*) from {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
-
-      SqlSettingInsert =
-      $"INSERT INTO {TnSettings} ({CnSettingsIdFolder}, {CnSettingsIdSetting}, {CnSettingsIdType}, {CnSettingsSettingValue}, {CnSettingsRank})" +
-      $" VALUES (@IdFolder, @IdSetting, @IdType, @SettingValue, (SELECT IFNULL(MAX({CnSettingsRank}), 0) + 1 FROM {TnSettings} WHERE {CnSettingsIdFolder} = @IdFolder))";
-
-      SqlSettingUpdate =
-      $"UPDATE {TnSettings} SET {CnSettingsSettingValue}=@SettingValue " +
-      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
-
-      SqlSettingRename =
-      $"UPDATE {TnSettings} SET {CnSettingsIdSetting}=@IdSettingNew " +
-      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSettingOld";
-
-      SqlSettingDelete =
-      $"DELETE FROM {TnSettings} " +
-      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
-
-      SqlFolderCountByIdParent = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
-      SqlFolderInsert = $"INSERT INTO {TnFolders} ({CnFoldersIdParent},{CnFoldersNameFolder}) VALUES (@IdParent,@NameFolder)";
-      SqlGetIdFolder = $"SELECT {CnFoldersIdFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
-
-      SqlFolderCountByIdFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = (SELECT {CnFoldersIdParent} FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder) AND {CnFoldersNameFolder}=@NameFolder";
-      SqlFolderRename = $"UPDATE {TnFolders} SET {CnFoldersNameFolder}=@NameFolder WHERE {CnFoldersIdFolder}=@IdFolder";
-
-      SqlFolderCountSimple = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdFolder} = @IdFolder";
-      SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
-      SqlCountChildSettings = $"SELECT COUNT(*) FROM {TnSettings} WHERE {CnFoldersIdFolder} = @IdFolder";
-      SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
-
-      SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
-
-      SqlDuplicatedRank = $"SELECT COUNT(*) FROM (SELECT * FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder GROUP BY {CnSettingsRank} HAVING COUNT(*) > 1)";
+      DbManager.InitVariables();
     }
 
     public void FillDropDownListForTableTypes(RadDropDownList combobox)
     {
       combobox.DataSource = TableTypes;
-      combobox.ValueMember = CnTypesIdType;
-      combobox.DisplayMember = CnTypesNameType;
+      combobox.ValueMember = DbManager.CnTypesIdType;
+      combobox.DisplayMember = DbManager.CnTypesNameType;
       combobox.ZzSetStandardVisualStyle();
     }
 
@@ -194,12 +92,12 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        command.ZzOpenConnection().ZzText(SqlFolderCountByIdParent).ZzAdd("@IdParent", IdParent).ZzAdd("@NameFolder", NameFolder);
+        command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountByIdParent).ZzAdd("@IdParent", IdParent).ZzAdd("@NameFolder", NameFolder);
         int count = command.ZzGetScalarInteger();
         if (count != 0) return ReturnCodeFactory.Error("A folder with the same name already exists");
-        count = command.ZzExecuteNonQuery(SqlFolderInsert);
+        count = command.ZzExecuteNonQuery(DbManager.SqlFolderInsert);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to add a new folder");
-        IdNewFolder = command.ZzGetScalarInteger(SqlGetIdFolder);
+        IdNewFolder = command.ZzGetScalarInteger(DbManager.SqlGetIdFolder);
         if (IdNewFolder > 0)
         {
           code.IdObject = IdNewFolder;
@@ -219,10 +117,10 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        command.ZzOpenConnection().ZzText(SqlFolderCountByIdFolder).ZzAdd("@IdFolder", IdFolder).ZzAdd("@NameFolder", NameFolder);
+        command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountByIdFolder).ZzAdd("@IdFolder", IdFolder).ZzAdd("@NameFolder", NameFolder);
         count = command.ZzGetScalarInteger();
         if (count != 0) return ReturnCodeFactory.Error("A folder with the same name already exists");
-        count = command.ZzExecuteNonQuery(SqlFolderRename);
+        count = command.ZzExecuteNonQuery(DbManager.SqlFolderRename);
         //count = command.ZzGetScalarInteger(SqlFolderCountByIdFolder);
         if (count < 1) return ReturnCodeFactory.Error("Error trying to rename a folder");
       }
@@ -236,14 +134,14 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        command.ZzOpenConnection().ZzText(SqlFolderCountSimple).ZzAdd("@IdFolder", IdFolder);
+        command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountSimple).ZzAdd("@IdFolder", IdFolder);
         count = command.ZzGetScalarInteger();
         if (count != 1) return ReturnCodeFactory.Error("The folder you specified was not found");
-        count = command.ZzGetScalarInteger(SqlCountChildFolder);
+        count = command.ZzGetScalarInteger(DbManager.SqlCountChildFolder);
         if (count != 0) return ReturnCodeFactory.Error("You cannot delete a folder that has other folders inside");
-        count = command.ZzGetScalarInteger(SqlCountChildSettings);
+        count = command.ZzGetScalarInteger(DbManager.SqlCountChildSettings);
         if (count != 0) return ReturnCodeFactory.Error("You cannot delete a folder that contains settings");
-        count = command.ZzExecuteNonQuery(SqlFolderDelete);
+        count = command.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
         if (count == 0) return ReturnCodeFactory.Error("Error trying to delete a folder");
       }
       return code;
@@ -251,11 +149,11 @@ namespace TJSettings
 
     public void FillTreeView(RadTreeView treeView, DataTable table)
     {
-      IEnumerable<DataRow> BadRows = table.Rows.Cast<DataRow>().Where(r => r[CnFoldersIdFolder].ToString() == r[CnFoldersIdParent].ToString());
-      BadRows.ToList().ForEach(r => r.SetField(CnFoldersIdParent, DBNull.Value));
-      treeView.DisplayMember = CnFoldersNameFolder;
-      treeView.ParentMember = CnFoldersIdParent;
-      treeView.ChildMember = CnFoldersIdFolder;
+      IEnumerable<DataRow> BadRows = table.Rows.Cast<DataRow>().Where(r => r[DbManager.CnFoldersIdFolder].ToString() == r[DbManager.CnFoldersIdParent].ToString());
+      BadRows.ToList().ForEach(r => r.SetField(DbManager.CnFoldersIdParent, DBNull.Value));
+      treeView.DisplayMember = DbManager.CnFoldersNameFolder;
+      treeView.ParentMember = DbManager.CnFoldersIdParent;
+      treeView.ChildMember = DbManager.CnFoldersIdFolder;
       treeView.DataSource = table; // <== This may cause application crash if there is any row having IdParent==IdFolder
       treeView.SortOrder = SortOrder.Ascending;
     }
@@ -267,7 +165,7 @@ namespace TJSettings
         try
         {
           DataRowView row = node.DataBoundItem as DataRowView;
-          Id = CxConvert.ToInt32(row.Row[CnFoldersIdFolder].ToString(), -1);
+          Id = CxConvert.ToInt32(row.Row[DbManager.CnFoldersIdFolder].ToString(), -1);
         }
         catch { }
       return Id;
@@ -289,7 +187,7 @@ namespace TJSettings
     {
       BindingList<Setting> list = new BindingList<Setting>();
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(SqlSettingSelect, connection))
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlSettingSelect, connection))
       {
         command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder);
         using (SQLiteDataReader reader = command.ExecuteReader())
@@ -307,7 +205,7 @@ namespace TJSettings
 
         if (ListHasDuplicatedRank(list))
         {
-          string sql = SqlSetRank.Replace("@IdFolder", IdFolder.ToString());
+          string sql = DbManager.SqlSetRank.Replace("@IdFolder", IdFolder.ToString());
           string temp = string.Empty;
 
           for (int i = 0; i < list.Count; i++)
@@ -381,9 +279,9 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(SqlSettingCount);
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
         if (count > 0) return ReturnCodeFactory.Error("A setting with the same name already exists");
-        count = command.ZzAdd("@IdType", IdType).ZzAdd("@SettingValue", value).ZzExecuteNonQuery(SqlSettingInsert);
+        count = command.ZzAdd("@IdType", IdType).ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingInsert);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to add a new setting");
         code.StringNote = value;
       }
@@ -398,9 +296,9 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(SqlSettingCount);
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
         if (count != 1) return ReturnCodeFactory.Error("The setting with the specified name does not exist");
-        count = command.ZzAdd("@SettingValue", value).ZzExecuteNonQuery(SqlSettingUpdate);
+        count = command.ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingUpdate);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to change a value of the setting");
         code.StringNote = value;
       }
@@ -416,10 +314,10 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSettingNew).ZzGetScalarInteger(SqlSettingCount);
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSettingNew).ZzGetScalarInteger(DbManager.SqlSettingCount);
         if (count > 0) return ReturnCodeFactory.Error("A setting with the same name already exists");
         command.Parameters.Clear();
-        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSettingOld", IdSettingOld).ZzAdd("@IdSettingNew", IdSettingNew).ZzExecuteNonQuery(SqlSettingRename);
+        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSettingOld", IdSettingOld).ZzAdd("@IdSettingNew", IdSettingNew).ZzExecuteNonQuery(DbManager.SqlSettingRename);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to rename a setting");
       }
       return code;
@@ -433,9 +331,9 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(SqlSettingCount);
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
         if (count != 1) return ReturnCodeFactory.Error("Setting not found");
-        count = command.ZzExecuteNonQuery(SqlSettingDelete);
+        count = command.ZzExecuteNonQuery(DbManager.SqlSettingDelete);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to delete a setting");
       }
       return code;
@@ -449,97 +347,11 @@ namespace TJSettings
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingOne.IdSetting).ZzAdd("@Rank", settingTwo.Rank).ZzExecuteNonQuery(SqlSetRank);
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingOne.IdSetting).ZzAdd("@Rank", settingTwo.Rank).ZzExecuteNonQuery(DbManager.SqlSetRank);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to change a rank of a setting");
         command.Parameters.Clear();
-        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingTwo.IdSetting).ZzAdd("@Rank", settingOne.Rank).ZzExecuteNonQuery(SqlSetRank);
+        count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", settingTwo.IdSetting).ZzAdd("@Rank", settingOne.Rank).ZzExecuteNonQuery(DbManager.SqlSetRank);
         if (count != 1) return ReturnCodeFactory.Error("Error trying to change a rank of a setting");
-      }
-      return code;
-    }
-
-    public ReturnCode CreateNewDatabase(string FileName)
-    {
-      string sql = string.Empty;
-      ReturnCode code = ReturnCodeFactory.Success();
-      try
-      {
-        SQLiteConnection.CreateFile(FileName);
-        SQLiteConnection connection = new SQLiteConnection($"Data Source={FileName};Version=3;");
-        connection.Open();
-        SQLiteCommand command = new SQLiteCommand(connection);
-
-        sql = @"CREATE TABLE FOLDERS 
-        (
-        IdFolder INTEGER CONSTRAINT PK_FOLDERS PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT NOT NULL ON CONFLICT ROLLBACK, 
-        IdParent INTEGER NOT NULL ON CONFLICT ROLLBACK CONSTRAINT FK_FOLDERS REFERENCES FOLDERS (IdFolder) 
-        ON DELETE RESTRICT ON UPDATE CASCADE, NameFolder TEXT (255) NOT NULL
-        );";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"
-        INSERT INTO FOLDERS VALUES(0, 0, 'application_root_folder');
-        INSERT INTO FOLDERS VALUES(1, 0, 'local_database');";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"
-        CREATE TABLE TYPES (IdType INTEGER PRIMARY KEY NOT NULL, NameType TEXT (255) NOT NULL, Note TEXT (4000));";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"
-        INSERT INTO TYPES VALUES(0,'unknown',NULL);
-        INSERT INTO TYPES VALUES(1,'boolean',NULL);
-        INSERT INTO TYPES VALUES(2,'datetime',NULL);
-        INSERT INTO TYPES VALUES(3,'integer',NULL);
-        INSERT INTO TYPES VALUES(4,'text',NULL);
-        INSERT INTO TYPES VALUES(5,'password',NULL);
-        INSERT INTO TYPES VALUES(6,'folder name',NULL);
-        INSERT INTO TYPES VALUES(7,'file name',NULL);
-        INSERT INTO TYPES VALUES(8,'font',NULL);
-        INSERT INTO TYPES VALUES(9,'color',NULL);";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"CREATE TABLE SETTINGS (
-        IdFolder INTEGER NOT NULL, 
-        IdSetting TEXT NOT NULL, 
-        IdType INTEGER NOT NULL, 
-        SettingValue TEXT, 
-        Rank INTEGER NOT NULL, 
-        CONSTRAINT PK_SETTINGS PRIMARY KEY (IdFolder, IdSetting) 
-        ON CONFLICT ROLLBACK, CONSTRAINT FK_SETTINGS_FOLDERS FOREIGN KEY (IdFolder) 
-        REFERENCES FOLDERS (IdFolder) ON DELETE RESTRICT ON UPDATE CASCADE, 
-        CONSTRAINT FK_SETTINGS_TYPES FOREIGN KEY (IdType) REFERENCES TYPES (IdType) 
-        ON DELETE RESTRICT ON UPDATE CASCADE);";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"DELETE FROM sqlite_sequence;";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"INSERT INTO sqlite_sequence VALUES('FOLDERS',2);";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"CREATE UNIQUE INDEX UX_NameFolder ON FOLDERS(IdParent, NameFolder);";
-        command.ZzExecuteNonQuery(sql);
-
-        sql = @"CREATE VIEW V_SETTINGS AS
-            SELECT A.IdFolder,
-                   A.IdSetting,
-                   A.IdType,
-                   B.NameType,
-                   A.SettingValue,
-                   A.Rank,
-                   CASE WHEN A.IdType = 1 THEN A.SettingValue ELSE '' END AS BooleanValue
-              FROM SETTINGS A
-              LEFT JOIN TYPES B
-              ON A.IdType = B.IdType
-              ORDER BY A.Rank, A.IdSetting;";
-        command.ZzExecuteNonQuery(sql);
-
-        connection.Close();
-      }
-      catch (Exception ex)
-      {
-        code = ReturnCodeFactory.Error(ex.Message, "Could not create a new database");
       }
       return code;
     }
@@ -555,10 +367,14 @@ namespace TJSettings
       VxFolders = GetTableFolders();
       FxTreeView form = new FxTreeView();
       form.Visible = false;
-      FillTreeView(form.TvFolders, VxFolders);      
-      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
+      FillTreeView(form.TvFolders, VxFolders);
+      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);      
       form.Close();
+      foreach (var item in ListFolders) if (item.Level == 0) { RootFolderName = item.NameFolder; break; }
     }
+
+    public ReturnCode CreateNewDatabase(string text) => DbManager.CreateNewDatabase(text);
+
   }
 }
 

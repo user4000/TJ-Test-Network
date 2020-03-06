@@ -46,6 +46,11 @@ namespace TestNetwork
     private void EventFindIdFolder(object sender, EventArgs e)
     {
       int IdFolder = DbSettings.GetIdFolder(TxTest.Text);
+      string s1 = "Item1";
+      string s2 = "Item2";
+      string s3 = "Nested_Folder";
+
+      IdFolder = DbSettings.GetIdFolder($"Application root folder\\My_Application_Server\\{s1}\\{s2}\\{s3}");
       BxTest.Text = IdFolder.ToString();
       Ms.Message("IdFolder", IdFolder.ToString()).Control(TxTest).Debug();
     }
