@@ -298,7 +298,7 @@ namespace TJSettings
     {
       if (SettingTypeIsText(type) == false)
       {
-        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method."); 
+        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method.");
       }
       return
         AddNewSetting
@@ -312,7 +312,7 @@ namespace TJSettings
     {
       if (SettingTypeIsText(type) == false)
       {
-        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method."); 
+        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method.");
       }
       return SettingCreateOrUpdate(FolderPath, IdSetting, (int)(type), value);
     }
@@ -439,6 +439,20 @@ namespace TJSettings
         if (count != 1) return ReturnCodeFactory.Error("Error trying to change a rank of a setting");
       }
       return code;
+    }
+
+    public ReceivedValueText GetStringValueOfSetting(string FolderPath, string IdSetting)
+    {
+      int IdFolder = GetIdFolder(FolderPath);
+      if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        int count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
+        if (count == 0) return ReceivedValueText.Error((int)Errors.SettingDoesNotExist, "Setting does not exist");
+        string value = command.ZzGetScalarString(DbManager.SqlGetSettingValue);
+        return ReceivedValueText.Success(value);
+      }
     }
 
     public void FillListFolders()

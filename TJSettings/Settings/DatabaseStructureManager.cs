@@ -66,6 +66,8 @@ namespace TJSettings
 
     public string SqlSetRank { get; private set; } = string.Empty;
 
+    public string SqlGetSettingValue { get; private set; } = string.Empty;
+
     public string SqlDuplicatedRank { get; private set; } = string.Empty;
 
     public void InitVariables()
@@ -113,6 +115,9 @@ namespace TJSettings
       SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
       SqlDuplicatedRank = $"SELECT COUNT(*) FROM (SELECT * FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder GROUP BY {CnSettingsRank} HAVING COUNT(*) > 1)";
+
+      SqlGetSettingValue =$"SELECT {CnSettingsSettingValue} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+
     }
 
     public ReturnCode CreateNewDatabase(string FileName)
