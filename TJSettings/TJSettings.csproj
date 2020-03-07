@@ -75,6 +75,8 @@
     <Compile Include="Models\XxListSetting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\DatabaseStructureManager.cs" />
+    <Compile Include="Settings\Errors.cs" />
+    <Compile Include="Settings\ItemNameValidation.cs" />
     <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
   </ItemGroup>
   <ItemGroup>

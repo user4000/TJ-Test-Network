@@ -27,10 +27,5 @@ namespace TestNetwork
     {
       Ms.Message(message, header).NoAlert().Debug();
     }
-
-    public string RemoveSpecialCharacters(string NameFolder)
-    {
-      return NameFolder.Trim().Replace(' ', '_').RemoveSpecialCharacters();
-    }
   }
 }

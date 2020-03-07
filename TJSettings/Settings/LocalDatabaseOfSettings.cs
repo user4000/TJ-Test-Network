@@ -11,14 +11,6 @@ using TJStandard;
 
 namespace TJSettings
 {
-
-  public enum Errors : int
-  {
-    Unknown = 100,
-    FolderAlreadyExists = 101
-  }
-
-
   public class LocalDatabaseOfSettings
   {
     internal DatabaseStructureManager DbManager = new DatabaseStructureManager();
@@ -36,7 +28,7 @@ namespace TJSettings
 
     internal DataTable TableTypes { get; private set; } = null;
 
-    public List<Folder> ListFolders { get; private set; } = new List<Folder>(); // TODO: Transform it to ConcurrentDictionary //
+    public List<Folder> ListFolders { get; private set; } = new List<Folder>();
 
     public string SqliteDatabase { get; private set; } = string.Empty;
 
@@ -93,15 +85,14 @@ namespace TJSettings
       combobox.ZzSetStandardVisualStyle();
     }
 
-
     private Folder GetFolder(int IdFolder)
     {
       return ListFolders.SingleOrDefault(f => f.IdFolder == IdFolder);
     }
 
-    private void FolderInsert(int IdParent, string NameFolder, bool UpdateListFolders)
+    public bool SettingTypeIsText(TypeSetting type)
     {
-      Folder folder = GetFolder(IdParent); if (folder == null) return;
+      return !((type == TypeSetting.Boolean) || (type == TypeSetting.Integer64) || (type == TypeSetting.Datetime));
     }
 
     public ReturnCode FolderInsert(string Parent, string NameFolder) => FolderInsert(GetIdFolder(Parent), NameFolder);
@@ -140,10 +131,10 @@ namespace TJSettings
       {
         command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountByIdFolder).ZzAdd("@IdFolder", IdFolder).ZzAdd("@NameFolder", NameFolder);
         count = command.ZzGetScalarInteger();
-        if (count != 0) return ReturnCodeFactory.Error("A folder with the same name already exists");
+        if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderAlreadyExists, "A folder with the same name already exists");
         count = command.ZzExecuteNonQuery(DbManager.SqlFolderRename);
         //count = command.ZzGetScalarInteger(SqlFolderCountByIdFolder);
-        if (count < 1) return ReturnCodeFactory.Error("Error trying to rename a folder");
+        if (count < 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to rename a folder");
       }
       return code;
     }
@@ -157,13 +148,13 @@ namespace TJSettings
       {
         command.ZzOpenConnection().ZzText(DbManager.SqlFolderCountSimple).ZzAdd("@IdFolder", IdFolder);
         count = command.ZzGetScalarInteger();
-        if (count != 1) return ReturnCodeFactory.Error("The folder you specified was not found");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.FolderNotFound, "The folder you specified was not found");
         count = command.ZzGetScalarInteger(DbManager.SqlCountChildFolder);
-        if (count != 0) return ReturnCodeFactory.Error("You cannot delete a folder that has other folders inside");
+        if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderHasChildFolder, "You cannot delete a folder that has other folders inside");
         count = command.ZzGetScalarInteger(DbManager.SqlCountChildSettings);
-        if (count != 0) return ReturnCodeFactory.Error("You cannot delete a folder that contains settings");
+        if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderHasSettings, "You cannot delete a folder that contains settings");
         count = command.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
-        if (count == 0) return ReturnCodeFactory.Error("Error trying to delete a folder");
+        if (count == 0) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to delete a folder");
       }
       return code;
     }
@@ -260,6 +251,12 @@ namespace TJSettings
         SettingUpdate(IdFolder, IdSetting, StringValue);
     }
 
+    public ReturnCode SaveSettingDatetime(string FolderPath, string IdSetting, DateTime value)
+    {
+      string StringValue = CvManager.CvDatetime.ToString(value);
+      return SettingCreateOrUpdate(FolderPath, IdSetting, (int)(TypeSetting.Datetime), StringValue);
+    }
+
     public ReturnCode SaveSettingBoolean(bool AddNewSetting, int IdFolder, string IdSetting, bool value)
     {
       string StringValue = CvManager.CvBoolean.ToString(value);
@@ -269,6 +266,12 @@ namespace TJSettings
         SettingCreate(IdFolder, IdSetting, (int)(TypeSetting.Boolean), StringValue)
         :
         SettingUpdate(IdFolder, IdSetting, StringValue);
+    }
+
+    public ReturnCode SaveSettingBoolean(string FolderPath, string IdSetting, bool value)
+    {
+      string StringValue = CvManager.CvBoolean.ToString(value);
+      return SettingCreateOrUpdate(FolderPath, IdSetting, (int)(TypeSetting.Boolean), StringValue);
     }
 
     public ReturnCode SaveSettingLong(bool AddNewSetting, int IdFolder, string IdSetting, long value)
@@ -282,8 +285,18 @@ namespace TJSettings
         SettingUpdate(IdFolder, IdSetting, StringValue);
     }
 
+    public ReturnCode SaveSettingLong(string FolderPath, string IdSetting, long value)
+    {
+      string StringValue = CvManager.CvInt64.ToString(value);
+      return SettingCreateOrUpdate(FolderPath, IdSetting, (int)(TypeSetting.Integer64), StringValue);
+    }
+
     public ReturnCode SaveSettingText(bool AddNewSetting, int IdFolder, string IdSetting, TypeSetting type, string value)
     {
+      if (SettingTypeIsText(type) == false)
+      {
+        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method."); 
+      }
       return
         AddNewSetting
         ?
@@ -292,18 +305,28 @@ namespace TJSettings
         SettingUpdate(IdFolder, IdSetting, value);
     }
 
+    public ReturnCode SaveSettingText(string FolderPath, string IdSetting, TypeSetting type, string value)
+    {
+      if (SettingTypeIsText(type) == false)
+      {
+        return ReturnCodeFactory.Error((int)Errors.SettingInappropriateType, "Incorrect [TypeSetting] value for the [SaveSettingText] method."); 
+      }
+      return SettingCreateOrUpdate(FolderPath, IdSetting, (int)(type), value);
+    }
+
     public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
     {
+      IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
-      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Setting name not specified");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
-        if (count > 0) return ReturnCodeFactory.Error("A setting with the same name already exists");
+        if (count > 0) return ReturnCodeFactory.Error((int)Errors.SettingAlreadyExists, "A setting with the same name already exists");
         count = command.ZzAdd("@IdType", IdType).ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingInsert);
-        if (count != 1) return ReturnCodeFactory.Error("Error trying to add a new setting");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingInsertFailed, "Error trying to add a new setting");
         code.StringNote = value;
       }
       return code;
@@ -312,16 +335,44 @@ namespace TJSettings
     public ReturnCode SettingUpdate(int IdFolder, string IdSetting, string value)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Changes saved: {IdSetting}");
-      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Setting name not specified");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
-        if (count != 1) return ReturnCodeFactory.Error("The setting with the specified name does not exist");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingDoesNotExist, "The setting with the specified name does not exist");
         count = command.ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingUpdate);
-        if (count != 1) return ReturnCodeFactory.Error("Error trying to change a value of the setting");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingUpdateFailed, "Error trying to change a value of the setting");
         code.StringNote = value;
+      }
+      return code;
+    }
+
+    public ReturnCode SettingCreateOrUpdate(string FolderPath, string IdSetting, int IdType, string value)
+    {
+      int IdFolder = GetIdFolder(FolderPath);
+      IdSetting = IdSetting.RemoveSpecialCharacters();
+      ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
+        if (count > 0) // UPDATE value of existing setting // 
+        {
+          code = ReturnCodeFactory.Success($"Changes saved: {IdSetting}");
+          count = command.ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingUpdate);
+          if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingUpdateFailed, "Error trying to change a value of the setting");
+          code.StringNote = value;
+        }
+        else // ADD a new value of setting // 
+        {
+          count = command.ZzAdd("@IdType", IdType).ZzAdd("@SettingValue", value).ZzExecuteNonQuery(DbManager.SqlSettingInsert);
+          if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingInsertFailed, "Error trying to add a new setting");
+          code.StringNote = value;
+        }
       }
       return code;
     }
@@ -329,17 +380,17 @@ namespace TJSettings
     public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Setting has been renamed: {IdSettingNew}");
-      if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error("New setting name not specified");
+      if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "New setting name not specified");
 
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSettingNew).ZzGetScalarInteger(DbManager.SqlSettingCount);
-        if (count > 0) return ReturnCodeFactory.Error("A setting with the same name already exists");
+        if (count > 0) return ReturnCodeFactory.Error((int)Errors.SettingAlreadyExists, "A setting with the same name already exists");
         command.Parameters.Clear();
         count = command.ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSettingOld", IdSettingOld).ZzAdd("@IdSettingNew", IdSettingNew).ZzExecuteNonQuery(DbManager.SqlSettingRename);
-        if (count != 1) return ReturnCodeFactory.Error("Error trying to rename a setting");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to rename a setting");
       }
       return code;
     }
@@ -347,15 +398,15 @@ namespace TJSettings
     public ReturnCode SettingDelete(int IdFolder, string IdSetting)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Setting has been deleted: {IdSetting}");
-      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error("Setting name not specified");
+      if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarInteger(DbManager.SqlSettingCount);
-        if (count != 1) return ReturnCodeFactory.Error("Setting not found");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.SettingNotFound, "Setting not found");
         count = command.ZzExecuteNonQuery(DbManager.SqlSettingDelete);
-        if (count != 1) return ReturnCodeFactory.Error("Error trying to delete a setting");
+        if (count != 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to delete a setting");
       }
       return code;
     }
@@ -389,13 +440,12 @@ namespace TJSettings
       FxTreeView form = new FxTreeView();
       form.Visible = false;
       FillTreeView(form.TvFolders, VxFolders);
-      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);      
+      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
       form.Close();
       foreach (var item in ListFolders) if (item.Level == 0) { RootFolderName = item.NameFolder; break; }
     }
 
     public ReturnCode CreateNewDatabase(string text) => DbManager.CreateNewDatabase(text);
-
   }
 }
 

@@ -33,28 +33,5 @@ namespace TJStandard
         default: return input.First().ToString().ToUpper() + input.Substring(1);
       }
     }
-
-    public static bool IsValidChar(char c) // Только цифры, латинские буквы и несколько символов //
-    {
-      return 
-        (
-        (c >= '0' && c <= '9') || 
-        (c >= 'A' && c <= 'Z') || 
-        (c >= 'a' && c <= 'z') || 
-        c == '-' ||
-        c == '+' ||
-        c == '=' ||
-        c == '(' ||
-        c == ')' ||
-        c == '^' ||
-        c == '_');
-    }
-
-    public static string RemoveSpecialCharacters(this string str)
-    {
-      StringBuilder sb = new StringBuilder();
-      foreach (char c in str) if (IsValidChar(c)) sb.Append(c);
-      return sb.ToString();
-    }
   }
 }

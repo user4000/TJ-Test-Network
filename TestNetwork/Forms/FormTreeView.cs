@@ -221,7 +221,7 @@ namespace TestNetwork
     {
       ReturnCode code = ReturnCodeFactory.Error("An error occurred while trying to change the setting name");
       string NameSettingDraft = TxSettingRename.Text.Trim();
-      string NameSetting = Manager.RemoveSpecialCharacters(NameSettingDraft);
+      string NameSetting = NameSettingDraft.RemoveSpecialCharacters();
       TxSettingRename.Text = NameSetting;
 
       if (NameSetting.Length < 1)
@@ -551,7 +551,7 @@ namespace TestNetwork
       }
 
       string NameFolderDraft = TxFolderAdd.Text.Trim();
-      string NameFolder = Manager.RemoveSpecialCharacters(NameFolderDraft);
+      string NameFolder = NameFolderDraft.RemoveSpecialCharacters();
       TxFolderAdd.Text = NameFolder;
 
       if (NameFolder.Length < 1)
@@ -642,7 +642,7 @@ namespace TestNetwork
         return;
       }
 
-      string NameFolder = Manager.RemoveSpecialCharacters(TxFolderRename.Text);
+      string NameFolder = TxFolderRename.Text.RemoveSpecialCharacters();
       TxFolderRename.Text = NameFolder;
 
       if (NameFolder.Length < 1)
@@ -771,7 +771,7 @@ namespace TestNetwork
 
       if (SearchResult.Length < 1)
       {
-        Ms.ShortMessage(MsgType.Fail, "The search has not given any results", 200, PvFolders).Offset(offset).NoTable().Create();
+        Ms.ShortMessage(MsgType.Fail, "The search has not given any results", 300, PvFolders).Offset(offset).NoTable().Create();
       }
 
       if (SearchResult.Length == 1)
@@ -889,7 +889,7 @@ namespace TestNetwork
     {
       string ErrorHeader = AddNewSetting ? "Failed to create a new setting" : "Failed to change setting value";
       ReturnCode code = ReturnCodeFactory.Error(ErrorHeader);
-      string IdSetting = AddNewSetting ? Manager.RemoveSpecialCharacters(TxSettingAdd.Text) : CurrentIdSetting;
+      string IdSetting = AddNewSetting ? TxSettingAdd.Text.RemoveSpecialCharacters() : CurrentIdSetting;
       TxSettingAdd.Text = AddNewSetting ? IdSetting : string.Empty;
 
       if (IdSetting.Length < 1)

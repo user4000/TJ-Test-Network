@@ -12,7 +12,6 @@ using TJSettings;
 using static TestSettingsConsumer.Program;
 using static TJFramework.TJFrameworkManager;
 
-
 namespace TestSettingsConsumer
 {
   public partial class FormTest : RadForm, IEventStartWork
@@ -48,10 +47,9 @@ namespace TestSettingsConsumer
       DxTest.Items.Add(item);
     }
 
-
     private void FillTestList()
     {
-      AddNewTest("FolderInsert");
+      AddNewTest("SettingGetValue");
     }
 
     private void EventExecuteTest(object sender, EventArgs e)
@@ -62,17 +60,15 @@ namespace TestSettingsConsumer
       string Result = string.Empty;
       int Num1 = CxConvert.ToInt32(Arg1, -1);
 
-      if (Test == "FolderInsert") Result = ExecuteTestFolderInsert(Arg1, Arg2);
+      //if (Test == "SettingGetValue") Result = ExecuteTest1(Arg1, Arg2);
 
       TxMessage.Text = Result;
       Ms.Message("", "Test has been passed").Control(BxTest).Debug();
-
     }
 
-    private string ExecuteTestFolderInsert(string ParentFolder, string NameFolder)
+    private string ExecuteTest1(string NameFolder, string NameSetting)
     {
-      ReturnCode code = DbSettings.FolderInsert(ParentFolder, NameFolder);
-      return ReturnCodeFormatter.ToString(code);
+      return ""; // ReturnCodeFormatter.ToString(code);
     }
   }
 }

@@ -11,10 +11,6 @@ using TJStandard;
 
 namespace TJSettings
 {
-  // TODO: Create COMMON public method to READ a VARIABLE
-  // TODO: Create COMMON public method to CHANGE a VARIABLE
-  // TODO: Consider a hierarchical system of folder names for accessing variables without a numerical folder identifier
-
   public class DatabaseStructureManager
   {
     public string TnFolders { get; } = "FOLDERS";
