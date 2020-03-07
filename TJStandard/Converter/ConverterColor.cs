@@ -2,7 +2,7 @@
 
 namespace TJStandard
 {
-  public class ConverterColor
+  public class ConverterColor // TODO: Каждый конвертер должен также сигнализировать об ошибке если преобразование из строки было неудачным.
   {
     private Color DefaultColor { get; } = Color.Black;
 

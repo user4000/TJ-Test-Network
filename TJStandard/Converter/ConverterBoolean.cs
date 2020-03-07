@@ -9,7 +9,7 @@
 
     public bool FromString(string value)
     {
-      return value == "1" ? true : false;
+      return value == "0" ? false : true;
     }
   }
 }

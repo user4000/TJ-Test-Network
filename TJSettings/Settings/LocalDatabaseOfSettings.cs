@@ -455,6 +455,28 @@ namespace TJSettings
       }
     }
 
+    public ReceivedValueBoolean GetSettingBoolean(string FolderPath, string IdSetting)
+    {
+      ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
+      if (TextValue.Code.Error) return ReceivedValueBoolean.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      return ReceivedValueBoolean.Success(CvManager.CvBoolean.FromString(TextValue.Value));
+    }
+
+    public ReceivedValueInteger64 GetSettingInteger64(string FolderPath, string IdSetting)
+    {
+      ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
+      if (TextValue.Code.Error) return ReceivedValueInteger64.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      return ReceivedValueInteger64.Success(CvManager.CvInt64.FromString(TextValue.Value));
+    }
+
+    public ReceivedValueColor GetSettingColor(string FolderPath, string IdSetting)
+    {
+      ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
+      if (TextValue.Code.Error) return ReceivedValueColor.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      return ReceivedValueColor.Success(CvManager.CvColor.FromString(TextValue.Value));
+    }
+
+
     public void FillListFolders()
     {
       void ProcessOneNode(RadTreeNode node)
