@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace TJSettings
+namespace TJStandard
 {
   public class ConverterDatetime
   {

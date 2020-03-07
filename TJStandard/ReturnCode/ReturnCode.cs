@@ -24,5 +24,6 @@ namespace TJStandard
     public bool Success { get => NumericValue == 0; }
 
     public bool Error { get => NumericValue != 0; }
+  }
 }
-}
+

@@ -54,13 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Converter\Converter.cs" />
-    <Compile Include="Converter\ConverterBoolean.cs" />
-    <Compile Include="Converter\ConverterColor.cs" />
-    <Compile Include="Converter\ConverterDatetime.cs" />
-    <Compile Include="Converter\ConverterFont.cs" />
-    <Compile Include="Converter\ConverterInt32.cs" />
-    <Compile Include="Converter\ConverterInt64.cs" />
     <Compile Include="Extensions\XxSQLiteCommand.cs" />
     <Compile Include="Form\FxTreeView.cs">
       <SubType>Form</SubType>

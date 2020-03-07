@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Globalization;
-using TJStandard;
 
-namespace TJSettings
+namespace TJStandard
 {
   public class ConverterFont
   {

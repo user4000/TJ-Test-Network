@@ -1,4 +1,4 @@
-﻿namespace TJSettings
+﻿namespace TJStandard
 {
   public class ConverterBoolean
   {

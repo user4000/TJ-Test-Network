@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
-using TJStandard;
 
-namespace TJSettings
+namespace TJStandard
 {
   public class ConverterColor
   {

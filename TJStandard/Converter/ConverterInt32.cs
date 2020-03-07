@@ -1,6 +1,4 @@
-﻿using TJStandard;
-
-namespace TJSettings
+﻿namespace TJStandard
 {
   public class ConverterInt32
   {

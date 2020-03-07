@@ -16,6 +16,7 @@ namespace TJSettings
     internal DatabaseStructureManager DbManager = new DatabaseStructureManager();
 
     public string RootFolderName { get; private set; } = string.Empty;
+
     public RadTreeView VxTreeview { get; private set; } = new RadTreeView();
 
     public DataTable VxFolders { get; private set; } = null;
@@ -77,14 +78,6 @@ namespace TJSettings
       DbManager.InitVariables();
     }
 
-    public void FillDropDownListForTableTypes(RadDropDownList combobox)
-    {
-      combobox.DataSource = TableTypes;
-      combobox.ValueMember = DbManager.CnTypesIdType;
-      combobox.DisplayMember = DbManager.CnTypesNameType;
-      combobox.ZzSetStandardVisualStyle();
-    }
-
     private Folder GetFolder(int IdFolder)
     {
       return ListFolders.SingleOrDefault(f => f.IdFolder == IdFolder);
@@ -94,6 +87,16 @@ namespace TJSettings
     {
       return !((type == TypeSetting.Boolean) || (type == TypeSetting.Integer64) || (type == TypeSetting.Datetime));
     }
+
+    public void FillDropDownListForTableTypes(RadDropDownList combobox)
+    {
+      combobox.DataSource = TableTypes;
+      combobox.ValueMember = DbManager.CnTypesIdType;
+      combobox.DisplayMember = DbManager.CnTypesNameType;
+      combobox.ZzSetStandardVisualStyle();
+    }
+
+    public ReturnCode CreateNewDatabase(string text) => DbManager.CreateNewDatabase(text);
 
     public ReturnCode FolderInsert(string Parent, string NameFolder) => FolderInsert(GetIdFolder(Parent), NameFolder);
 
@@ -377,6 +380,11 @@ namespace TJSettings
       return code;
     }
 
+    public ReturnCode SettingRename(string FolderPath, string IdSettingOld, string IdSettingNew)
+    {
+      return SettingRename(GetIdFolder(FolderPath), IdSettingOld, IdSettingNew);
+    }
+
     public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
     {
       ReturnCode code = ReturnCodeFactory.Success($"Setting has been renamed: {IdSettingNew}");
@@ -393,6 +401,11 @@ namespace TJSettings
         if (count != 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to rename a setting");
       }
       return code;
+    }
+
+    public ReturnCode SettingDelete(string FolderPath, string IdSetting)
+    {
+      return SettingDelete(GetIdFolder(FolderPath), IdSetting);
     }
 
     public ReturnCode SettingDelete(int IdFolder, string IdSetting)
@@ -444,8 +457,6 @@ namespace TJSettings
       form.Close();
       foreach (var item in ListFolders) if (item.Level == 0) { RootFolderName = item.NameFolder; break; }
     }
-
-    public ReturnCode CreateNewDatabase(string text) => DbManager.CreateNewDatabase(text);
   }
 }
 
