@@ -2,27 +2,25 @@
 
 namespace TJStandard
 {
-  public class ConverterColor // TODO: Каждый конвертер должен также сигнализировать об ошибке если преобразование из строки было неудачным.
-  {
-    private Color DefaultColor { get; } = Color.Black;
-
+  public class ConverterColor
+  {   
     public string ToString(Color value)
     {
       return CxConvert.ObjectToJson(value);
     }
 
-    public Color FromString(string value)
+    public ReceivedValueColor FromString(string value)
     {
-      Color color = DefaultColor;
+      Color color;
       try
       {
         color = CxConvert.JsonToObject<Color>(value);
       }
       catch
       {
-        color = DefaultColor;
+        return ReceivedValueColor.Error(ReturnCodeFactory.NcError);
       }
-      return color;
+      return ReceivedValueColor.Success(color);
     }
   }
 }

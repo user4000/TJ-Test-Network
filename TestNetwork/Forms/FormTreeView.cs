@@ -296,7 +296,7 @@ namespace TestNetwork
     private void EventButtonSettingColorSelect(object sender, EventArgs e)
     {
       RadColorDialog dialog = new RadColorDialog();
-      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage == PgSettingChange)) dialog.SelectedColor = Manager.CvManager.CvColor.FromString(StxColor.Text);
+      if ((StxColor.Text.Length > 0) && (PvSettings.SelectedPage == PgSettingChange)) dialog.SelectedColor = Manager.CvManager.CvColor.FromString(StxColor.Text).Value;
       DialogResult result = dialog.ShowDialog();
       if (result == DialogResult.OK) StxColor.Text = Manager.CvManager.CvColor.ToString(dialog.SelectedColor);
     }
@@ -435,13 +435,13 @@ namespace TestNetwork
       switch ((TypeSetting)CurrentSetting.IdType)
       {
         case TypeSetting.Boolean:
-          StxBoolean.Value = Manager.CvManager.CvBoolean.FromString(CurrentSetting.SettingValue);
+          StxBoolean.Value = Manager.CvManager.CvBoolean.FromString(CurrentSetting.SettingValue).Value;
           break;
         case TypeSetting.Datetime:
-          StxDatetime.Value = Manager.CvManager.CvDatetime.FromString(CurrentSetting.SettingValue);
+          StxDatetime.Value = Manager.CvManager.CvDatetime.FromString(CurrentSetting.SettingValue).Value;
           break;
         case TypeSetting.Integer64:
-          StxLongInteger.Text = Manager.CvManager.CvInt64.FromString(CurrentSetting.SettingValue).ToString();
+          StxLongInteger.Text = Manager.CvManager.CvInt64.FromString(CurrentSetting.SettingValue).Value.ToString();
           break;
         case TypeSetting.Text:
           StxText.Text = CurrentSetting.SettingValue;
@@ -920,7 +920,7 @@ namespace TestNetwork
           {
             Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width,-100).Warning(); return;
           }
-          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text));
+          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text).Value);
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;

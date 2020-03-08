@@ -455,7 +455,7 @@ namespace TJSettings
       }
     }
 
-    public ReceivedValueText GetStringValueOfSettingUsingOneQuery(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method //
+    public ReceivedValueText GetStringValueOfSettingUsingOneQuery(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method
     {
       int IdFolder = GetIdFolder(FolderPath);
       if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
@@ -474,23 +474,22 @@ namespace TJSettings
     {
       ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
       if (TextValue.Code.Error) return ReceivedValueBoolean.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
-      return ReceivedValueBoolean.Success(CvManager.CvBoolean.FromString(TextValue.Value));
+      return CvManager.CvBoolean.FromString(TextValue.Value);
     }
 
     public ReceivedValueInteger64 GetSettingInteger64(string FolderPath, string IdSetting)
     {
       ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
       if (TextValue.Code.Error) return ReceivedValueInteger64.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
-      return ReceivedValueInteger64.Success(CvManager.CvInt64.FromString(TextValue.Value));
+      return CvManager.CvInt64.FromString(TextValue.Value);
     }
 
     public ReceivedValueColor GetSettingColor(string FolderPath, string IdSetting)
     {
       ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
       if (TextValue.Code.Error) return ReceivedValueColor.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
-      return ReceivedValueColor.Success(CvManager.CvColor.FromString(TextValue.Value));
+      return CvManager.CvColor.FromString(TextValue.Value);
     }
-
 
     public void FillListFolders()
     {

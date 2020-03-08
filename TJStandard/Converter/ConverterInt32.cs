@@ -7,9 +7,16 @@
       return value.ToString();
     }
 
-    public int FromString(string value)
+    public ReceivedValueInteger32 FromString(string value)
     {
-      return CxConvert.ToInt32(value, 0);
+      if (int.TryParse(value, out int x))
+      {
+        return ReceivedValueInteger32.Success(x);
+      }
+      else
+      {
+        return ReceivedValueInteger32.Error(ReturnCodeFactory.NcError);
+      }
     }
   }
 }

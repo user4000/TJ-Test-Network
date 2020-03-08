@@ -4,15 +4,14 @@ using System.Globalization;
 namespace TJStandard
 {
   public class ConverterDatetime
-  {
-    private DateTime DefaultDatetime { get; } = DateTime.MinValue;
+  {  
     public string DatetimeFormat { get; } = "yyyy-MM-dd HH:mm:ss";
     public string ToString(DateTime value)
     {
       return value.ToString(DatetimeFormat);
     }
 
-    public DateTime FromString(string value)
+    public ReceivedValueDatetime FromString(string value)
     {
       DateTime dt;
       try
@@ -21,9 +20,9 @@ namespace TJStandard
       }
       catch
       {
-        dt = DefaultDatetime;
+        return ReceivedValueDatetime.Error(ReturnCodeFactory.NcError);
       }
-      return dt;
+      return ReceivedValueDatetime.Success(dt);
     }
   }
 }

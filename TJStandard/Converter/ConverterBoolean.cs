@@ -7,9 +7,10 @@
       return value ? "1" : "0";
     }
 
-    public bool FromString(string value)
+    public ReceivedValueBoolean FromString(string value)
     {
-      return value == "0" ? false : true;
+      if (((value == "0") || (value == "1")) == false) return ReceivedValueBoolean.Error(ReturnCodeFactory.NcError);
+      return ReceivedValueBoolean.Success(value == "0" ? false : true);     
     }
   }
 }

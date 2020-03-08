@@ -5,26 +5,24 @@ using System.Globalization;
 namespace TJStandard
 {
   public class ConverterFont
-  {
-    private Font DefaultFont { get; } = new Font("Verdana", 9);
-
+  {   
     public string ToString(Font value)
     {
       return CxConvert.ObjectToJson(value);
     }
 
-    public Font FromString(string value)
+    public ReceivedValueFont FromString(string value)
     {
-      Font font = DefaultFont;
+      Font font;
       try
       {
         font = CxConvert.JsonToObject<Font>(value);
       }
       catch
       {
-        font = DefaultFont;
+        return ReceivedValueFont.Error(ReturnCodeFactory.NcError);
       }
-      return font;
+      return ReceivedValueFont.Success(font);
     }
   }
 }
