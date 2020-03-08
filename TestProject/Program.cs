@@ -7,11 +7,11 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
 
-namespace TestSettingsConsumer
+namespace TestProject
 {
   static class Program
   {
-    public static string ApplicationUniqueName { get; } = "Application settings consumer";
+    public static string ApplicationUniqueName { get; } = "Test project";
 
     private static Mutex AxMutex = null;
 
@@ -72,7 +72,7 @@ namespace TestSettingsConsumer
       FrameworkSettings.FontAlertCaption = new Font("Verdana", 9);
       FrameworkSettings.FontAlertText = new Font("Verdana", 9);
 
-     // Manager = ProjectManagerFactory.Create();
+      // Manager = ProjectManagerFactory.Create();
 
       Action ExampleOfVisualSettingsAndEvents = () =>
       {

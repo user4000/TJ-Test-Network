@@ -455,6 +455,21 @@ namespace TJSettings
       }
     }
 
+    public ReceivedValueText GetStringValueOfSettingUsingOneQuery(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method //
+    {
+      int IdFolder = GetIdFolder(FolderPath);
+      if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        string value = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarString(DbManager.SqlGetSettingValueWithCount);
+        if (value.Length < 1) return ReceivedValueText.Error((int)Errors.Unknown,"Query has returned empty string");
+        if (value[value.Length-1] == '0') return ReceivedValueText.Error((int)Errors.SettingDoesNotExist, "Setting does not exist");
+        if (value.Length == 1) return ReceivedValueText.Success(string.Empty);
+        return ReceivedValueText.Success(value.Remove(value.Length-1));
+      }
+    }
+
     public ReceivedValueBoolean GetSettingBoolean(string FolderPath, string IdSetting)
     {
       ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
