@@ -25,7 +25,7 @@ namespace TJSettings
 
     public override string ToString()
     {
-      return $"{IdFolder}; {FullPath};";
+      return $"{IdFolder}; {NameFolder}; {FullPath}; {Level};";
     }
   }
 }

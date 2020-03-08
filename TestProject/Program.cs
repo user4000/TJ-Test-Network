@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Akka.Actor;
 using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
@@ -14,6 +15,8 @@ namespace TestProject
     public static string ApplicationUniqueName { get; } = "Test project";
 
     private static Mutex AxMutex = null;
+
+    public static ActorSystem AcSystem { get; set; } = null;
 
     //public static ProjectManager Manager { get; set; } = null;
 
@@ -88,6 +91,7 @@ namespace TestProject
         //TJFrameworkManager.Service.EventBeforeMainFormCloseAsync = Manager.EventBeforeMainFormCloseAsync();
       };
 
+      AcSystem = ActorSystem.Create("MainSystem");
       TJFrameworkManager.Run();
     }
   }
