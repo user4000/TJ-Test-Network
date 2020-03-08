@@ -491,6 +491,18 @@ namespace TJSettings
       return CvManager.CvColor.FromString(TextValue.Value);
     }
 
+    public ReceivedValueDatetime GetSettingDatetime(string FolderPath, string IdSetting)
+    {
+      ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
+      if (TextValue.Code.Error) return ReceivedValueDatetime.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      return CvManager.CvDatetime.FromString(TextValue.Value);
+    }
+
+    public ReceivedValueText GetSettingText(string FolderPath, string IdSetting)
+    {
+      return GetStringValueOfSetting(FolderPath, IdSetting);
+    }
+
     public void FillListFolders()
     {
       void ProcessOneNode(RadTreeNode node)
