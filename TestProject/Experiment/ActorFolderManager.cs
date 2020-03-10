@@ -17,7 +17,7 @@ namespace TestProject
       Receive<MessageFolderGenerateRandom>(EventGenerateRandomFolders);
       Receive<MessageRequestFolderCount>(EventRequestFolderCount);
     }
-
+    
     public void AddRandomFolder()
     {
       ListFolders.Add
