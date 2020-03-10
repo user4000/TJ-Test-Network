@@ -35,7 +35,7 @@ namespace TestNetwork
     {
       CreateColumns();
       Grid.DataSource = ListDataSource;
-      Grid.ReadOnly = false;
+      Grid.ReadOnly = true;
       Grid.AllowEditRow = false;
       Grid.AllowRowResize = false;
       Grid.MultiSelect = false;
@@ -45,11 +45,11 @@ namespace TestNetwork
       Grid.EnableSorting = false;
       Grid.HideSelection = true;
 
-      //Grid.CurrentCellChanged += GridCurrentCellChanged;
       Grid.CurrentColumnChanged += GridCurrentColumnChanged;
       Grid.SelectionMode = GridViewSelectionMode.FullRowSelect;
       Grid.RowFormatting += new RowFormattingEventHandler(EventRowFormatting);
       Grid.CurrentRowChanging += new CurrentRowChangingEventHandler(EventCurrentRowChanging);
+      //Grid.CurrentCellChanged += GridCurrentCellChanged;
       //Grid.CellFormatting += new CellFormattingEventHandler(EventCellFormatting);
       //Grid.CellValueChanged += EventCellValueChanged;
       //SetThemeForGrid();
@@ -122,7 +122,7 @@ namespace TestNetwork
       if (Grid.Rows.Count > 0)
       {
         Grid.GridNavigator.ClearSelection(); // Clear selection //
-      }
+      }     
     }
 
     internal void HidePasswordValues()
@@ -138,20 +138,6 @@ namespace TestNetwork
       if ((list != null) && (list.Count > 0))
       {
         ListDataSource = list;
-        HidePasswordValues();
-      }
-      else
-      {
-        ListDataSource = Empty;
-      }
-      RefreshGrid();
-    }
-
-    private void RefreshGrid(List<Setting> list)
-    {
-      if ((list != null) && (list.Count > 0))
-      {
-        ListDataSource = new BindingList<Setting>(list);
         HidePasswordValues();
       }
       else

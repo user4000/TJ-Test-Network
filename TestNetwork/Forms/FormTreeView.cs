@@ -7,8 +7,8 @@ using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
 using TJFramework;
-using TJStandard;
 using TJSettings;
+using TJStandard;
 using static TestNetwork.Program;
 using static TJFramework.TJFrameworkManager;
 
@@ -46,6 +46,7 @@ namespace TestNetwork
 
     private void SetProperties()
     {
+      Padding NoPadding = new Padding(0, 0, 0, 0);
       BxOpenFile.ShowBorder = false;
       BxSelectFile.ShowBorder = false;
       BxFolderAdd.ShowBorder = false;
@@ -106,13 +107,13 @@ namespace TestNetwork
       PgSettingMessage.Item.Visibility = ElementVisibility.Collapsed;
 
       PvEditor.Padding = new Padding(0, 1, 0, 0);
-      PvEditor.Margin = new Padding(0, 0, 0, 0);
+      PvEditor.Margin = NoPadding;
 
-      PnSettingAddTool.Padding = new Padding(0, 0, 0, 0);
-      PnSettingAddTool.Margin = new Padding(0, 0, 0, 0);
+      PnSettingAddTool.Padding = NoPadding;
+      PnSettingAddTool.Margin = NoPadding;
 
-      PnSettingChangeTool.Padding = new Padding(0, 0, 0, 0);
-      PnSettingChangeTool.Margin = new Padding(0, 0, 0, 0);
+      PnSettingChangeTool.Padding = NoPadding;
+      PnSettingChangeTool.Margin = NoPadding;
 
       StxDatetime.Value = DateTime.Today;
 
@@ -155,7 +156,7 @@ namespace TestNetwork
 
       PvSettings.SelectedPageChanged += EventSettingsSelectedPageChanged; // Settings Change, Add, Rename, Delete //
 
-      TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e);
+      TvFolders.SelectedNodeChanged += async (s, e) => await EventTreeviewSelectedNodeChanged(s, e); // SELECTED NODE CHANGED //
       ScMain.SplitterMoved += EventScMainSplitterMoved;
       GvSettings.SelectionChanged += EventGridSelectionChanged; // User has selected a new row //
     }
@@ -355,16 +356,6 @@ namespace TestNetwork
         PnTreeview.SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
 
-    private void EventSettingClearSelection()
-    {
-      CurrentIdSetting = string.Empty;
-      CurrentSetting = null;
-      BxSettingChange.Enabled = false;
-      PgSettingDelete.Enabled = false;
-      PgSettingRename.Enabled = false;
-      BxSettingUp.Enabled = false;
-      BxSettingDown.Enabled = false;
-    }
 
     private void EventSettingOneRowSelected() // Event - user selected a setting in the grid //
     {
@@ -389,6 +380,17 @@ namespace TestNetwork
     {
       var list = await DbSettings.GetSettings(CurrentIdFolder);
       VxGridSettings.RefreshGrid(list);
+    }
+
+    private void EventSettingClearSelection()
+    {
+      CurrentIdSetting = string.Empty;
+      CurrentSetting = null;
+      BxSettingChange.Enabled = false;
+      PgSettingDelete.Enabled = false;
+      PgSettingRename.Enabled = false;
+      BxSettingUp.Enabled = false;
+      BxSettingDown.Enabled = false;
     }
 
     private async Task RefreshGridSettingsAndClearSelection()
@@ -824,21 +826,29 @@ namespace TestNetwork
 
     private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTimeFromThisFile)
     {
-      DataTable table = null; bool Error = false;
+      DataTable table = null; bool Error = false; ReturnCode CheckDbStructure = ReturnCodeFactory.Error("Could not check database structure");
+
       try
       {
+        CheckDbStructure = DbSettings.CheckDatabaseStructure();
+        if (CheckDbStructure.Error) throw new DatabaseStructureCheckException(CheckDbStructure.StringValue);
         table = DbSettings.GetTableFolders();
+      }
+      catch (DatabaseStructureCheckException ex)
+      {
+        Error = true;
+        Ms.Message("Checking database structure", ex.Message).Control(TxDatabaseFile).Error();
       }
       catch (Exception ex)
       {
         Error = true;
         if (ex.Message.Contains("not a database"))
         {
-          Ms.Message("Failed to read data from\nthe file you specified", "The file you specified is not a database of the specified type").Control(TxDatabaseFile).Error();
+          Ms.Message("Failed to read data from the file", "This file is not a database of the specified type").Control(TxDatabaseFile).Error();
         }
         else
         {
-          Ms.Error("Failed to read data from\nthe file you specified", ex).Control(TxDatabaseFile).Create();
+          Ms.Error("Failed to read data from the file you specified", ex).Control(TxDatabaseFile).Create();
         }
       }
 
@@ -918,7 +928,7 @@ namespace TestNetwork
           StxLongInteger.Text = StxLongInteger.Text.Trim();
           if (Manager.CvManager.CvInt64.IsValid(StxLongInteger.Text) == false)
           {
-            Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width,-100).Warning(); return;
+            Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width, -100).Warning(); return;
           }
           code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text).Value);
           break;

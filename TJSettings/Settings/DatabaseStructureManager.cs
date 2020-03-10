@@ -68,9 +68,16 @@ namespace TJSettings
 
     public string SqlGetSettingValue { get; private set; } = string.Empty;
 
-    public string SqlGetSettingValueWithCount  { get; private set; } = string.Empty;
+    public string SqlGetSettingValueWithCount { get; private set; } = string.Empty;
+
+    public string SqlCheckDatabaseStructure { get; private set; } = string.Empty;
 
     public string SqlDuplicatedRank { get; private set; } = string.Empty;
+
+    public DatabaseStructureManager()
+    {
+      InitVariables();
+    }
 
     public void InitVariables()
     {
@@ -121,6 +128,17 @@ namespace TJSettings
       SqlGetSettingValue = $"SELECT {CnSettingsSettingValue} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
       SqlGetSettingValueWithCount = $"SELECT IFNULL((SELECT {CnSettingsSettingValue} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting),'') || COUNT(*) as S FROM {TnSettings} WHERE { CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+
+      SqlCheckDatabaseStructure = "SELECT SUM(C) as Table_Structure_Check_Sum FROM " +
+      "(" +
+      "SELECT 1 as N, COUNT(*) as C FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLEFOLDERS%IdFolderINTEGER%,IdParentINTEGERNOTNULL%REFERENCESFOLDERS%IdFolder%,NameFolderTEXT%NOTNULL%' " +
+      "union " +
+      "SELECT 2, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLETYPES(%IdTypeINTEGER%PRIMARYKEYNOTNULL%,NameTypeTEXT%NOTNULL%,NoteTEXT%' " +
+      "union " +
+      "SELECT 3, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLESETTINGS(%IdFolderINTEGERNOTNULL%,IdSettingTEXT%NOTNULL%,IdTypeINTEGER%NOTNULL%,SettingValueTEXT%,RankINTEGER%NOTNULL%CONSTRAINT%PRIMARYKEY%IdFolder%IdSetting%CONSTRAINT%FOREIGNKEY%IdFolder%REFERENCESFOLDERS%IdFolder%CONSTRAINT%FOREIGNKEY%IdType%REFERENCESTYPES%IdType%' " +
+      "union " +
+      "SELECT 4, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE 'CREATEVIEWV_SETTINGSAS%SELECTA.IdFolder%A.IdSetting%A.IdType%B.NameType%A.SettingValue%A.Rank%BooleanValue%FROMSETTINGSA%LEFTJOIN%TYPESB%ON%A.IdType%=%B.IdType%' " +
+      ")";    
     }
 
     public ReturnCode CreateNewDatabase(string FileName)
@@ -167,7 +185,7 @@ namespace TJSettings
 
             sql = @"CREATE TABLE SETTINGS (
             IdFolder INTEGER NOT NULL, 
-            IdSetting TEXT NOT NULL, 
+            IdSetting TEXT (255) NOT NULL, 
             IdType INTEGER NOT NULL, 
             SettingValue TEXT, 
             Rank INTEGER NOT NULL, 

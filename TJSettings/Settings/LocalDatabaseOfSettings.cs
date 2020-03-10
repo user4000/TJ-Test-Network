@@ -13,7 +13,7 @@ namespace TJSettings
 {
   public class LocalDatabaseOfSettings
   {
-    internal DatabaseStructureManager DbManager = new DatabaseStructureManager();
+    public DatabaseStructureManager DbManager = new DatabaseStructureManager();
 
     public string RootFolderName { get; private set; } = string.Empty;
 
@@ -75,7 +75,6 @@ namespace TJSettings
       if (FlagInitVariablesHasBeenAlreadyExecuted) return;
       // This block will be executed only ONE TIME //
       FlagInitVariablesHasBeenAlreadyExecuted = true;
-      DbManager.InitVariables();
     }
 
     private Folder GetFolder(int IdFolder)
@@ -158,6 +157,19 @@ namespace TJSettings
         if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderHasSettings, "You cannot delete a folder that contains settings");
         count = command.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
         if (count == 0) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to delete a folder");
+      }
+      return code;
+    }
+
+    public ReturnCode CheckDatabaseStructure()
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Database structure is ok");
+      int CheckObjectCount = 4;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        command.ZzOpenConnection().ZzText(DbManager.SqlCheckDatabaseStructure);
+        if (command.ZzGetScalarInteger() != CheckObjectCount) code = ReturnCodeFactory.Error(ReturnCodeFactory.NcError, "The database structure is not compliant with the standard. When working with the database errors may occur.");
       }
       return code;
     }
@@ -463,10 +475,10 @@ namespace TJSettings
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
         string value = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzAdd("@IdSetting", IdSetting).ZzGetScalarString(DbManager.SqlGetSettingValueWithCount);
-        if (value.Length < 1) return ReceivedValueText.Error((int)Errors.Unknown,"Query has returned empty string");
-        if (value[value.Length-1] == '0') return ReceivedValueText.Error((int)Errors.SettingDoesNotExist, "Setting does not exist");
+        if (value.Length < 1) return ReceivedValueText.Error((int)Errors.Unknown, "Query has returned empty string");
+        if (value[value.Length - 1] == '0') return ReceivedValueText.Error((int)Errors.SettingDoesNotExist, "Setting does not exist");
         if (value.Length == 1) return ReceivedValueText.Success(string.Empty);
-        return ReceivedValueText.Success(value.Remove(value.Length-1));
+        return ReceivedValueText.Success(value.Remove(value.Length - 1));
       }
     }
 
