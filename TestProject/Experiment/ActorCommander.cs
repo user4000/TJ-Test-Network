@@ -16,12 +16,12 @@ namespace TestProject
     public ActorCommander()
     {
       Receive<FormTest>(EventInitializeForm);
-      Receive<MessageFolderAdd>(EventFolderAdd);
-      Receive<MessageFolderDelete>(EventFolderDelete);
-      Receive<MessageFolderGenerateRandom>(EventGenerateRandomFolders);
-      Receive<MessageRequestFolderCount>(EventRequestFolderCount);
+      Receive<MessageFolderAdd>(obj => { AcFolderManager.Tell(obj); });
+      Receive<MessageFolderDelete>(obj => { AcFolderManager.Tell(obj); });
+      Receive<MessageFolderGenerateRandom>(obj => { AcFolderManager.Tell(obj);});
+      Receive<MessageRequestFolderCount>(obj => { AcFolderManager.Tell(obj);});
       Receive<MessageResponseFolderCount>(EventResponseFolderCount);
-      Receive<string>(EventSayHello);
+      Receive<string>(EventSayHello);       
     }
 
     private bool EventResponseFolderCount(MessageResponseFolderCount obj)
@@ -35,6 +35,19 @@ namespace TestProject
       Form.Print(obj); return true;
     }
 
+    private bool EventInitializeForm(FormTest form)
+    {
+      //Log.Save(MsgType.Debug, "", "EventInitializeForm");
+      if (Form != null) return true;
+      Form = form;
+      AcFolderManager = AcSystem.ActorOf<ActorFolderManager>("Actor_Folder_Manager");
+      form.Print("Actor Commander is ACTIVE");
+      return true;
+    }
+  }
+}
+
+/*
     private bool EventRequestFolderCount(MessageRequestFolderCount obj)
     {
       AcFolderManager.Tell(obj); return true;
@@ -54,15 +67,4 @@ namespace TestProject
     {
       AcFolderManager.Tell(obj); return true;
     }
-
-    private bool EventInitializeForm(FormTest form)
-    {
-      //Log.Save(MsgType.Debug, "", "EventInitializeForm");
-      if (Form != null) return true;
-      Form = form;
-      AcFolderManager = AcSystem.ActorOf<ActorFolderManager>("Actor_Folder_Manager");
-      form.Print("Actor Commander is ACTIVE");
-      return true;
-    }
-  }
-}
+*/
