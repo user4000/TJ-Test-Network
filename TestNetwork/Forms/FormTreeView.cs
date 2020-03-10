@@ -826,7 +826,8 @@ namespace TestNetwork
 
     private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTimeFromThisFile)
     {
-      DataTable table = null; bool Error = false; ReturnCode CheckDbStructure = ReturnCodeFactory.Error("Could not check database structure");
+      DataTable table = null; bool Error = false;
+      ReturnCode CheckDbStructure = ReturnCodeFactory.Success();
 
       try
       {
