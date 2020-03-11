@@ -74,6 +74,10 @@ namespace TJSettings
 
     public string SqlDuplicatedRank { get; private set; } = string.Empty;
 
+    public string SqlGetRandomIdFolder { get; private set; } = string.Empty;
+
+    public string SqlGetRandomIdSetting { get; private set; } = string.Empty;
+
     public DatabaseStructureManager()
     {
       InitVariables();
@@ -138,7 +142,11 @@ namespace TJSettings
       "SELECT 3, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLESETTINGS(%IdFolderINTEGERNOTNULL%,IdSettingTEXT%NOTNULL%,IdTypeINTEGER%NOTNULL%,SettingValueTEXT%,RankINTEGER%NOTNULL%CONSTRAINT%PRIMARYKEY%IdFolder%IdSetting%CONSTRAINT%FOREIGNKEY%IdFolder%REFERENCESFOLDERS%IdFolder%CONSTRAINT%FOREIGNKEY%IdType%REFERENCESTYPES%IdType%' " +
       "union " +
       "SELECT 4, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE 'CREATEVIEWV_SETTINGSAS%SELECTA.IdFolder%A.IdSetting%A.IdType%B.NameType%A.SettingValue%A.Rank%BooleanValue%FROMSETTINGSA%LEFTJOIN%TYPESB%ON%A.IdType%=%B.IdType%' " +
-      ")";    
+      ")";
+
+      SqlGetRandomIdFolder = $"SELECT {CnFoldersIdFolder} FROM (SELECT {CnFoldersIdFolder} FROM {TnFolders} ORDER BY Random() LIMIT 1) UNION SELECT -1 as {CnFoldersIdFolder} ORDER BY 1 DESC";
+
+      SqlGetRandomIdSetting = $"SELECT {CnSettingsIdSetting} FROM (SELECT {CnSettingsIdSetting} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder ORDER BY Random() LIMIT 1) UNION SELECT '' as {CnSettingsIdSetting} ORDER BY 1 DESC";
     }
 
     public ReturnCode CreateNewDatabase(string FileName)

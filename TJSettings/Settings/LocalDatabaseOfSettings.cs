@@ -23,6 +23,8 @@ namespace TJSettings
 
     public char SingleQuote { get; } = '\'';
 
+    public int IdFolderNotFound { get; } = -1;
+
     public string FolderPathSeparator { get; } = @"\";
 
     public Converter CvManager { get; } = new Converter();
@@ -38,8 +40,6 @@ namespace TJSettings
     public string GetSqliteConnectionString(string PathToDatabase) => $"Data Source={PathToDatabase}";
 
     public SQLiteConnection GetSqliteConnection(string PathToDatabase) => new SQLiteConnection(GetSqliteConnectionString(PathToDatabase));
-
-    public string GetSqliteConnectionString() => GetSqliteConnectionString(SqliteDatabase);
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
@@ -65,16 +65,11 @@ namespace TJSettings
       return table;
     }
 
-    private bool FlagInitVariablesHasBeenAlreadyExecuted { get; set; } = false;
-
     public void InitVariables()
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(DbManager.TnTypes);
       FillListFolders();
-      if (FlagInitVariablesHasBeenAlreadyExecuted) return;
-      // This block will be executed only ONE TIME //
-      FlagInitVariablesHasBeenAlreadyExecuted = true;
     }
 
     private Folder GetFolder(int IdFolder)
@@ -187,12 +182,12 @@ namespace TJSettings
 
     public int GetIdFolder(RadTreeNode node)
     {
-      int Id = -1;
+      int Id = IdFolderNotFound;
       if (node != null)
         try
         {
           DataRowView row = node.DataBoundItem as DataRowView;
-          Id = CxConvert.ToInt32(row.Row[DbManager.CnFoldersIdFolder].ToString(), -1);
+          Id = CxConvert.ToInt32(row.Row[DbManager.CnFoldersIdFolder].ToString(), IdFolderNotFound);
         }
         catch { }
       return Id;
@@ -201,8 +196,58 @@ namespace TJSettings
     public int GetIdFolder(string FullPath)
     {
       foreach (var item in ListFolders) if (item.FullPath == FullPath) return item.IdFolder;
-      return -1;
+      return IdFolderNotFound;
     }
+
+    public int GetIdFolderFromDatabase(string FullPath)
+    {
+      string[] names = FullPath.Split(FolderPathSeparator[0]);
+      int IdFolder = IdFolderNotFound;
+      for (int i = 0; i < names.Length; i++)
+      {
+
+        // TODO: Создать метод получения IdFolder из FullPath и сравнить его скорость с методом GetIdFolderWithTreeview;
+        //IdFolder = 
+      }
+      return IdFolderNotFound;
+    }
+
+    public int GetIdFolderWithTreeview(string FullPath)
+    {
+      int x = IdFolderNotFound;
+
+      int ProcessOneNode(RadTreeNode node)
+      {
+        if (node.FullPath == FullPath) return GetIdFolder(node);
+        foreach (var item in node.Nodes)
+        {
+          x = ProcessOneNode(item);
+          if (x != IdFolderNotFound) { return x; }
+        }
+        return -1;
+      }
+
+      DataTable table = GetTableFolders();
+      FxTreeView form = new FxTreeView();
+      form.Visible = false;
+      FillTreeView(form.TvFolders, table);
+
+      int IdFolder = IdFolderNotFound;
+
+      foreach (var item in form.TvFolders.Nodes)
+      {
+        IdFolder = ProcessOneNode(item);
+        if (IdFolder != IdFolderNotFound) break;
+      }
+
+      form.TvFolders.DataSource = null;
+      table.Clear();
+      form.TvFolders.Dispose();
+      table.Dispose();
+      form.Close();
+      return IdFolder;
+    }
+
 
     private async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
     {
@@ -366,7 +411,7 @@ namespace TJSettings
 
     public ReturnCode SettingCreateOrUpdate(string FolderPath, string IdSetting, int IdType, string value)
     {
-      int IdFolder = GetIdFolder(FolderPath);
+      int IdFolder = GetIdFolder(FolderPath); // TODO: Test this method //
       IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
@@ -515,6 +560,24 @@ namespace TJSettings
       return GetStringValueOfSetting(FolderPath, IdSetting);
     }
 
+    public int GetRandomIdFolder()
+    {
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        return command.ZzOpenConnection().ZzGetScalarInteger(DbManager.SqlGetRandomIdFolder);
+      }
+    }
+
+    public string GetRandomIdSetting(int IdFolder)
+    {
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        return command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzGetScalarString(DbManager.SqlGetRandomIdSetting);
+      }
+    }
+
     public void FillListFolders()
     {
       void ProcessOneNode(RadTreeNode node)
@@ -530,6 +593,27 @@ namespace TJSettings
       foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
       form.Close();
       foreach (var item in ListFolders) if (item.Level == 0) { RootFolderName = item.NameFolder; break; }
+    }
+
+    public List<Folder> GetMaterializedPath()
+    {
+      List<Folder> list = new List<Folder>();
+      void ProcessOneNode(RadTreeNode node)
+      {
+        list.Add(Folder.Create(GetIdFolder(node), node.Text, node.FullPath, node.Level));
+        foreach (var item in node.Nodes) ProcessOneNode(item);
+      }
+      DataTable table = GetTableFolders();
+      FxTreeView form = new FxTreeView();
+      form.Visible = false;
+      FillTreeView(form.TvFolders, table);
+      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
+      form.TvFolders.DataSource = null;
+      table.Clear();
+      form.TvFolders.Dispose();
+      table.Dispose();
+      form.Close();
+      return list;
     }
   }
 }
