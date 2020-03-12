@@ -31,14 +31,7 @@ namespace TestNetwork
     private void EventTest(object sender, EventArgs e)
     {
       Stopwatch sw = Stopwatch.StartNew();
-      DbSettings.FillListFolders();
       sw.Stop();
-      Debug($"{sw.ElapsedMilliseconds}", "Milliseconds elapsed =");
-      Debug($"{DbSettings.ListFolders.Count}", "count =");
-
-      foreach (var item in DbSettings.ListFolders)
-        Debug(item.ToString());
-
       BxTest.Click -= EventTest;
       BxTest.Click += EventFindIdFolder;
     }

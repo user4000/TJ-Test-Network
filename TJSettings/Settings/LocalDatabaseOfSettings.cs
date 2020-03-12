@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,9 +31,7 @@ namespace TJSettings
     public Converter CvManager { get; } = new Converter();
 
     internal DataTable TableTypes { get; private set; } = null;
-
-    public List<Folder> ListFolders { get; private set; } = new List<Folder>();
-
+  
     public string SqliteDatabase { get; private set; } = string.Empty;
 
     public void SetPathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
@@ -69,12 +68,6 @@ namespace TJSettings
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(DbManager.TnTypes);
-      FillListFolders();
-    }
-
-    private Folder GetFolder(int IdFolder)
-    {
-      return ListFolders.SingleOrDefault(f => f.IdFolder == IdFolder);
     }
 
     public bool SettingTypeIsText(TypeSetting type)
@@ -195,24 +188,28 @@ namespace TJSettings
 
     public int GetIdFolder(string FullPath)
     {
-      foreach (var item in ListFolders) if (item.FullPath == FullPath) return item.IdFolder;
-      return IdFolderNotFound;
-    }
-
-    public int GetIdFolderFromDatabase(string FullPath)
-    {
+      FullPath = FullPath.TrimStart(FolderPathSeparator[0]).TrimEnd(FolderPathSeparator[0]);
       string[] names = FullPath.Split(FolderPathSeparator[0]);
-      int IdFolder = IdFolderNotFound;
-      for (int i = 0; i < names.Length; i++)
+      int IdFolder = 0;
+      string sql = string.Empty; 
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
       {
-
-        // TODO: Создать метод получения IdFolder из FullPath и сравнить его скорость с методом GetIdFolderWithTreeview;
-        //IdFolder = 
+        command.Connection.Open();
+        command.CommandText = DbManager.SqlGetIdFolder;
+        for (int i = 0; i < names.Length; i++)
+        {
+          Trace.WriteLine(names[i]);
+          IdFolder = command.ZzAdd("@IdParent", IdFolder).ZzAdd("@NameFolder", names[i]).ZzGetScalarInteger();
+          command.Parameters.Clear();
+          if (IdFolder < 0) break;
+        }
+        command.Connection.Close();
       }
-      return IdFolderNotFound;
+      return IdFolder;
     }
 
-    public int GetIdFolderWithTreeview(string FullPath)
+    private int GetIdFolderWithTreeview(string FullPath)
     {
       int x = IdFolderNotFound;
 
@@ -247,7 +244,6 @@ namespace TJSettings
       form.Close();
       return IdFolder;
     }
-
 
     private async Task<BindingList<Setting>> GetSettings(RadTreeNode node)
     {
@@ -578,24 +574,7 @@ namespace TJSettings
       }
     }
 
-    public void FillListFolders()
-    {
-      void ProcessOneNode(RadTreeNode node)
-      {
-        ListFolders.Add(Folder.Create(GetIdFolder(node), node.Text, node.FullPath, node.Level));
-        foreach (var item in node.Nodes) ProcessOneNode(item);
-      }
-      ListFolders.Clear();
-      VxFolders = GetTableFolders();
-      FxTreeView form = new FxTreeView();
-      form.Visible = false;
-      FillTreeView(form.TvFolders, VxFolders);
-      foreach (var item in form.TvFolders.Nodes) ProcessOneNode(item);
-      form.Close();
-      foreach (var item in ListFolders) if (item.Level == 0) { RootFolderName = item.NameFolder; break; }
-    }
-
-    public List<Folder> GetMaterializedPath()
+    public List<Folder> GetListOfFolders()
     {
       List<Folder> list = new List<Folder>();
       void ProcessOneNode(RadTreeNode node)

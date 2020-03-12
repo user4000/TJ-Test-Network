@@ -21,6 +21,8 @@ namespace TestSettingsConsumer
   {
     private LocalDatabaseOfSettings DbSettings = new LocalDatabaseOfSettings();
 
+    private List<Folder> ListFolder = new List<Folder>();
+
     Faker VxFaker = new Faker("en");
 
     public System.Threading.Timer Tm1;
@@ -61,11 +63,20 @@ namespace TestSettingsConsumer
 
     private void TestGetIdFolder(object sender, EventArgs e)
     {
-      string FullPath = TxOne.Text;
-      if (FullPath.Length < 1) FullPath = TxTwo.Text;
-      TxMessage.Clear();
-      int IdFolder = DbSettings.GetIdFolderWithTreeview(FullPath);
-      Print($"{DateTime.Now} ________  Id Folder = {IdFolder}");
+      string FullPath;
+      FullPath = ListFolder.PickRandom().FullPath;
+      TxOne.Text = FullPath;
+      //TxMessage.Clear();
+
+      //int IdFolder = DbSettings.GetIdFolderWithTreeview(FullPath);
+      //int IdFolder = DbSettings.GetIdFolderFromDatabase(FullPath);
+
+      Stopwatch sw = Stopwatch.StartNew();
+      int IdFolder = DbSettings.GetIdFolder(FullPath);
+      sw.Stop();
+
+      //Print($"{DateTime.Now} ________  Id Folder = {IdFolder}");
+      TxTwo.Text = $"{IdFolder} -------- {sw.ElapsedMilliseconds}";
     }
 
     public void EventStartWork()
@@ -82,7 +93,7 @@ namespace TestSettingsConsumer
     public void Print(string message)
     {
       if (TxMessage.InvokeRequired)
-        TxMessage.Invoke((MethodInvoker)delegate {PrintInner(message);});
+        TxMessage.Invoke((MethodInvoker)delegate { PrintInner(message); });
       else
         PrintInner(message);
     }
@@ -99,16 +110,16 @@ namespace TestSettingsConsumer
       AddNewTest("SettingGetValue");
     }
 
-
     private void TestGetAllFolders(object sender, EventArgs e)
     {
-      List<Folder> list = DbSettings.GetMaterializedPath();
-      foreach (var item in list) Print(item.IdFolder + " --- " + item.FullPath);
+      ListFolder.Clear();
+      ListFolder = DbSettings.GetListOfFolders();
+      foreach (var item in ListFolder) Print(item.IdFolder + " --- " + item.FullPath);
     }
 
     private void StartTestTimers(object sender, EventArgs e)
     {
-      Tm1 = new System.Threading.Timer(TestActionCreateFolder, null, 1000, 393 + VxFaker.Random.Int(1 ,27));
+      Tm1 = new System.Threading.Timer(TestActionCreateFolder, null, 1000, 393 + VxFaker.Random.Int(1, 27));
       Tm2 = new System.Threading.Timer(TestActionRenameFolder, null, 1007, 1394 + VxFaker.Random.Int(1, 28));
       Tm3 = new System.Threading.Timer(TestActionDeleteFolder, null, 1011, 2395 + VxFaker.Random.Int(1, 29));
       Tm4 = new System.Threading.Timer(TestActionCreateFolder, null, 2019, 427 + VxFaker.Random.Int(1, 30));
@@ -124,7 +135,7 @@ namespace TestSettingsConsumer
     {
       TxMessage.Clear();
       Stopwatch sw = Stopwatch.StartNew();
-      List<Folder> list = DbSettings.GetMaterializedPath();
+      List<Folder> list = DbSettings.GetListOfFolders();
       sw.Stop();
       foreach (var item in list) Print(item.FullPath);
       Print($"{sw.ElapsedMilliseconds}");
@@ -204,5 +215,5 @@ namespace TestSettingsConsumer
       if (code.Error) Print($"Error TestActionRenameSetting: {code.StringValue}");
     }
 
-  } 
+  }
 }
