@@ -78,6 +78,9 @@ namespace TJSettings
 
     public string SqlGetRandomIdSetting { get; private set; } = string.Empty;
 
+    public string SqlGetRandomSetting { get; private set; } = string.Empty;
+
+
     public DatabaseStructureManager()
     {
       InitVariables();
@@ -147,6 +150,9 @@ namespace TJSettings
       SqlGetRandomIdFolder = $"SELECT {CnFoldersIdFolder} FROM (SELECT {CnFoldersIdFolder} FROM {TnFolders} ORDER BY Random() LIMIT 1) UNION SELECT -1 as {CnFoldersIdFolder} ORDER BY 1 DESC";
 
       SqlGetRandomIdSetting = $"SELECT {CnSettingsIdSetting} FROM (SELECT {CnSettingsIdSetting} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder ORDER BY Random() LIMIT 1) UNION SELECT '' as {CnSettingsIdSetting} ORDER BY 1 DESC";
+
+      SqlGetRandomSetting = $"SELECT {CnSettingsIdFolder},{CnSettingsIdSetting} FROM (SELECT {CnSettingsIdFolder},{CnSettingsIdSetting} FROM {TnSettings} ORDER BY Random() LIMIT 1) UNION SELECT -1,'' ORDER BY 1 DESC";
+
     }
 
     public ReturnCode CreateNewDatabase(string FileName)

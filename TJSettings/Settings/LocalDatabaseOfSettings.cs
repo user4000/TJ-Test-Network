@@ -31,7 +31,7 @@ namespace TJSettings
     public Converter CvManager { get; } = new Converter();
 
     internal DataTable TableTypes { get; private set; } = null;
-  
+
     public string SqliteDatabase { get; private set; } = string.Empty;
 
     public void SetPathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
@@ -191,7 +191,7 @@ namespace TJSettings
       FullPath = FullPath.TrimStart(FolderPathSeparator[0]).TrimEnd(FolderPathSeparator[0]);
       string[] names = FullPath.Split(FolderPathSeparator[0]);
       int IdFolder = 0;
-      string sql = string.Empty; 
+      string sql = string.Empty;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(connection))
       {
@@ -199,7 +199,6 @@ namespace TJSettings
         command.CommandText = DbManager.SqlGetIdFolder;
         for (int i = 0; i < names.Length; i++)
         {
-          Trace.WriteLine(names[i]);
           IdFolder = command.ZzAdd("@IdParent", IdFolder).ZzAdd("@NameFolder", names[i]).ZzGetScalarInteger();
           command.Parameters.Clear();
           if (IdFolder < 0) break;
@@ -407,7 +406,7 @@ namespace TJSettings
 
     public ReturnCode SettingCreateOrUpdate(string FolderPath, string IdSetting, int IdType, string value)
     {
-      int IdFolder = GetIdFolder(FolderPath); // TODO: Test this method //
+      int IdFolder = GetIdFolder(FolderPath); 
       IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
@@ -572,6 +571,21 @@ namespace TJSettings
       {
         return command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzGetScalarString(DbManager.SqlGetRandomIdSetting);
       }
+    }
+
+    public ReturnCode GetRandomSetting() 
+    {
+      ReturnCode code = ReturnCodeFactory.Error();
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlGetRandomSetting, connection).ZzOpenConnection())
+      using (SQLiteDataReader reader = command.ExecuteReader())
+        while (reader.Read())
+        {
+          code = ReturnCodeFactory.Create(ReturnCodeFactory.NcSuccess, reader.GetInt32(0), reader.GetString(1), string.Empty);
+          //Trace.WriteLine("---> " + ReturnCodeFormatter.ToString(code));
+          break;
+        }
+      return code;
     }
 
     public List<Folder> GetListOfFolders()

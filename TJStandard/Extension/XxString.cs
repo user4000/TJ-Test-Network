@@ -33,5 +33,12 @@ namespace TJStandard
         default: return input.First().ToString().ToUpper() + input.Substring(1);
       }
     }
+
+    public static string SafeSubstring(this string text, int start, int length)
+    {
+      return text.Length <= start ? string.Empty
+          : text.Length - start <= length ? text.Substring(start)
+          : text.Substring(start, length);
+    }
   }
 }
