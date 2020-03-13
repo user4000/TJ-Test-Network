@@ -17,7 +17,7 @@ using TJStandard;
 using static TestSettingsConsumer.Program;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestSettingsConsumer
+namespace TestSettingsConsumer // TODO: Организовать подсчёт времени через StopWatcher для каждой операции //
 {
   public partial class FormTest : RadForm, IEventStartWork
   {
@@ -205,7 +205,7 @@ namespace TestSettingsConsumer
       Tm2 = new System.Threading.Timer(TestSelectRandomSetting, null, 2207, 494 + VxFaker.Random.Int(1, 28));
       Tm3 = new System.Threading.Timer(TestSelectRandomSetting, null, 3311, 395 + VxFaker.Random.Int(1, 29));
       Tm4 = new System.Threading.Timer(TestSelectRandomSetting, null, 4419, 927 + VxFaker.Random.Int(1, 30));
-      Tm5 = new System.Threading.Timer(TestSelectRandomSetting, null, 5500, 291 + VxFaker.Random.Int(1, 27));
+      Tm5 = new System.Threading.Timer(TestActionCreateFolder, null, 5500, 891 + VxFaker.Random.Int(1, 27));
       Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 594 + VxFaker.Random.Int(1, 28));
       Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
       Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
@@ -249,10 +249,21 @@ namespace TestSettingsConsumer
     private void TestActionCreateFolder(object sender)
     {
       //int IdFolder = DbSettings.GetRandomIdFolder();
+      string guid = "CreateFolder-" + GetNewGuid(); OperationBegin(guid);
       string NameFolder = VxFaker.Commerce.ProductAdjective() + VxFaker.Commerce.ProductName() + VxFaker.Company.CatchPhrase() + VxFaker.Person.FullName;
       NameFolder = NameFolder.SafeSubstring(1, VxFaker.Random.Int(5, 100));
+      Trace.WriteLine($"create folder {guid}");
       ReturnCode code = DbSettings.FolderInsert(GetRandomFolderPath(), NameFolder);
-      if (code.Error) Print($"Error Folder Insert: {code.StringValue}");
+      if (code.Error)
+      {
+        Trace.WriteLine("ERROR !!! Could not create a folder.");
+        Print($"Error Folder Insert: {code.StringValue}");
+      }
+      else
+      {
+        Trace.WriteLine($"CREATE FOLDER {guid}");
+        OperationSuccess(guid);
+      }
     }
 
     private void TestActionRenameFolder(object sender)
