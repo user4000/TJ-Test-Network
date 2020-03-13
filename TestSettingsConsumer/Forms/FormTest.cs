@@ -205,11 +205,11 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       Tm2 = new System.Threading.Timer(TestSelectRandomSetting, null, 2207, 494 + VxFaker.Random.Int(1, 28));
       Tm3 = new System.Threading.Timer(TestSelectRandomSetting, null, 3311, 395 + VxFaker.Random.Int(1, 29));
       Tm4 = new System.Threading.Timer(TestSelectRandomSetting, null, 4419, 927 + VxFaker.Random.Int(1, 30));
-      Tm5 = new System.Threading.Timer(TestActionCreateFolder, null, 5500, 891 + VxFaker.Random.Int(1, 27));
-      Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 594 + VxFaker.Random.Int(1, 28));
+      Tm5 = new System.Threading.Timer(TestActionCreateFolder, null, 5500, 1291 + VxFaker.Random.Int(1, 27));
+      Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 1594 + VxFaker.Random.Int(1, 28));
       Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
       Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
-      Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 571 + VxFaker.Random.Int(1, 27));
+      Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 871 + VxFaker.Random.Int(1, 27));
 
       BxTest.Click -= StartTestTimersForExperiment2;
       BxTest.Click += StopTestTimersForExperiment2;
@@ -217,8 +217,10 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       TxMessage.Clear();
     }
 
-    private void StopTestTimersForExperiment2(object sender, EventArgs e)
+    private async void StopTestTimersForExperiment2(object sender, EventArgs e)
     {
+      Trace.WriteLine(">>> ============================================================== Stop experiment.");
+
       Tm1.Change(Timeout.Infinite, Timeout.Infinite);
       Tm2.Change(Timeout.Infinite, Timeout.Infinite);
       Tm3.Change(Timeout.Infinite, Timeout.Infinite);
@@ -232,11 +234,18 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       BxTest.Click -= StopTestTimersForExperiment2;
       BxTest.Click += StartTestTimersForExperiment2;
 
-      Ms.Message("STOP Experiment 2", "Timers were stopped.").Control(BxTest).Ok();
+      //Ms.Message("STOP Experiment 2", "Timers were stopped.").Control(BxTest).Ok();
 
       OperationsRegistrar.TryAdd("Test value 1", 0);
       OperationsRegistrar.TryAdd("Test value 2", 0);
       OperationsRegistrar.TryAdd("Test value 3", 0);
+
+      BxTest.Enabled = false;
+
+      await Task.Delay(15000);
+
+      BxTest.Enabled = true;
+
 
       Trace.WriteLine("----------------------------- END ---------------------------");
       foreach (var item in OperationsRegistrar) Trace.WriteLine(item.Key);
