@@ -33,15 +33,20 @@ namespace TJSettings
       return CxConvert.ToInt32(command.ExecuteScalar(), -1);
     }
 
+    public static int ZzGetScalarInteger(this SQLiteCommand command)
+    {
+      return CxConvert.ToInt32(command.ExecuteScalar(), -1);
+    }
+
     public static string ZzGetScalarString(this SQLiteCommand command, string sql)
     {
       command.CommandText = sql;
       return CxConvert.ToString(command.ExecuteScalar());
     }
 
-    public static int ZzGetScalarInteger(this SQLiteCommand command)
+    public static string ZzGetScalarString(this SQLiteCommand command)
     {
-      return CxConvert.ToInt32(command.ExecuteScalar(), -1);
+      return CxConvert.ToString(command.ExecuteScalar());
     }
   }
 }

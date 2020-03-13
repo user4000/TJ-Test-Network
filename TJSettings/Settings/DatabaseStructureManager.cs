@@ -82,6 +82,8 @@ namespace TJSettings
 
     public string SqlGetAllSettings { get; private set; } = string.Empty;
 
+    public string SqlGetRootFolderName { get; private set; } = string.Empty;
+
     public DatabaseStructureManager()
     {
       InitVariables();
@@ -158,9 +160,11 @@ namespace TJSettings
         $"{CnSettingsIdFolder}," +
         $"{CnSettingsIdSetting}," +
         $"{CnSettingsIdType}," +
-        $"{VnSettingsNameType}," +
+        $"{CnSettingsSettingValue}," +
         $"{CnSettingsRank}" +
         $" FROM {TnSettings}";
+
+      SqlGetRootFolderName = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdFolder}={CnFoldersIdParent} AND {CnFoldersIdFolder}=0";
     }
 
     public ReturnCode CreateNewDatabase(string FileName)
@@ -250,6 +254,7 @@ namespace TJSettings
       }
       return code;
     }
+
   }
 }
 

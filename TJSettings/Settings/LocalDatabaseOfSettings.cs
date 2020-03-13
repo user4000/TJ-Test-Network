@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telerik.WinControls.UI;
 using TJStandard;
+using System.Drawing;
 
 namespace TJSettings
 {
@@ -296,6 +297,15 @@ namespace TJSettings
       return count > 0;
     }
 
+    public string GetRootFolderName()
+    {
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlGetRootFolderName, connection).ZzOpenConnection())
+      {
+        return command.ZzGetScalarString();
+      }
+    }
+
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
     {
       string StringValue = CvManager.CvDatetime.ToString(value);
@@ -330,6 +340,30 @@ namespace TJSettings
     {
       string StringValue = CvManager.CvInt64.ToString(value);
       return SettingCreateOrUpdate(FolderPath, IdSetting, TypeSetting.Integer64, StringValue);
+    }
+
+    public ReturnCode SaveSettingFont(bool AddNewSetting, int IdFolder, string IdSetting, Font value)
+    {
+      string StringValue = CvManager.CvFont.ToString(value);
+      return SettingCreateOrUpdate(AddNewSetting, IdFolder, IdSetting, TypeSetting.Font, StringValue);
+    }
+
+    public ReturnCode SaveSettingFont(string FolderPath, string IdSetting, Font value)
+    {
+      string StringValue = CvManager.CvFont.ToString(value);
+      return SettingCreateOrUpdate(FolderPath, IdSetting, TypeSetting.Font, StringValue);
+    }
+
+    public ReturnCode SaveSettingColor(bool AddNewSetting, int IdFolder, string IdSetting, Color value)
+    {
+      string StringValue = CvManager.CvColor.ToString(value);
+      return SettingCreateOrUpdate(AddNewSetting, IdFolder, IdSetting, TypeSetting.Color, StringValue);
+    }
+
+    public ReturnCode SaveSettingColor(string FolderPath, string IdSetting, Color value)
+    {
+      string StringValue = CvManager.CvColor.ToString(value);
+      return SettingCreateOrUpdate(FolderPath, IdSetting, TypeSetting.Color, StringValue);
     }
 
     public ReturnCode SaveSettingText(bool AddNewSetting, int IdFolder, string IdSetting, TypeSetting type, string value)
