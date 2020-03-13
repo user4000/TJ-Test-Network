@@ -80,6 +80,7 @@ namespace TJSettings
 
     public string SqlGetRandomSetting { get; private set; } = string.Empty;
 
+    public string SqlGetAllSettings { get; private set; } = string.Empty;
 
     public DatabaseStructureManager()
     {
@@ -106,7 +107,7 @@ namespace TJSettings
 
       SqlSettingUpdate =
       $"UPDATE {TnSettings} SET {CnSettingsSettingValue}=@SettingValue " +
-      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+      $"WHERE {CnSettingsIdType}=@IdType AND {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
       SqlSettingRename =
       $"UPDATE {TnSettings} SET {CnSettingsIdSetting}=@IdSettingNew " +
@@ -153,6 +154,13 @@ namespace TJSettings
 
       SqlGetRandomSetting = $"SELECT {CnSettingsIdFolder},{CnSettingsIdSetting} FROM (SELECT {CnSettingsIdFolder},{CnSettingsIdSetting} FROM {TnSettings} ORDER BY Random() LIMIT 1) UNION SELECT -1,'' ORDER BY 1 DESC";
 
+      SqlGetAllSettings = $"SELECT " +
+        $"{CnSettingsIdFolder}," +
+        $"{CnSettingsIdSetting}," +
+        $"{CnSettingsIdType}," +
+        $"{VnSettingsNameType}," +
+        $"{CnSettingsRank}" +
+        $" FROM {TnSettings}";
     }
 
     public ReturnCode CreateNewDatabase(string FileName)

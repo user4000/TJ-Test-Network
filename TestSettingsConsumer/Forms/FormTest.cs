@@ -24,6 +24,8 @@ namespace TestSettingsConsumer
 
     private List<Folder> ListFolder = new List<Folder>();
 
+    private List<Setting> ListSetting = new List<Setting>();
+
     Faker VxFaker = new Faker("en");
 
     public System.Threading.Timer Tm1;
@@ -57,8 +59,9 @@ namespace TestSettingsConsumer
 
     public void SetEvents()
     {
-      BxTest.Click += StartTestTimersReadTextSetting;
-      BxList.Click += TestGetAllFolders;
+      BxTest.Click += StartTestTimersForExperiment2;
+      BxList.Enabled = false;
+      //BxList.Click += FillListFolder;
       BxGetIdFolder.Click += TestGetIdFolder;
     }
 
@@ -105,7 +108,7 @@ namespace TestSettingsConsumer
       AddNewTest("SettingGetValue");
     }
 
-    private void TestGetAllFolders(object sender, EventArgs e)
+    private void FillListFolder(object sender, EventArgs e)
     {
       ListFolder.Clear();
       ListFolder = DbSettings.GetListOfFolders();
@@ -114,7 +117,20 @@ namespace TestSettingsConsumer
       TxMessage.AppendText(text);
     }
 
-    private void StartTestTimers(object sender, EventArgs e)
+    private void FillListSetting(object sender, EventArgs e)
+    {
+      ListSetting.Clear();
+      ListSetting = DbSettings.GetAllSettings();
+    }
+
+    private string GetFolderPath(Setting setting)
+    {
+      foreach (var item in ListFolder)
+        if (item.IdFolder == setting.IdFolder) return item.FullPath;
+      return string.Empty;
+    }
+
+    private void StartTestTimersForExperiment1(object sender, EventArgs e)
     {
       Tm1 = new System.Threading.Timer(TestActionCreateFolder, null, 1100, 114393 + VxFaker.Random.Int(1, 27));
       Tm2 = new System.Threading.Timer(TestActionRenameFolder, null, 1207, 115494 + VxFaker.Random.Int(1, 28));
@@ -127,12 +143,12 @@ namespace TestSettingsConsumer
       Tm8 = new System.Threading.Timer(TestActionAddSettingText, null, 2819, 5900 + VxFaker.Random.Int(1, 30));
       Tm9 = new System.Threading.Timer(TestActionRenameSetting, null, 2900, 6011 + VxFaker.Random.Int(1, 27));
 
-      BxTest.Click -= StartTestTimers;
-      BxTest.Click += StopTestTimers;
+      BxTest.Click -= StartTestTimersForExperiment1;
+      BxTest.Click += StopTestTimersForExperiment1;
       Ms.Message("START", "Timers were started.").Control(BxTest).Info();
     }
 
-    private void StopTestTimers(object sender, EventArgs e)
+    private void StopTestTimersForExperiment1(object sender, EventArgs e)
     {
       Tm1.Change(Timeout.Infinite, Timeout.Infinite);
       Tm2.Change(Timeout.Infinite, Timeout.Infinite);
@@ -144,15 +160,15 @@ namespace TestSettingsConsumer
       Tm8.Change(Timeout.Infinite, Timeout.Infinite);
       Tm9.Change(Timeout.Infinite, Timeout.Infinite);
       
-      BxTest.Click -= StopTestTimers;
-      BxTest.Click += StartTestTimers;
+      BxTest.Click -= StopTestTimersForExperiment1;
+      BxTest.Click += StartTestTimersForExperiment1;
       Ms.Message("STOP", "Timers were stopped.").Control(BxTest).Ok();
     }
 
-
-    private void StartTestTimersReadTextSetting(object sender, EventArgs e)
+    private void StartTestTimersForExperiment2(object sender, EventArgs e)
     {
-      if (ListFolder.Count == 0) TestGetAllFolders(sender, e);
+      if (ListFolder.Count == 0) FillListFolder(sender, e);
+      if (ListSetting.Count == 0) FillListSetting(sender, e);
 
       Tm1 = new System.Threading.Timer(TestSelectRandomSetting, null, 1100, 393 + VxFaker.Random.Int(1, 27));
       Tm2 = new System.Threading.Timer(TestSelectRandomSetting, null, 1207, 494 + VxFaker.Random.Int(1, 28));
@@ -161,16 +177,16 @@ namespace TestSettingsConsumer
       Tm5 = new System.Threading.Timer(TestSelectRandomSetting, null, 2500, 291 + VxFaker.Random.Int(1, 27));
       Tm6 = new System.Threading.Timer(TestSelectRandomSetting, null, 2607, 594 + VxFaker.Random.Int(1, 28));
       Tm7 = new System.Threading.Timer(TestSelectRandomSetting, null, 2711, 795 + VxFaker.Random.Int(1, 29));
-      Tm8 = new System.Threading.Timer(TestSelectRandomSetting, null, 2819, 480 + VxFaker.Random.Int(1, 30));
+      Tm8 = new System.Threading.Timer(TestActionAddSettingText, null, 2819, 990 + VxFaker.Random.Int(1, 30));
       Tm9 = new System.Threading.Timer(TestActionAddSettingText, null, 2900, 571 + VxFaker.Random.Int(1, 27));
 
-      BxTest.Click -= StartTestTimersReadTextSetting;
-      BxTest.Click += StopTestTimersReadTextSetting;
-      Ms.Message("START Read Text Settings", "Timers were started.").Control(BxTest).Info();
+      BxTest.Click -= StartTestTimersForExperiment2;
+      BxTest.Click += StopTestTimersForExperiment2;
+      Ms.Message("START Experiment 2", "Timers were started.").Control(BxTest).Info();
       TxMessage.Clear();
     }
 
-    private void StopTestTimersReadTextSetting(object sender, EventArgs e)
+    private void StopTestTimersForExperiment2(object sender, EventArgs e)
     {
       Tm1.Change(Timeout.Infinite, Timeout.Infinite);
       Tm2.Change(Timeout.Infinite, Timeout.Infinite);
@@ -182,54 +198,47 @@ namespace TestSettingsConsumer
       Tm8.Change(Timeout.Infinite, Timeout.Infinite);
       Tm9.Change(Timeout.Infinite, Timeout.Infinite);
 
-      BxTest.Click -= StopTestTimers;
-      BxTest.Click += StartTestTimers;
-      Ms.Message("STOP Read Text Settings", "Timers were stopped.").Control(BxTest).Ok();
+      BxTest.Click -= StopTestTimersForExperiment1;
+      BxTest.Click += StartTestTimersForExperiment1;
+      Ms.Message("STOP Experiment 2", "Timers were stopped.").Control(BxTest).Ok();
     }
 
-    private void TestDbSettingsGetMaterializedPath(object sender, EventArgs e)
-    {
-      TxMessage.Clear();
-      Stopwatch sw = Stopwatch.StartNew();
-      List<Folder> list = DbSettings.GetListOfFolders();
-      sw.Stop();
-      foreach (var item in list) Print(item.FullPath);
-      Print($"{sw.ElapsedMilliseconds}");
-      Ms.Message("", "Test has been passed 123").Control(BxTest).Debug();
-    }
+    private string GetRandomFolderPath() => ListFolder.PickRandom().FullPath;
+
+    private Setting GetRandomSetting() => ListSetting.PickRandom();
 
     private void TestActionCreateFolder(object sender)
     {
-      int IdFolder = DbSettings.GetRandomIdFolder();
+      //int IdFolder = DbSettings.GetRandomIdFolder();
       string NameFolder = VxFaker.Commerce.ProductAdjective() + VxFaker.Commerce.ProductName() + VxFaker.Company.CatchPhrase() + VxFaker.Person.FullName;
       NameFolder = NameFolder.SafeSubstring(1, VxFaker.Random.Int(5, 100));
-      ReturnCode code = DbSettings.FolderInsert(IdFolder, NameFolder);
+      ReturnCode code = DbSettings.FolderInsert(GetRandomFolderPath(), NameFolder);
       if (code.Error) Print($"Error Folder Insert: {code.StringValue}");
     }
 
     private void TestActionRenameFolder(object sender)
     {
-      int IdFolder = DbSettings.GetRandomIdFolder();
+      //int IdFolder = DbSettings.GetRandomIdFolder();
+      /*if (IdFolder == 0) IdFolder = DbSettings.GetRandomIdFolder();
       if (IdFolder == 0) IdFolder = DbSettings.GetRandomIdFolder();
-      if (IdFolder == 0) IdFolder = DbSettings.GetRandomIdFolder();
-      if (IdFolder == 0) return;
+      if (IdFolder == 0) return;*/
       string NameFolder = VxFaker.Hacker.Phrase() + "-" + VxFaker.Vehicle.Manufacturer() + "^" + VxFaker.Vehicle.Model() + "_" + VxFaker.Address.FullAddress();
       NameFolder = NameFolder.SafeSubstring(1, VxFaker.Random.Int(3, 150));
-      ReturnCode code = DbSettings.FolderRename(IdFolder, NameFolder);
+      ReturnCode code = DbSettings.FolderRename(GetRandomFolderPath(), NameFolder);
       if (code.Error) Print($"Error Folder Rename: {code.StringValue}");
     }
 
     private void TestActionDeleteFolder(object sender)
     {
-      int IdFolder = DbSettings.GetRandomIdFolder();
-      DbSettings.FolderDelete(IdFolder, string.Empty);
+      //int IdFolder = DbSettings.GetRandomIdFolder();
+      DbSettings.FolderDelete(GetRandomFolderPath(), string.Empty);
     }
 
     private void TestActionAddSettingBoolean(object sender)
     {
       string IdSetting = VxFaker.Name.JobTitle() + VxFaker.Name.JobDescriptor();
       IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(7, 100));
-      ReturnCode code = DbSettings.SaveSettingBoolean(true, DbSettings.GetRandomIdFolder(), IdSetting, VxFaker.Random.Bool());
+      ReturnCode code = DbSettings.SaveSettingBoolean(GetRandomFolderPath(), IdSetting, VxFaker.Random.Bool());
       if (code.Error) Print($"Error TestActionAddSettingBoolean: {code.StringValue}");
     }
 
@@ -238,7 +247,7 @@ namespace TestSettingsConsumer
       string IdSetting = VxFaker.Rant.Review();
       IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(7, 100));
       DateTime dt = new DateTime(2000, 1, 1).AddSeconds(VxFaker.Random.Int(1, 600000000));
-      ReturnCode code = DbSettings.SaveSettingDatetime(true, DbSettings.GetRandomIdFolder(), IdSetting, dt);
+      ReturnCode code = DbSettings.SaveSettingDatetime(GetRandomFolderPath(), IdSetting, dt);
       if (code.Error) Print($"Error TestActionAddSettingDateTime: {code.StringValue}");
     }
 
@@ -246,7 +255,7 @@ namespace TestSettingsConsumer
     {
       string IdSetting = VxFaker.Internet.DomainWord() + VxFaker.Internet.UserName() + VxFaker.Internet.UserAgent();
       IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(5, 100));
-      ReturnCode code = DbSettings.SaveSettingLong(true, DbSettings.GetRandomIdFolder(), IdSetting, VxFaker.Random.Long());
+      ReturnCode code = DbSettings.SaveSettingLong(GetRandomFolderPath(), IdSetting, VxFaker.Random.Long());
       if (code.Error) Print($"Error TestActionAddSettingInteger64: {code.StringValue}");
     }
 
@@ -255,48 +264,43 @@ namespace TestSettingsConsumer
       string IdSetting = VxFaker.Company.CompanyName() + VxFaker.Lorem.Sentence(5);
       IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(5, 100));
       string Text = VxFaker.Phone.PhoneNumber() + " " + VxFaker.Address.SecondaryAddress() + " " + VxFaker.System.DirectoryPath() + " " + VxFaker.Address.StreetAddress();
-      Text = Text.SafeSubstring(1, VxFaker.Random.Int(1, Text.Length));
-      //Trace.WriteLine($"IdFolder ???");
-      string FolderPath = ListFolder.PickRandom().FullPath;
-    
+      Text = Text.SafeSubstring(1, VxFaker.Random.Int(1, Text.Length));   
       Trace.WriteLine($"Trying to create a new setting ..... {IdSetting}");
+      ReturnCode code = DbSettings.SaveSettingText(GetRandomFolderPath(), IdSetting, TypeSetting.Text, Text);
+      if (code.Error) Trace.WriteLine($"Error TestActionAddSettingText: {code.StringValue}");
+      else Trace.WriteLine($"New Text Setting has been created ----- {IdSetting}");
+    }
 
-      ReturnCode code = DbSettings.SaveSettingText(FolderPath, IdSetting, TypeSetting.Text, Text);
+    private void TestActionUpdateSettingText(object sender)
+    {
+      string IdSetting = VxFaker.Hacker.Abbreviation() + "~" + VxFaker.Hacker.Adjective() + "$" + VxFaker.Hacker.Phrase() + VxFaker.Company.CompanyName() + VxFaker.Lorem.Sentence(5);
+      IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(5, 100));
+      string Text = VxFaker.Phone.PhoneNumber() + " " + VxFaker.Address.SecondaryAddress() + " " + VxFaker.System.DirectoryPath() + " " + VxFaker.Address.StreetAddress();
+      Text = Text.SafeSubstring(1, VxFaker.Random.Int(1, Text.Length));
 
+      Setting setting = GetRandomSetting();
+
+      Trace.WriteLine($"Trying to update setting {setting.IdSetting}");
+      ReturnCode code = DbSettings.SaveSettingText(GetFolderPath(setting), setting.IdSetting, TypeSetting.Text, Text);
       if (code.Error) Trace.WriteLine($"Error TestActionAddSettingText: {code.StringValue}");
       else Trace.WriteLine($"New Text Setting has been created ----- {IdSetting}");
     }
 
     private void TestActionRenameSetting(object sender)
     {
-      int IdFolder = DbSettings.GetRandomIdFolder();
-      string IdSetting = DbSettings.GetRandomIdSetting(IdFolder);
-      if (IdSetting.Length == 0) return;
+      //int IdFolder = DbSettings.GetRandomIdFolder();
+      Setting setting = GetRandomSetting();
       string NewIdSetting = VxFaker.Commerce.Random + "^" + VxFaker.Company.Random + VxFaker.Hacker.Random;
       NewIdSetting = NewIdSetting.SafeSubstring(3, VxFaker.Random.Int(1, NewIdSetting.Length));
-      ReturnCode code = DbSettings.SettingRename(IdFolder, IdSetting, NewIdSetting);
+      ReturnCode code = DbSettings.SettingRename(GetFolderPath(setting), setting.IdSetting, NewIdSetting);
       if (code.Error) Print($"Error TestActionRenameSetting: {code.StringValue}");
     }
 
     private void TestSelectRandomSetting(object sender)
     {
-      Trace.WriteLine("--> DbSettings.GetRandomSetting()");
-      ReturnCode code = DbSettings.GetRandomSetting();
-
-      // TODO: GetRandomSetting - должна быть локальной - из заранее готового списка переменных, а НЕ лезть в БД, как сейчас
-      // Надо изменить логику - перед началом эксперимента все возможные сеттинги должны быть прочитаны в список
-      // и затем рандомно выбираться из этого списка. Тогда в этом методе будет всего 1 обращение в БД а не 2, как сейчас
-
-      Trace.WriteLine("DbSettings.GetRandomSetting() -->");
-      if (code.Error) { Trace.WriteLine("Error! Could not get random setting."); return; }
-      string FolderPath=string.Empty;
-      foreach (var item in ListFolder)
-        if (item.IdFolder==code.IdObject)
-        {
-          FolderPath = item.FullPath; break;
-        }
-      Trace.WriteLine("???");
-      ReceivedValueText value = DbSettings.GetSettingText(FolderPath, code.StringValue);
+      Setting setting = GetRandomSetting(); 
+      Trace.WriteLine("Trying to get setting value ...");
+      ReceivedValueText value = DbSettings.GetSettingText(GetFolderPath(setting), setting.IdSetting);
       Trace.WriteLine($"Ok! value = {value.Value}");
     }
   }

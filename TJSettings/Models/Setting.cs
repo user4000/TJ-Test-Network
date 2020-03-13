@@ -32,6 +32,11 @@ namespace TJSettings
       Rank = rank;
       BooleanValue = booleanValue;
     }
+
+    public static Setting Create(int idFolder, string idSetting, int idType, string settingValue, int rank)
+    {
+      return new Setting(idFolder, idSetting, idType, string.Empty, settingValue, rank, string.Empty);
+    }
   }
 }
 
