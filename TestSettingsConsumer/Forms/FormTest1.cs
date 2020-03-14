@@ -19,7 +19,7 @@ using static TJFramework.TJFrameworkManager;
 
 namespace TestSettingsConsumer // TODO: Организовать подсчёт времени через StopWatcher для каждой операции //
 {
-  public partial class FormTest : RadForm, IEventStartWork
+  public partial class FormTest1 : RadForm, IEventStartWork
   {
     private LocalDatabaseOfSettings DbSettings = new LocalDatabaseOfSettings();
 
@@ -51,7 +51,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
     public System.Threading.Timer Tm9;
 
-    public FormTest()
+    public FormTest1()
     {
       InitializeComponent();
     }

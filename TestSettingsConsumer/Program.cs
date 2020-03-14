@@ -45,9 +45,10 @@ namespace TestSettingsConsumer
       TJFrameworkManager.Logger.Create();
 
       TJFrameworkManager.Service.CreateApplicationSettings<CxApplicationSettings>();
-      TJFrameworkManager.Service.AddForm<FormTest>("Test");
+      TJFrameworkManager.Service.AddForm<FormTest1>("Test 1");
+      TJFrameworkManager.Service.AddForm<FormTest2>("Test 2");
       TJFrameworkManager.Service.SetMainFormCaption(ApplicationUniqueName);
-      TJFrameworkManager.Service.StartPage<FormTest>();
+      TJFrameworkManager.Service.StartPage<FormTest1>();
       //TJFrameworkManager.Service.SetMainPageViewOrientation(StripViewAlignment.Left);
 
       FrameworkSettings.HeaderFormSettings = "Settings";

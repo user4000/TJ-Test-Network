@@ -77,12 +77,21 @@
     <Compile Include="Forms\FormTest1.Designer.cs">
       <DependentUpon>FormTest1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormTest2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormTest2.Designer.cs">
+      <DependentUpon>FormTest2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings\CxApplicationSettings.cs" />
     <EmbeddedResource Include="Forms\FormTest1.resx">
       <DependentUpon>FormTest1.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\FormTest2.resx">
+      <DependentUpon>FormTest2.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
