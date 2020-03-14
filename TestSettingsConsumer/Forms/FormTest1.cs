@@ -20,9 +20,7 @@ using static TJFramework.TJFrameworkManager;
 namespace TestSettingsConsumer // TODO: Организовать подсчёт времени через StopWatcher для каждой операции //
 {
   public partial class FormTest1 : RadForm, IEventStartWork
-  {
-    private LocalDatabaseOfSettings DbSettings = new LocalDatabaseOfSettings();
-
+  {  
     private List<Folder> ListFolder = new List<Folder>();
 
     private List<Setting> ListSetting = new List<Setting>();
@@ -56,12 +54,6 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       InitializeComponent();
     }
 
-    public void InitSettingsDatabase()
-    {
-      DbSettings.SetPathToDatabase(Program.ApplicationSettings.SettingsDatabaseLocation);
-      DbSettings.InitVariables();
-    }
-
     public void SetEvents()
     {
       BxTest.Click += StartTestTimersForExperiment2;
@@ -84,8 +76,9 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
     public void EventStartWork()
     {
-      InitSettingsDatabase();
+      Trace.WriteLine("--> #FormTest1# [EventStartWork]");
       SetEvents();
+      Trace.WriteLine("<-- #FormTest1# [EventStartWork]");
     }
 
     private void PrintInner(string message)

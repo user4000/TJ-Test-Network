@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -6,6 +7,7 @@ using System.Windows.Forms;
 using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
+using TJSettings;
 
 namespace TestSettingsConsumer
 {
@@ -20,6 +22,8 @@ namespace TestSettingsConsumer
     public static CxApplicationSettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<CxApplicationSettings>(); } // User custom settings in Property Grid //
 
     public static TJStandardFrameworkSettings FrameworkSettings { get; } = TJFrameworkManager.FrameworkSettings; // Framework embedded settings //
+
+    public static LocalDatabaseOfSettings DbSettings { get; private set; } = null;
 
     private static void TestEventPageChanged(string PageName)
     {
@@ -89,7 +93,17 @@ namespace TestSettingsConsumer
         //TJFrameworkManager.Service.EventBeforeMainFormCloseAsync = Manager.EventBeforeMainFormCloseAsync();
       };
 
+      TJFrameworkManager.MainForm.Load += EventMainFormLoad;
+
       TJFrameworkManager.Run();
+    }
+
+    private static void EventMainFormLoad(object sender, EventArgs e)
+    {
+      Trace.WriteLine("--> #Program# [EventMainFormLoad]");
+      DbSettings = LocalDatabaseOfSettings.Create(ApplicationSettings.SettingsDatabaseLocation);
+      Trace.WriteLine("<-- #Program# [EventMainFormLoad]");
+      // TODO: Переделать метод так, чтобы умел доставать БД по относительному пути
     }
   }
 }

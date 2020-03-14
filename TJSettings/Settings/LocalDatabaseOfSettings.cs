@@ -43,6 +43,14 @@ namespace TJSettings
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
+    private LocalDatabaseOfSettings(string PathToDatabase)
+    {
+      SetPathToDatabase(PathToDatabase);
+      InitVariables();
+    }
+
+    public static LocalDatabaseOfSettings Create(string PathToDatabase) => new LocalDatabaseOfSettings(PathToDatabase);
+
     public DataTable GetTable(string TableName)
     {
       DataTable table = new DataTable();
@@ -62,7 +70,7 @@ namespace TJSettings
       return table;
     }
 
-    public void InitVariables()
+    private void InitVariables()
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(DbManager.TnTypes);
