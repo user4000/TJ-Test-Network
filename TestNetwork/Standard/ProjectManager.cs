@@ -13,7 +13,7 @@ namespace TestNetwork
 
     public UiControlManager UiControl { get; } = new UiControlManager();
 
-    public LocalDatabaseOfSettings DbSettings { get; } = new LocalDatabaseOfSettings();
+    public LocalDatabaseOfSettings DbSettings { get; internal set; } = null;
 
     private FormTreeView FxTreeview { get; set; } = null;
 

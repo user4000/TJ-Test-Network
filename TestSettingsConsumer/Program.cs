@@ -93,16 +93,16 @@ namespace TestSettingsConsumer
         //TJFrameworkManager.Service.EventBeforeMainFormCloseAsync = Manager.EventBeforeMainFormCloseAsync();
       };
 
-      TJFrameworkManager.MainForm.Load += EventMainFormLoad;
+      TJFrameworkManager.Service.EventAfterAllFormsAreCreated = EventAfterAllFormsAreCreated;
 
       TJFrameworkManager.Run();
     }
 
-    private static void EventMainFormLoad(object sender, EventArgs e)
+    private static void EventAfterAllFormsAreCreated()
     {
-      Trace.WriteLine("--> #Program# [EventMainFormLoad]");
+      Trace.WriteLine("==> #Program# [EventAfterAllFormsAreCreated]");
       DbSettings = LocalDatabaseOfSettings.Create(ApplicationSettings.SettingsDatabaseLocation);
-      Trace.WriteLine("<-- #Program# [EventMainFormLoad]");
+      Trace.WriteLine("<~~ #Program# [EventAfterAllFormsAreCreated]");
       // TODO: Переделать метод так, чтобы умел доставать БД по относительному пути
     }
   }

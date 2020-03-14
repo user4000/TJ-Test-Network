@@ -879,7 +879,7 @@ namespace TestNetwork
 
     private void EventLoadDataFromFileFirstTime()
     {
-      DbSettings.InitVariables();
+      //DbSettings.SetPathToDatabase();
       DbSettings.FillDropDownListForTableTypes(DxTypes);
       Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height).Create();
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -143,14 +144,16 @@ namespace TJSettings
 
       SqlCheckDatabaseStructure = "SELECT SUM(C) as Table_Structure_Check_Sum FROM " +
       "(" +
-      "SELECT 1 as N, COUNT(*) as C FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLEFOLDERS%IdFolderINTEGER%,IdParentINTEGERNOTNULL%REFERENCESFOLDERS%IdFolder%,NameFolderTEXT%NOTNULL%' " +
+      "SELECT 1 as N, COUNT(*) as C FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLEFOLDERS%IdFolderINTEGER%IdParentINTEGERNOTNULL%REFERENCESFOLDERS%IdFolder%,NameFolderTEXT%NOTNULL%' " +
       "union " +
-      "SELECT 2, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLETYPES(%IdTypeINTEGER%PRIMARYKEYNOTNULL%,NameTypeTEXT%NOTNULL%,NoteTEXT%' " +
+      "SELECT 2, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLETYPES(%IdTypeINTEGER%PRIMARYKEYNOTNULL%NameTypeTEXT%NOTNULL%NoteTEXT%' " +
       "union " +
-      "SELECT 3, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLESETTINGS(%IdFolderINTEGERNOTNULL%,IdSettingTEXT%NOTNULL%,IdTypeINTEGER%NOTNULL%,SettingValueTEXT%,RankINTEGER%NOTNULL%CONSTRAINT%PRIMARYKEY%IdFolder%IdSetting%CONSTRAINT%FOREIGNKEY%IdFolder%REFERENCESFOLDERS%IdFolder%CONSTRAINT%FOREIGNKEY%IdType%REFERENCESTYPES%IdType%' " +
+      "SELECT 3, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE '%CREATETABLESETTINGS(%IdFolderINTEGERNOTNULL%IdSettingTEXT%NOTNULL%IdTypeINTEGER%NOTNULL%SettingValueTEXT%RankINTEGER%NOTNULL%CONSTRAINT%PRIMARYKEY%IdFolder%IdSetting%CONSTRAINT%FOREIGNKEY%IdFolder%REFERENCESFOLDERS%IdFolder%CONSTRAINT%FOREIGNKEY%IdType%REFERENCESTYPES%IdType%' " +
       "union " +
       "SELECT 4, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE 'CREATEVIEWV_SETTINGSAS%SELECTA.IdFolder%A.IdSetting%A.IdType%B.NameType%A.SettingValue%A.Rank%BooleanValue%FROMSETTINGSA%LEFTJOIN%TYPESB%ON%A.IdType%=%B.IdType%' " +
       ")";
+
+      Trace.WriteLine(SqlCheckDatabaseStructure);
 
       SqlGetRandomIdFolder = $"SELECT {CnFoldersIdFolder} FROM (SELECT {CnFoldersIdFolder} FROM {TnFolders} ORDER BY Random() LIMIT 1) UNION SELECT -1 as {CnFoldersIdFolder} ORDER BY 1 DESC";
 
@@ -193,7 +196,7 @@ namespace TJSettings
             command.ZzExecuteNonQuery(sql);
 
             sql = @"
-            INSERT INTO FOLDERS VALUES(0, 0, 'application_root_folder');
+            INSERT INTO FOLDERS VALUES(0, 0, 'application');
             INSERT INTO FOLDERS VALUES(1, 0, 'local_database');";
             command.ZzExecuteNonQuery(sql);
 
