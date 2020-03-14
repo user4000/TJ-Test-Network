@@ -649,6 +649,22 @@ namespace TJSettings
       form.Close();
       return list;
     }
+
+    public List<string> GetListOfFolders(string ParentFolderPath) // TODO: test
+    {
+      List<string> list = new List<string>();
+      DataTable table = new DataTable();
+      int IdFolder = GetIdFolder(ParentFolderPath);
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlFolderGetChildren, connection).ZzAdd("@IdFolder",IdFolder))
+      using (SQLiteDataReader reader = command.ZzOpenConnection().ExecuteReader())
+      {
+        table.Load(reader);
+      }
+      if (table.Rows.Count > 0) list = (from DataRow row in table.Rows select row[0].ToString()).ToList();
+      table.Clear();
+      return list;
+    }
   }
 }
 

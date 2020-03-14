@@ -71,15 +71,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\FormTest.cs">
+    <Compile Include="Forms\FormTest1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormTest.Designer.cs">
-      <DependentUpon>FormTest.cs</DependentUpon>
+    <Compile Include="Forms\FormTest1.Designer.cs">
+      <DependentUpon>FormTest1.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings\CxApplicationSettings.cs" />
-    <EmbeddedResource Include="Forms\FormTest.resx">
-      <DependentUpon>FormTest.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormTest1.resx">
+      <DependentUpon>FormTest1.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

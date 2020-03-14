@@ -84,6 +84,8 @@ namespace TJSettings
 
     public string SqlGetRootFolderName { get; private set; } = string.Empty;
 
+    public string SqlFolderGetChildren { get; private set; } = string.Empty;
+
     public DatabaseStructureManager()
     {
       InitVariables();
@@ -165,6 +167,9 @@ namespace TJSettings
         $" FROM {TnSettings}";
 
       SqlGetRootFolderName = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdFolder}={CnFoldersIdParent} AND {CnFoldersIdFolder}=0";
+
+      SqlFolderGetChildren = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder";
+
     }
 
     public ReturnCode CreateNewDatabase(string FileName)
