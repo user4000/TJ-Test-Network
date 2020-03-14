@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telerik.WinControls;
@@ -19,9 +20,6 @@ namespace TestNetwork
     private int HeightCollapsed { get; } = 82;
     private int HeightExpanded { get; } = 126;
     private int HeightForLongText { get; } = 200;
-
-    private LocalDatabaseOfSettings DbSettings { get => Manager.DbSettings; }
-
     private TreeviewManager TvManager { get; set; } = null;
     private GridSettings VxGridSettings { get; set; } = null;
     private DataTable TableFolders { get; set; } = null;
@@ -811,7 +809,12 @@ namespace TestNetwork
 
     private void EventButtonChooseFile(object sender, EventArgs e)
     {
-      if (DialogOpenFile.ShowDialog() == DialogResult.OK) SetDatabaseFile(DialogOpenFile.FileName);
+      DialogOpenFile.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
+      if (DialogOpenFile.ShowDialog() == DialogResult.OK)
+      {
+        SetDatabaseFile(DialogOpenFile.FileName);
+        DialogOpenFile.InitialDirectory = Path.GetDirectoryName(DialogOpenFile.FileName);
+      }
     }
 
     private async Task EventButtonLoadData(object sender, EventArgs e)

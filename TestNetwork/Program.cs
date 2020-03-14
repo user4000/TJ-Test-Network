@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
+using TJSettings;
 
 namespace TestNetwork 
 {
@@ -16,6 +17,8 @@ namespace TestNetwork
     private static Mutex AxMutex = null;
 
     public static ProjectManager Manager { get; set; } = null;
+
+    public static LocalDatabaseOfSettings DbSettings { get => Manager.DbSettings; }
 
     public static CxApplicationSettings ApplicationSettings { get => TJFrameworkManager.ApplicationSettings<CxApplicationSettings>(); } // User custom settings in Property Grid //
 
