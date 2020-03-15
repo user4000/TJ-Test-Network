@@ -14,6 +14,7 @@ namespace TJSettings
 {
   public class DatabaseStructureManager
   {
+    public int IdFolderRoot { get; } = 0;
     public string TnFolders { get; } = "FOLDERS";
     public string CnFoldersIdParent { get; } = "IdParent";
     public string CnFoldersIdFolder { get; } = "IdFolder";
@@ -132,7 +133,7 @@ namespace TJSettings
       SqlFolderCountSimple = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdFolder} = @IdFolder";
       SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
       SqlCountChildSettings = $"SELECT COUNT(*) FROM {TnSettings} WHERE {CnFoldersIdFolder} = @IdFolder";
-      SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder";
+      SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder AND {CnFoldersIdFolder}>0";
 
       SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
@@ -169,7 +170,7 @@ namespace TJSettings
         $"{CnSettingsRank}" +
         $" FROM {TnSettings}";
 
-      SqlGetRootFolderName = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdFolder}={CnFoldersIdParent} AND {CnFoldersIdFolder}=0";
+      SqlGetRootFolderName = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdFolder}={CnFoldersIdParent} AND {CnFoldersIdFolder}={IdFolderRoot}";
 
       SqlFolderGetChildren = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder AND {CnFoldersIdFolder}!={CnFoldersIdParent}";
 
@@ -195,9 +196,9 @@ namespace TJSettings
             );";
             command.ZzExecuteNonQuery(sql);
 
-            sql = @"
-            INSERT INTO FOLDERS VALUES(0, 0, 'application');
-            INSERT INTO FOLDERS VALUES(1, 0, 'local_database');";
+            sql = $@"
+            INSERT INTO FOLDERS VALUES({IdFolderRoot}, {IdFolderRoot}, 'application');
+            INSERT INTO FOLDERS VALUES(1, {IdFolderRoot}, 'local_database');";
             command.ZzExecuteNonQuery(sql);
 
             sql = @"

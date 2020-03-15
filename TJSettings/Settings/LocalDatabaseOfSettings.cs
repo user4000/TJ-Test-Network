@@ -74,6 +74,7 @@ namespace TJSettings
     {
       if (TableTypes != null) TableTypes.Clear();
       TableTypes = GetTable(DbManager.TnTypes);
+      RootFolderName = GetRootFolderName();
     }
 
     public bool SettingTypeIsText(TypeSetting type)
@@ -134,6 +135,7 @@ namespace TJSettings
         //count = command.ZzGetScalarInteger(SqlFolderCountByIdFolder);
         if (count < 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to rename a folder");
       }
+      if (IdFolder == DbManager.IdFolderRoot) RootFolderName = GetRootFolderName();
       return code;
     }
 
@@ -183,6 +185,15 @@ namespace TJSettings
       treeView.SortOrder = SortOrder.Ascending;
     }
 
+    public string AddRootFolderNameIfNotSpecified(string FullPath)
+    {
+      FullPath = FullPath.Trim();
+      if (FullPath == string.Empty) return RootFolderName;
+      FullPath = FullPath.TrimStart(FolderPathSeparator[0]).TrimEnd(FolderPathSeparator[0]);
+      if (FullPath.StartsWith(RootFolderName) == false) FullPath = RootFolderName + FolderPathSeparator + FullPath;
+      return FullPath;
+    }
+
     public int GetIdFolder(RadTreeNode node)
     {
       int Id = IdFolderNotFound;
@@ -196,9 +207,12 @@ namespace TJSettings
       return Id;
     }
 
-    public int GetIdFolder(string FullPath) // Find IdFolder by Materialized Full Path //
+    /// <summary>
+    /// Find IdFolder by Materialized Full Path (Root Folder Name may be omitted).
+    /// </summary>
+    public int GetIdFolder(string FullPath) // Find IdFolder by Materialized Full Path - Root Folder Name may be omitted //
     {
-      FullPath = FullPath.TrimStart(FolderPathSeparator[0]).TrimEnd(FolderPathSeparator[0]);
+      FullPath = AddRootFolderNameIfNotSpecified(FullPath);
       string[] names = FullPath.Split(FolderPathSeparator[0]);
       int IdFolder = 0;
       string sql = string.Empty;
@@ -280,7 +294,7 @@ namespace TJSettings
                 BooleanValue: reader.GetString(6)
               );
 
-        if (ListHasDuplicatedRank(list))
+        if (ListHasDuplicatedRank(list)) // Correct rank if duplicate values occur //
         {
           string sql = DbManager.SqlSetRank.Replace("@IdFolder", IdFolder.ToString());
           string temp = string.Empty;
@@ -295,6 +309,21 @@ namespace TJSettings
         }
       }
       return list;
+    }
+
+    /// <summary>
+    /// Get list of settings of the specified type. First argument is a Full Path to a Folder, containing the settings.
+    /// </summary>
+    public List<string> GetSettings(string FullPath, TypeSetting type)
+    {
+      List<string> list = new List<string>();
+      int IdFolder = GetIdFolder(FullPath);
+      if (IdFolder < 0) return list;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlSettingSelect, connection).ZzOpenConnection().ZzAdd("@IdFolder", IdFolder))     
+      using (SQLiteDataReader reader = command.ExecuteReader())
+        while (reader.Read()) if ( (reader.GetInt32(2) == (int)type) || (type==TypeSetting.Unknown)) list.Add(reader.GetString(1));
+      return list;      
     }
 
     public bool ListHasDuplicatedRank(BindingList<Setting> list)
@@ -523,7 +552,7 @@ namespace TJSettings
       return code;
     }
 
-    public ReceivedValueText GetStringValueOfSetting(string FolderPath, string IdSetting)
+    public ReceivedValueText GetStringValueOfSettingThisIsPreviousVersionOfMethod(string FolderPath, string IdSetting)
     {
       int IdFolder = GetIdFolder(FolderPath);
       if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
@@ -537,7 +566,7 @@ namespace TJSettings
       }
     }
 
-    public ReceivedValueText GetStringValueOfSettingUsingOneQuery(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method
+    public ReceivedValueText GetStringValueOfSetting(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method
     {
       int IdFolder = GetIdFolder(FolderPath);
       if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
@@ -618,6 +647,9 @@ namespace TJSettings
       return code;
     }
 
+    /// <summary>
+    /// Get all settings of all folders.
+    /// </summary>
     public List<Setting> GetAllSettings()
     {
       ReturnCode code = ReturnCodeFactory.Error();
@@ -658,7 +690,7 @@ namespace TJSettings
       return list;
     }
 
-    public List<string> GetListOfFolders(string ParentFolderPath) // TODO: test
+    public List<string> GetListOfFolders(string ParentFolderPath)
     {
       List<string> list = new List<string>();
       DataTable table = new DataTable();

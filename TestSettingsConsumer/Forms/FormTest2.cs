@@ -41,9 +41,9 @@ namespace TestSettingsConsumer
     {
       BxListAllFolders.Click += EventGetListOfFolders;
       BxGetChildrenOfOneFolder.Click += EventGetChildrenOfOneFolder;
+      BxGetIdFolder.Click += EventGetIdFolder;
+      BxGetListOfSettings.Click += EventGetListOfSettings;
     }
-
-
 
     private void PrintInner(string message)
     {
@@ -63,7 +63,7 @@ namespace TestSettingsConsumer
       TxMessage.Clear();
       string names = string.Empty;
       List<Folder> list = DbSettings.GetListOfFolders();
-      foreach (var item in list) names += item.FullPath + Environment.NewLine;
+      foreach (var item in list) names += item.IdFolder + " = " + item.FullPath + Environment.NewLine;
       TxMessage.Text = names;
     }
 
@@ -77,7 +77,26 @@ namespace TestSettingsConsumer
       Print(names);
       TxTwo.Text = ParentFolderFullPath;
       TxOne.Clear();
+    }
 
+    private void EventGetIdFolder(object sender, EventArgs e)
+    {
+      string FolderFullPath = TxOne.Text;
+      TxTwo.Text = FolderFullPath;
+      int IdFolder = DbSettings.GetIdFolder(FolderFullPath);
+      TxOne.Text = IdFolder.ToString();  
+    }
+
+    private void EventGetListOfSettings(object sender, EventArgs e)
+    {
+      string FolderFullPath = TxOne.Text;
+      TxTwo.Text = FolderFullPath;
+      TxOne.Clear();
+      List<string> list = DbSettings.GetSettings(FolderFullPath, TypeSetting.Text);
+      string names = string.Empty;
+      foreach (var item in list) names += item + Environment.NewLine;
+      Print($"SETTINGS OF A FOLDER = {FolderFullPath}");
+      Print(names);
     }
   }
 }
