@@ -171,7 +171,7 @@ namespace TJSettings
 
       SqlGetRootFolderName = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdFolder}={CnFoldersIdParent} AND {CnFoldersIdFolder}=0";
 
-      SqlFolderGetChildren = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder";
+      SqlFolderGetChildren = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder AND {CnFoldersIdFolder}!={CnFoldersIdParent}";
 
     }
 

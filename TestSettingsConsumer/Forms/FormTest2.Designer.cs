@@ -31,19 +31,21 @@
       this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
       this.TxOne = new Telerik.WinControls.UI.RadTextBoxControl();
       this.TxTwo = new Telerik.WinControls.UI.RadTextBoxControl();
-      this.BxList = new Telerik.WinControls.UI.RadButton();
+      this.BxListAllFolders = new Telerik.WinControls.UI.RadButton();
       this.BxTest = new Telerik.WinControls.UI.RadButton();
       this.radPanel2 = new Telerik.WinControls.UI.RadPanel();
       this.TxMessage = new Telerik.WinControls.UI.RadTextBox();
+      this.BxGetChildrenOfOneFolder = new Telerik.WinControls.UI.RadButton();
       ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
       this.radPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxOne)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxTwo)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxList)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxListAllFolders)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxTest)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).BeginInit();
       this.radPanel2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxMessage)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxGetChildrenOfOneFolder)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -51,7 +53,8 @@
       // 
       this.radPanel1.Controls.Add(this.TxOne);
       this.radPanel1.Controls.Add(this.TxTwo);
-      this.radPanel1.Controls.Add(this.BxList);
+      this.radPanel1.Controls.Add(this.BxGetChildrenOfOneFolder);
+      this.radPanel1.Controls.Add(this.BxListAllFolders);
       this.radPanel1.Controls.Add(this.BxTest);
       this.radPanel1.Dock = System.Windows.Forms.DockStyle.Top;
       this.radPanel1.Location = new System.Drawing.Point(0, 0);
@@ -81,21 +84,21 @@
       this.TxTwo.Size = new System.Drawing.Size(1092, 38);
       this.TxTwo.TabIndex = 0;
       // 
-      // BxList
+      // BxListAllFolders
       // 
-      this.BxList.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxList.Location = new System.Drawing.Point(14, 143);
-      this.BxList.Name = "BxList";
-      this.BxList.Size = new System.Drawing.Size(109, 38);
-      this.BxList.TabIndex = 1;
-      this.BxList.Text = "L I S T";
+      this.BxListAllFolders.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxListAllFolders.Location = new System.Drawing.Point(156, 119);
+      this.BxListAllFolders.Name = "BxListAllFolders";
+      this.BxListAllFolders.Size = new System.Drawing.Size(120, 28);
+      this.BxListAllFolders.TabIndex = 1;
+      this.BxListAllFolders.Text = "List ALL Folders";
       // 
       // BxTest
       // 
       this.BxTest.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxTest.Location = new System.Drawing.Point(158, 143);
+      this.BxTest.Location = new System.Drawing.Point(14, 119);
       this.BxTest.Name = "BxTest";
-      this.BxTest.Size = new System.Drawing.Size(109, 38);
+      this.BxTest.Size = new System.Drawing.Size(109, 28);
       this.BxTest.TabIndex = 1;
       this.BxTest.Text = "T E S T";
       // 
@@ -123,6 +126,15 @@
       this.TxMessage.Size = new System.Drawing.Size(1118, 494);
       this.TxMessage.TabIndex = 3;
       // 
+      // BxGetChildrenOfOneFolder
+      // 
+      this.BxGetChildrenOfOneFolder.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxGetChildrenOfOneFolder.Location = new System.Drawing.Point(305, 119);
+      this.BxGetChildrenOfOneFolder.Name = "BxGetChildrenOfOneFolder";
+      this.BxGetChildrenOfOneFolder.Size = new System.Drawing.Size(157, 28);
+      this.BxGetChildrenOfOneFolder.TabIndex = 1;
+      this.BxGetChildrenOfOneFolder.Text = "Children of one folder";
+      // 
       // FormTest2
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -140,12 +152,13 @@
       this.radPanel1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.TxOne)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxTwo)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxList)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxListAllFolders)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxTest)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).EndInit();
       this.radPanel2.ResumeLayout(false);
       this.radPanel2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxMessage)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxGetChildrenOfOneFolder)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -156,9 +169,10 @@
     private Telerik.WinControls.UI.RadPanel radPanel1;
     private Telerik.WinControls.UI.RadTextBoxControl TxOne;
     private Telerik.WinControls.UI.RadTextBoxControl TxTwo;
-    private Telerik.WinControls.UI.RadButton BxList;
+    private Telerik.WinControls.UI.RadButton BxListAllFolders;
     private Telerik.WinControls.UI.RadButton BxTest;
     private Telerik.WinControls.UI.RadPanel radPanel2;
     private Telerik.WinControls.UI.RadTextBox TxMessage;
+    private Telerik.WinControls.UI.RadButton BxGetChildrenOfOneFolder;
   }
 }

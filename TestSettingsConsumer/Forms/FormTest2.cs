@@ -39,12 +39,45 @@ namespace TestSettingsConsumer
 
     private void SetEvents()
     {
-      BxList.Click += EventGetListOfFolders;
+      BxListAllFolders.Click += EventGetListOfFolders;
+      BxGetChildrenOfOneFolder.Click += EventGetChildrenOfOneFolder;
+    }
+
+
+
+    private void PrintInner(string message)
+    {
+      TxMessage.AppendText(message + Environment.NewLine);
+    }
+
+    public void Print(string message)
+    {
+      if (TxMessage.InvokeRequired)
+        TxMessage.Invoke((MethodInvoker)delegate { PrintInner(message); });
+      else
+        PrintInner(message);
     }
 
     private void EventGetListOfFolders(object sender, EventArgs e)
     {
-      
+      TxMessage.Clear();
+      string names = string.Empty;
+      List<Folder> list = DbSettings.GetListOfFolders();
+      foreach (var item in list) names += item.FullPath + Environment.NewLine;
+      TxMessage.Text = names;
+    }
+
+    private void EventGetChildrenOfOneFolder(object sender, EventArgs e)
+    {
+      string ParentFolderFullPath = TxOne.Text;
+      List<string> list = DbSettings.GetListOfFolders(ParentFolderFullPath);
+      string names = string.Empty;
+      foreach (var item in list) names += item + Environment.NewLine;
+      Print($"-------------------- {ParentFolderFullPath}");
+      Print(names);
+      TxTwo.Text = ParentFolderFullPath;
+      TxOne.Clear();
+
     }
   }
 }

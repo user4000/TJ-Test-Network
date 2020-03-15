@@ -38,6 +38,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Faker.NET4">
       <HintPath>J:\Nuget_Package_Offline_Source\Fake_Data_Generator\Faker_NET_4\Debug\Faker.NET4.dll</HintPath>
