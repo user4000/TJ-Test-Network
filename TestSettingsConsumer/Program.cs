@@ -8,6 +8,7 @@ using Telerik.WinControls.UI;
 using TJFramework;
 using TJFramework.FrameworkSettings;
 using TJSettings;
+using TJStandard;
 
 namespace TestSettingsConsumer
 {
@@ -99,7 +100,13 @@ namespace TestSettingsConsumer
     private static void EventBeforeAnyFormStartHandlerLaunched()
     {
       Trace.WriteLine("==> #Program# [EventAfterAllFormsAreCreated]");
-      DbSettings = LocalDatabaseOfSettings.Create(ApplicationSettings.SettingsDatabaseLocation);
+      //DbSettings = LocalDatabaseOfSettings.Create(ApplicationSettings.SettingsDatabaseLocation);
+      DbSettings = LocalDatabaseOfSettings.Create();
+      ReturnCode code = DbSettings.ConnectToDatabase("D:\aaa\test\folder\bbb.ccc");
+      if (code.Error)
+      {
+        MessageBox.Show("Could not connect to the database of settings", code.StringValue + " " + code.StringNote, MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
       Trace.WriteLine("<~~ #Program# [EventAfterAllFormsAreCreated]");
       // TODO: Переделать метод так, чтобы умел доставать БД по относительному пути
     }

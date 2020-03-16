@@ -35,7 +35,7 @@ namespace TJSettings
 
     public string SqliteDatabase { get; private set; } = string.Empty;
 
-    public void SetPathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
+    private void SetPathToDatabase(string PathToDatabase) => SqliteDatabase = PathToDatabase;
 
     public string GetSqliteConnectionString(string PathToDatabase) => $"Data Source={PathToDatabase}";
 
@@ -43,13 +43,9 @@ namespace TJSettings
 
     public SQLiteConnection GetSqliteConnection() => GetSqliteConnection(SqliteDatabase);
 
-    private LocalDatabaseOfSettings(string PathToDatabase)
-    {
-      SetPathToDatabase(PathToDatabase);
-      InitVariables();
-    }
+    private LocalDatabaseOfSettings() { } // Empty private constructor //
 
-    public static LocalDatabaseOfSettings Create(string PathToDatabase) => new LocalDatabaseOfSettings(PathToDatabase);
+    public static LocalDatabaseOfSettings Create() => new LocalDatabaseOfSettings();
 
     public DataTable GetTable(string TableName)
     {
@@ -70,11 +66,46 @@ namespace TJSettings
       return table;
     }
 
-    private void InitVariables()
+    public ReturnCode ConnectToDatabase(string PathToDatabase)
     {
+      SetPathToDatabase(PathToDatabase);
+      ReturnCode code;
+      try
+      {
+        code = CheckDatabaseStructure();
+      }
+      catch
+      {
+         return ReturnCodeFactory.Error("The file you specified is not a SQLite database.");
+      }
+
+      if (code.Error) return code;
+
       if (TableTypes != null) TableTypes.Clear();
-      TableTypes = GetTable(DbManager.TnTypes);
-      RootFolderName = GetRootFolderName();
+      try
+      {
+        TableTypes = GetTable(DbManager.TnTypes);
+        RootFolderName = GetRootFolderName();
+      }
+      catch (Exception ex)
+      {
+        RootFolderName = string.Empty;
+        return ReturnCodeFactory.Error("Could not read data from the database file.", ex.Message);
+      }
+      return ReturnCodeFactory.Success();
+    }
+
+    private ReturnCode CheckDatabaseStructure()
+    {
+      ReturnCode code = ReturnCodeFactory.Success($"Database structure is ok");
+      int CheckObjectCount = 4;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        command.ZzOpenConnection().ZzText(DbManager.SqlCheckDatabaseStructure);
+        if (command.ZzGetScalarInteger() != CheckObjectCount) code = ReturnCodeFactory.Error(ReturnCodeFactory.NcError, "The database structure is not compliant with the standard. When working with the database errors may occur.");
+      }
+      return code;
     }
 
     public bool SettingTypeIsText(TypeSetting type)
@@ -161,18 +192,6 @@ namespace TJSettings
       return code;
     }
 
-    public ReturnCode CheckDatabaseStructure()
-    {
-      ReturnCode code = ReturnCodeFactory.Success($"Database structure is ok");
-      int CheckObjectCount = 4;
-      using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(connection))
-      {
-        command.ZzOpenConnection().ZzText(DbManager.SqlCheckDatabaseStructure);
-        if (command.ZzGetScalarInteger() != CheckObjectCount) code = ReturnCodeFactory.Error(ReturnCodeFactory.NcError, "The database structure is not compliant with the standard. When working with the database errors may occur.");
-      }
-      return code;
-    }
 
     public void FillTreeView(RadTreeView treeView, DataTable table)
     {

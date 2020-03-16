@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using Telerik.WinControls;
 using Telerik.WinControls.UI;
 using Telerik.WinControls.UI.Docking;
@@ -178,7 +178,7 @@ namespace TestNetwork
     {
       ResetView();
       TxDatabaseFile.Text = PathToDatabaseFile;
-      DbSettings.SetPathToDatabase(PathToDatabaseFile);
+      //DbSettings.SetPathToDatabase(PathToDatabaseFile);
       TxDatabaseFile.SelectionStart = PathToDatabaseFile.Length;
     }
 
@@ -830,12 +830,12 @@ namespace TestNetwork
     private void EventLoadDataFromDatabaseFile(bool LoadDataFirstTimeFromThisFile)
     {
       DataTable table = null; bool Error = false;
-      ReturnCode CheckDbStructure = ReturnCodeFactory.Success();
+      ReturnCode ConnectToDatabase = ReturnCodeFactory.Success();
 
       try
       {
-        CheckDbStructure = DbSettings.CheckDatabaseStructure();
-        if (CheckDbStructure.Error) throw new DatabaseStructureCheckException(CheckDbStructure.StringValue);
+        ConnectToDatabase = DbSettings.ConnectToDatabase(TxDatabaseFile.Text);
+        if (ConnectToDatabase.Error) throw new DatabaseStructureCheckException(ConnectToDatabase.StringValue);
         table = DbSettings.GetTableFolders();
       }
       catch (DatabaseStructureCheckException ex)
@@ -882,7 +882,6 @@ namespace TestNetwork
 
     private void EventLoadDataFromFileFirstTime()
     {
-      //DbSettings.SetPathToDatabase();
       DbSettings.FillDropDownListForTableTypes(DxTypes);
       Ms.ShortMessage(MsgType.Debug, "Data has been loaded from file", 220, TxDatabaseFile).Offset(TxDatabaseFile.Width + 30, -2 * TxDatabaseFile.Height).Create();
     }
