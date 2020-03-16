@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,6 +29,11 @@ namespace TJSettings
     public int IdFolderNotFound { get; } = -1;
 
     public string FolderPathSeparator { get; } = @"\";
+
+    public string DefaultFolder { get; } = "settings";
+
+    public string DefaultFileName { get; } = "application_settings.db";
+
 
     public Converter CvManager { get; } = new Converter();
 
@@ -66,8 +72,15 @@ namespace TJSettings
       return table;
     }
 
-    public ReturnCode ConnectToDatabase(string PathToDatabase)
+    public ReturnCode ConnectToDatabase(string PathToDatabase = "")
     {
+      if (PathToDatabase == string.Empty)
+      {
+        PathToDatabase = Path.Combine(Path.Combine(Application.StartupPath, DefaultFolder), DefaultFileName);        
+      }
+
+      MessageBox.Show(PathToDatabase);
+
       SetPathToDatabase(PathToDatabase);
       ReturnCode code;
       try

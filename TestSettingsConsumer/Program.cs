@@ -76,7 +76,7 @@ namespace TestSettingsConsumer
       FrameworkSettings.FontAlertCaption = new Font("Verdana", 9);
       FrameworkSettings.FontAlertText = new Font("Verdana", 9);
 
-     // Manager = ProjectManagerFactory.Create();
+      // Manager = ProjectManagerFactory.Create();
 
       Action ExampleOfVisualSettingsAndEvents = () =>
       {
@@ -100,15 +100,17 @@ namespace TestSettingsConsumer
     private static void EventBeforeAnyFormStartHandlerLaunched()
     {
       Trace.WriteLine("==> #Program# [EventAfterAllFormsAreCreated]");
-      //DbSettings = LocalDatabaseOfSettings.Create(ApplicationSettings.SettingsDatabaseLocation);
+      
       DbSettings = LocalDatabaseOfSettings.Create();
-      ReturnCode code = DbSettings.ConnectToDatabase("D:\aaa\test\folder\bbb.ccc");
+      ReturnCode code = DbSettings.ConnectToDatabase(ApplicationSettings.SettingsDatabaseLocation);
+
+      if (code.Error) code = DbSettings.ConnectToDatabase(); // Retrying connection to default Database Location //
+
       if (code.Error)
       {
         MessageBox.Show("Could not connect to the database of settings", code.StringValue + " " + code.StringNote, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       Trace.WriteLine("<~~ #Program# [EventAfterAllFormsAreCreated]");
-      // TODO: Переделать метод так, чтобы умел доставать БД по относительному пути
     }
   }
 }
