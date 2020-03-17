@@ -38,6 +38,7 @@
       this.radPanel1 = new Telerik.WinControls.UI.RadPanel();
       this.BxGetIdFolder = new Telerik.WinControls.UI.RadButton();
       this.radPanel2 = new Telerik.WinControls.UI.RadPanel();
+      this.BxTestSettings = new Telerik.WinControls.UI.RadButton();
       ((System.ComponentModel.ISupportInitialize)(this.TxOne)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxTest)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxTwo)).BeginInit();
@@ -49,12 +50,13 @@
       ((System.ComponentModel.ISupportInitialize)(this.BxGetIdFolder)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).BeginInit();
       this.radPanel2.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.BxTestSettings)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
       // TxOne
       // 
-      this.TxOne.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.TxOne.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.TxOne.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.TxOne.Location = new System.Drawing.Point(14, 16);
@@ -66,7 +68,7 @@
       // BxTest
       // 
       this.BxTest.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxTest.Location = new System.Drawing.Point(158, 143);
+      this.BxTest.Location = new System.Drawing.Point(878, 143);
       this.BxTest.Name = "BxTest";
       this.BxTest.Size = new System.Drawing.Size(109, 38);
       this.BxTest.TabIndex = 1;
@@ -74,7 +76,7 @@
       // 
       // TxTwo
       // 
-      this.TxTwo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.TxTwo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.TxTwo.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.TxTwo.Location = new System.Drawing.Point(14, 75);
@@ -93,9 +95,9 @@
       radListDataItem1.ForeColor = System.Drawing.Color.RoyalBlue;
       radListDataItem1.Text = "Unknown";
       this.DxTest.Items.Add(radListDataItem1);
-      this.DxTest.Location = new System.Drawing.Point(858, 143);
+      this.DxTest.Location = new System.Drawing.Point(1013, 143);
       this.DxTest.Name = "DxTest";
-      this.DxTest.Size = new System.Drawing.Size(276, 38);
+      this.DxTest.Size = new System.Drawing.Size(121, 38);
       this.DxTest.TabIndex = 2;
       // 
       // TxMessage
@@ -120,13 +122,14 @@
       this.BxList.Name = "BxList";
       this.BxList.Size = new System.Drawing.Size(109, 38);
       this.BxList.TabIndex = 1;
-      this.BxList.Text = "L I S T";
+      this.BxList.Text = "Fill list";
       // 
       // radPanel1
       // 
       this.radPanel1.Controls.Add(this.TxOne);
       this.radPanel1.Controls.Add(this.TxTwo);
       this.radPanel1.Controls.Add(this.DxTest);
+      this.radPanel1.Controls.Add(this.BxTestSettings);
       this.radPanel1.Controls.Add(this.BxGetIdFolder);
       this.radPanel1.Controls.Add(this.BxList);
       this.radPanel1.Controls.Add(this.BxTest);
@@ -139,9 +142,9 @@
       // BxGetIdFolder
       // 
       this.BxGetIdFolder.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxGetIdFolder.Location = new System.Drawing.Point(323, 143);
+      this.BxGetIdFolder.Location = new System.Drawing.Point(691, 143);
       this.BxGetIdFolder.Name = "BxGetIdFolder";
-      this.BxGetIdFolder.Size = new System.Drawing.Size(276, 38);
+      this.BxGetIdFolder.Size = new System.Drawing.Size(161, 38);
       this.BxGetIdFolder.TabIndex = 1;
       this.BxGetIdFolder.Text = "Get Id Folder";
       // 
@@ -154,14 +157,23 @@
       this.radPanel2.Size = new System.Drawing.Size(1156, 537);
       this.radPanel2.TabIndex = 4;
       // 
-      // FormTest
+      // BxTestSettings
+      // 
+      this.BxTestSettings.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxTestSettings.Location = new System.Drawing.Point(149, 143);
+      this.BxTestSettings.Name = "BxTestSettings";
+      this.BxTestSettings.Size = new System.Drawing.Size(281, 38);
+      this.BxTestSettings.TabIndex = 1;
+      this.BxTestSettings.Text = "Test settings read / write";
+      // 
+      // FormTest1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1156, 744);
       this.Controls.Add(this.radPanel2);
       this.Controls.Add(this.radPanel1);
-      this.Name = "FormTest";
+      this.Name = "FormTest1";
       // 
       // 
       // 
@@ -179,6 +191,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).EndInit();
       this.radPanel2.ResumeLayout(false);
       this.radPanel2.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.BxTestSettings)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -195,5 +208,6 @@
     private Telerik.WinControls.UI.RadPanel radPanel1;
     private Telerik.WinControls.UI.RadPanel radPanel2;
     private Telerik.WinControls.UI.RadButton BxGetIdFolder;
+    private Telerik.WinControls.UI.RadButton BxTestSettings;
   }
 }

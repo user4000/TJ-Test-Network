@@ -25,6 +25,9 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
 
     private List<Setting> ListSetting { get; set; } = new List<Setting>();
 
+    private List<string> ListFont { get; set; } = new List<string>();
+
+
     private ConcurrentDictionary<string, int> OperationsRegistrar = new ConcurrentDictionary<string, int>();
 
     private Random rnd = new Random();
@@ -60,7 +63,26 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       BxList.Enabled = true;
       BxList.Click += FillListFolder;
       BxGetIdFolder.Click += TestGetIdFolder;
+      BxTestSettings.Click += TestGetRandomSettingReadWrite;
     }
+
+    public void FillListOfFonts()
+    {
+      ListFont.Clear();
+      ListFont.Add("Arial");
+      ListFont.Add("Comic Sans MS");
+      ListFont.Add("Verdana");
+      ListFont.Add("Calibri");
+      ListFont.Add("Consolas");
+      ListFont.Add("Courier New");
+      ListFont.Add("Microsoft Sans Serif");
+      ListFont.Add("Palatino Linotype");
+      ListFont.Add("Segoe UI");
+      ListFont.Add("Tahoma");
+      ListFont.Add("Times New Roman");
+      ListFont.Add("Trebuchet MS");
+    }
+
 
     private void TestGetIdFolder(object sender, EventArgs e)
     {
@@ -78,6 +100,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
     {
       Trace.WriteLine("--> #FormTest1# [EventStartWork]");
       SetEvents();
+      FillListOfFonts();
       Trace.WriteLine("<-- #FormTest1# [EventStartWork]");
     }
 
@@ -134,6 +157,9 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
 
       ListFolder.Clear();
       ListFolder = DbSettings.GetListOfFolders();
+
+      FillListSetting(sender, e);
+
       string text = string.Empty;
       foreach (var item in ListFolder) text += item.IdFolder + " --- " + item.FullPath + Environment.NewLine;
       TxMessage.AppendText(text);
@@ -389,7 +415,6 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
 
       Trace.WriteLine($"update ... {guid} ... [[{setting.IdSetting}]]");
 
-
       Stopwatch sw = Stopwatch.StartNew();
       if (setting.IdType == (int)TypeSetting.Boolean)
       {
@@ -457,15 +482,125 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       Trace.WriteLine($"SELECT --- {guid} --- <<{setting.IdSetting}>> value === {value.Value} >>>> ms = {sw.ElapsedMilliseconds}");
     }
 
-
-    private void TestGetRandomSettingAngChangeValue()
+    private void TestGetRandomSettingReadWrite(object sender, EventArgs e)
     {
       if (ListSetting.Count < 1)
       {
         MessageBox.Show("ERROR ! List of Settings is empty.");
         return;
       }
+
+      TxMessage.Clear();
       Setting setting = GetRandomSetting();
+      string FolderPath = GetFolderPath(setting);
+      TypeSetting type = (TypeSetting)setting.IdType;
+
+      Print($"---------------------- Random setting has been selected: ");
+      Print($"IdFolder = {setting.IdFolder}; ------- FolderPath = {FolderPath}");
+      Print($"IdSetting = {setting.IdSetting}; ------- Type={type}");
+      Print($"String Value = {setting.SettingValue}");
+
+      switch (type)
+      {
+        case TypeSetting.Boolean:
+          TestReadWriteSettingBoolean(FolderPath, setting);
+          break;
+        case TypeSetting.Color:
+          TestReadWriteSettingColor(FolderPath, setting);
+          break;
+        case TypeSetting.Datetime:
+          TestReadWriteSettingColor(FolderPath, setting);
+          break;
+        case TypeSetting.File:
+          TestReadWriteSettingFile(FolderPath, setting);
+          break;
+        case TypeSetting.Folder:
+          TestReadWriteSettingFolder(FolderPath, setting);
+          break;
+        case TypeSetting.Font:
+          TestReadWriteSettingFont(FolderPath, setting);
+          break;
+        case TypeSetting.Integer64:
+          TestReadWriteSettingInteger64(FolderPath, setting);
+          break;
+        case TypeSetting.Password:
+          TestReadWriteSettingPassword(FolderPath, setting);
+          break;
+        case TypeSetting.Text:
+          TestReadWriteSettingText(FolderPath, setting);
+          break;
+        default:
+          break;
+      }
+    }
+
+    private void TestReadWriteSettingBoolean(string FolderPath, Setting setting)
+    {
+      ReceivedValueBoolean value = DbSettings.GetSettingBoolean(FolderPath, setting.IdSetting);
+      if (value.Code.Error)
+      {
+        Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
+      }
+      Print($"Current value of setting = {value.Value}");
+      //---------------------------------------------------------------------------------------------------------
+      bool NewValue = !value.Value;
+      ReturnCode code = DbSettings.SaveSettingBoolean(FolderPath, setting.IdSetting, NewValue);
+      if (code.Error)
+      {
+        Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
+      }
+      Print($"Saved new value of setting = {NewValue}");
+      Thread.Sleep(500);
+      //---------------------------------------------------------------------------------------------------------
+      value = DbSettings.GetSettingBoolean(FolderPath, setting.IdSetting);
+      if (value.Code.Error)
+      {
+        Print($"ERROR !?!?! Could not get current value of setting {setting.IdSetting}"); return;
+      }
+      if (value.Value != NewValue )
+      {
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+      }
+      Print("------------------- OK. Test passed. -------------------");
+    }
+
+    private void TestReadWriteSettingColor(string FolderPath, Setting setting)
+    {
+      //Color color = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+    }
+
+    private void TestReadWriteSettingDatetime(string FolderPath, Setting setting)
+    {
+      //DateTime NewValue = new DateTime(2000, 1, 1).AddSeconds(VxFaker.Random.Int(1, 600000000));
+    }
+
+    private void TestReadWriteSettingFile(string FolderPath, Setting setting)
+    {
+
+    }
+
+    private void TestReadWriteSettingFolder(string FolderPath, Setting setting)
+    {
+
+    }
+
+    private void TestReadWriteSettingFont(string FolderPath, Setting setting)
+    {
+      Font NewValue = new Font(ListFont.PickRandom(), rnd.Next(8, 28));
+    }
+
+    private void TestReadWriteSettingInteger64(string FolderPath, Setting setting)
+    {
+      long NewValue = VxFaker.Random.Long();
+    }
+
+    private void TestReadWriteSettingPassword(string FolderPath, Setting setting)
+    {
+
+    }
+
+    private void TestReadWriteSettingText(string FolderPath, Setting setting)
+    {
 
     }
   }
