@@ -564,7 +564,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       Print("------------------- OK. Test passed. -------------------");
     }
 
-    private void TestReadWriteSettingColor(string FolderPath, Setting setting)
+    private void TestReadWriteSettingColor(string FolderPath, Setting setting) // TODO: Fill it and other methods
     {
       //Color color = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
     }
