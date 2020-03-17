@@ -79,7 +79,7 @@ namespace TJSettings
         PathToDatabase = Path.Combine(Path.Combine(Application.StartupPath, DefaultFolder), DefaultFileName);        
       }
 
-      MessageBox.Show(PathToDatabase);
+      //MessageBox.Show(PathToDatabase);
 
       SetPathToDatabase(PathToDatabase);
       ReturnCode code;

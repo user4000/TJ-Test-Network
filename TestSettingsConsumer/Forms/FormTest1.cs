@@ -17,7 +17,7 @@ using TJStandard;
 using static TestSettingsConsumer.Program;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestSettingsConsumer // TODO: Организовать подсчёт времени через StopWatcher для каждой операции //
+namespace TestSettingsConsumer 
 {
   public partial class FormTest1 : RadForm, IEventStartWork
   {  
@@ -154,7 +154,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
     private void StartTestTimersForExperiment1(object sender, EventArgs e)
     {
-      Tm1 = new System.Threading.Timer(TestActionCreateFolder, null, 1100, 114393 + VxFaker.Random.Int(1, 27));
+      /*Tm1 = new System.Threading.Timer(TestActionCreateFolder, null, 1100, 114393 + VxFaker.Random.Int(1, 27));
       Tm2 = new System.Threading.Timer(TestActionRenameFolder, null, 1207, 115494 + VxFaker.Random.Int(1, 28));
       Tm3 = new System.Threading.Timer(TestActionDeleteFolder, null, 1311, 116395 + VxFaker.Random.Int(1, 29));
       Tm4 = new System.Threading.Timer(TestActionCreateFolder, null, 2419, 114927 + VxFaker.Random.Int(1, 30));
@@ -167,7 +167,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
       BxTest.Click -= StartTestTimersForExperiment1;
       BxTest.Click += StopTestTimersForExperiment1;
-      Ms.Message("START", "Timers were started.").Control(BxTest).Info();
+      Ms.Message("START", "Timers were started.").Control(BxTest).Info();*/
     }
 
     private void StopTestTimersForExperiment1(object sender, EventArgs e)
@@ -194,6 +194,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       TxMessage.Refresh();
       Application.DoEvents();
 
+      /*
       Tm1 = new System.Threading.Timer(TestSelectRandomSetting, null, 1100, 393 + VxFaker.Random.Int(1, 27));
       Tm2 = new System.Threading.Timer(TestSelectRandomSetting, null, 2207, 494 + VxFaker.Random.Int(1, 28));
       Tm3 = new System.Threading.Timer(TestSelectRandomSetting, null, 3311, 395 + VxFaker.Random.Int(1, 29));
@@ -203,6 +204,18 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
       Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
       Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 871 + VxFaker.Random.Int(1, 27));
+      */
+
+      Tm1 = new System.Threading.Timer(TestSelectRandomSetting, null, 1100, 393 + VxFaker.Random.Int(1, 27));
+      Tm2 = new System.Threading.Timer(TestSelectRandomSetting, null, 2207, 494 + VxFaker.Random.Int(1, 28));
+      Tm3 = new System.Threading.Timer(TestSelectRandomSetting, null, 3311, 547 + VxFaker.Random.Int(1, 29));
+      Tm4 = new System.Threading.Timer(TestSelectRandomSetting, null, 4419, 678 + VxFaker.Random.Int(1, 30));
+      Tm5 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 5500, 3300 + VxFaker.Random.Int(1, 27));
+
+     // Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 1594 + VxFaker.Random.Int(1, 28));
+     // Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
+     // Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
+     // Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 871 + VxFaker.Random.Int(1, 27));
 
       BxTest.Click -= StartTestTimersForExperiment2;
       BxTest.Click += StopTestTimersForExperiment2;
@@ -219,10 +232,10 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       Tm3.Change(Timeout.Infinite, Timeout.Infinite);
       Tm4.Change(Timeout.Infinite, Timeout.Infinite);
       Tm5.Change(Timeout.Infinite, Timeout.Infinite);
-      Tm6.Change(Timeout.Infinite, Timeout.Infinite);
-      Tm7.Change(Timeout.Infinite, Timeout.Infinite);
-      Tm8.Change(Timeout.Infinite, Timeout.Infinite);
-      Tm9.Change(Timeout.Infinite, Timeout.Infinite);
+      //Tm6.Change(Timeout.Infinite, Timeout.Infinite);
+      //Tm7.Change(Timeout.Infinite, Timeout.Infinite);
+      //Tm8.Change(Timeout.Infinite, Timeout.Infinite);
+      //Tm9.Change(Timeout.Infinite, Timeout.Infinite);
 
       BxTest.Click -= StopTestTimersForExperiment2;
       BxTest.Click += StartTestTimersForExperiment2;
@@ -253,9 +266,11 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       //int IdFolder = DbSettings.GetRandomIdFolder();
       string guid = "CreateFolder-" + GetNewGuid(); OperationBegin(guid);
       string NameFolder = VxFaker.Commerce.ProductAdjective() + VxFaker.Commerce.ProductName() + VxFaker.Company.CatchPhrase() + VxFaker.Person.FullName;
-      NameFolder = NameFolder.SafeSubstring(1, VxFaker.Random.Int(5, 100));
+      NameFolder = NameFolder.SafeSubstring(VxFaker.Random.Int(1, 20), VxFaker.Random.Int(5, 20));
       Trace.WriteLine($"create folder {guid}");
+      Stopwatch sw = Stopwatch.StartNew();
       ReturnCode code = DbSettings.FolderInsert(GetRandomFolderPath(), NameFolder);
+      sw.Stop();
       if (code.Error)
       {
         Trace.WriteLine("ERROR !!! Could not create a folder.");
@@ -263,7 +278,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       }
       else
       {
-        Trace.WriteLine($"CREATE FOLDER {guid}");
+        Trace.WriteLine($"CREATE FOLDER {guid} >>>> ms = {sw.ElapsedMilliseconds}");
         OperationSuccess(guid);
       }
     }
@@ -307,8 +322,10 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
     {
       string IdSetting = VxFaker.Internet.DomainWord() + VxFaker.Internet.UserName() + VxFaker.Internet.UserAgent();
       IdSetting = IdSetting.SafeSubstring(1, VxFaker.Random.Int(5, 100));
+      Stopwatch sw = Stopwatch.StartNew();
       ReturnCode code = DbSettings.SaveSettingLong(GetRandomFolderPath(), IdSetting, VxFaker.Random.Long());
-      if (code.Error) Print($"Error TestActionAddSettingInteger64: {code.StringValue}");
+      sw.Stop();
+      if (code.Error) Print($"Error TestActionAddSettingInteger64: {code.StringValue} >>>> ms = {sw.ElapsedMilliseconds}");
     }
 
     private void TestActionRenameSetting(object sender)
@@ -317,8 +334,10 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       Setting setting = GetRandomSetting();
       string NewIdSetting = VxFaker.Commerce.Random + "^" + VxFaker.Company.Random + VxFaker.Hacker.Random;
       NewIdSetting = NewIdSetting.SafeSubstring(3, VxFaker.Random.Int(1, NewIdSetting.Length));
+      Stopwatch sw = Stopwatch.StartNew();
       ReturnCode code = DbSettings.SettingRename(GetFolderPath(setting), setting.IdSetting, NewIdSetting);
-      if (code.Error) Print($"Error TestActionRenameSetting: {code.StringValue}");
+      sw.Stop();
+      if (code.Error) Print($"Error TestActionRenameSetting: {code.StringValue} >>>> ms = {sw.ElapsedMilliseconds}");
     }
 
     private void TestActionAddSettingText(object sender)
@@ -330,12 +349,14 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
       string guid = "i-" + GetNewGuid(); OperationBegin(guid);
       Trace.WriteLine($"insert ... {guid} ... (({IdSetting}))");
+      Stopwatch sw = Stopwatch.StartNew();
       ReturnCode code = DbSettings.SaveSettingText(GetRandomFolderPath(), IdSetting, TypeSetting.Text, Text);
+      sw.Stop();
       if (code.Error)
         Trace.WriteLine($"Error [insert] --- {guid} --- TestActionAddSettingText: {code.StringValue}");
       else
       {
-        Trace.WriteLine($"INSERT --- {guid} --- (({IdSetting}))");
+        Trace.WriteLine($"INSERT --- {guid} --- (({IdSetting})) >>>> ms = {sw.ElapsedMilliseconds}");
         OperationSuccess(guid);
       }
     }
@@ -350,6 +371,8 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
 
       Trace.WriteLine($"update ... {guid} ... [[{setting.IdSetting}]]");
 
+
+      Stopwatch sw = Stopwatch.StartNew();
       if (setting.IdType == (int)TypeSetting.Boolean)
       {
         code = DbSettings.SaveSettingBoolean(FolderPath, setting.IdSetting, VxFaker.Random.Bool());
@@ -387,6 +410,8 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
         Font font = new Font("Arial", rnd.Next(8, 28));
         code = DbSettings.SaveSettingFont(FolderPath, setting.IdSetting, font);
       }
+      sw.Stop();
+
 
       if (code.StringValue == "cancel")
       {
@@ -397,7 +422,7 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
         Trace.WriteLine($"!!! {guid} --- Could not update a setting. Error = {code.StringValue}");
       else
       {
-        Trace.WriteLine($"UPDATE --- {guid} --- [[{setting.IdSetting}]] --- {setting.IdType}");
+        Trace.WriteLine($"UPDATE --- {guid} --- [[{setting.IdSetting}]] --- {setting.IdType} >>>> ms = {sw.ElapsedMilliseconds}");
         OperationSuccess(guid);
       }
     }
@@ -407,9 +432,11 @@ namespace TestSettingsConsumer // TODO: Организовать подсчёт 
       Setting setting = GetRandomSetting();
       string guid = "S-" + GetNewGuid(); OperationBegin(guid);
       Trace.WriteLine($"select ... {guid} ... <<{setting.IdSetting}>>");
+      Stopwatch sw = Stopwatch.StartNew();
       ReceivedValueText value = DbSettings.GetSettingText(GetFolderPath(setting), setting.IdSetting);
+      sw.Stop();
       OperationSuccess(guid);
-      Trace.WriteLine($"SELECT --- {guid} --- <<{setting.IdSetting}>> value === {value.Value}");
+      Trace.WriteLine($"SELECT --- {guid} --- <<{setting.IdSetting}>> value === {value.Value} >>>> ms = {sw.ElapsedMilliseconds}");
     }
   }
 }
