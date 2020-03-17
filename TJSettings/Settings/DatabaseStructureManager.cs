@@ -12,7 +12,7 @@ using TJStandard;
 
 namespace TJSettings
 {
-  public class DatabaseStructureManager // TODO: Проверить все методы получения и записи переменнных. Вызывать их через тестовую форму //
+  public class DatabaseStructureManager
   {
     public int IdFolderRoot { get; } = 0;
     public string TnFolders { get; } = "FOLDERS";

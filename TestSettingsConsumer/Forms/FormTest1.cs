@@ -17,13 +17,13 @@ using TJStandard;
 using static TestSettingsConsumer.Program;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestSettingsConsumer 
+namespace TestSettingsConsumer // TODO: Проверить все методы получения и записи переменнных. Вызывать их через тестовую форму. //
 {
   public partial class FormTest1 : RadForm, IEventStartWork
-  {  
-    private List<Folder> ListFolder = new List<Folder>();
+  {
+    private List<Folder> ListFolder { get; set; } = new List<Folder>();
 
-    private List<Setting> ListSetting = new List<Setting>();
+    private List<Setting> ListSetting { get; set; } = new List<Setting>();
 
     private ConcurrentDictionary<string, int> OperationsRegistrar = new ConcurrentDictionary<string, int>();
 
@@ -56,9 +56,9 @@ namespace TestSettingsConsumer
 
     public void SetEvents()
     {
-      BxTest.Click += StartTestTimersForExperiment2;
-      BxList.Enabled = false;
-      //BxList.Click += FillListFolder;
+      //BxTest.Click += StartTestTimersForExperiment2;
+      BxList.Enabled = true;
+      BxList.Click += FillListFolder;
       BxGetIdFolder.Click += TestGetIdFolder;
     }
 
@@ -130,12 +130,30 @@ namespace TestSettingsConsumer
 
     private void FillListFolder(object sender, EventArgs e)
     {
+      //DbSettings.FolderRename(0, "Root");
+
       ListFolder.Clear();
       ListFolder = DbSettings.GetListOfFolders();
       string text = string.Empty;
-      //foreach (var item in ListFolder) text += item.IdFolder + " --- " + item.FullPath + Environment.NewLine;
-      //TxMessage.AppendText(text);
+      foreach (var item in ListFolder) text += item.IdFolder + " --- " + item.FullPath + Environment.NewLine;
+      TxMessage.AppendText(text);
       Print($"Folders = {ListFolder.Count}");
+
+      /*
+      ReturnCode code = ReturnCodeFactory.Error();    
+      Print("Renaming...");
+      foreach (var item in ListFolder)
+      {
+        if (item.NameFolder.Length > 8 )
+        {
+          code = DbSettings.FolderRename(item.IdFolder, "Item_" + item.IdFolder.ToString());
+          //if (code.Success) Print($"RENAMED {item.FullPath}");
+        }
+      
+      }
+      Print("STOP");
+      */
+
     }
 
     private void FillListSetting(object sender, EventArgs e)
@@ -212,10 +230,10 @@ namespace TestSettingsConsumer
       Tm4 = new System.Threading.Timer(TestSelectRandomSetting, null, 4419, 678 + VxFaker.Random.Int(1, 30));
       Tm5 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 5500, 3300 + VxFaker.Random.Int(1, 27));
 
-     // Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 1594 + VxFaker.Random.Int(1, 28));
-     // Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
-     // Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
-     // Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 871 + VxFaker.Random.Int(1, 27));
+      // Tm6 = new System.Threading.Timer(TestActionAddSettingText, null, 6607, 1594 + VxFaker.Random.Int(1, 28));
+      // Tm7 = new System.Threading.Timer(TestActionAddSettingInteger64, null, 7711, 1795 + VxFaker.Random.Int(1, 29));
+      // Tm8 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 8819, 780 + VxFaker.Random.Int(1, 30));
+      // Tm9 = new System.Threading.Timer(TestActionUpdateRandomSetting, null, 9900, 871 + VxFaker.Random.Int(1, 27));
 
       BxTest.Click -= StartTestTimersForExperiment2;
       BxTest.Click += StopTestTimersForExperiment2;
@@ -437,6 +455,18 @@ namespace TestSettingsConsumer
       sw.Stop();
       OperationSuccess(guid);
       Trace.WriteLine($"SELECT --- {guid} --- <<{setting.IdSetting}>> value === {value.Value} >>>> ms = {sw.ElapsedMilliseconds}");
+    }
+
+
+    private void TestGetRandomSettingAngChangeValue()
+    {
+      if (ListSetting.Count < 1)
+      {
+        MessageBox.Show("ERROR ! List of Settings is empty.");
+        return;
+      }
+      Setting setting = GetRandomSetting();
+
     }
   }
 }
