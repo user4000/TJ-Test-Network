@@ -15,8 +15,8 @@ using TJFramework;
 using TJSettings;
 using TJStandard;
 using static TestSettingsConsumer.Program;
-using static TJFramework.TJFrameworkManager;
 using static TJFramework.Logger.Manager;
+using static TJFramework.TJFrameworkManager;
 
 namespace TestSettingsConsumer // TODO: Проверить все методы получения и записи переменнных. Вызывать их через тестовую форму. //
 {
@@ -30,6 +30,10 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
 
 
     private ConcurrentDictionary<string, int> OperationsRegistrar = new ConcurrentDictionary<string, int>();
+
+
+    private bool FlagErrorOccured { get; set; } = false;
+
 
     private Random rnd = new Random();
 
@@ -108,10 +112,31 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
     private void PrintInner(string message)
     {
       TxMessage.AppendText(message + Environment.NewLine);
-      if (message.StartsWith("ERROR")) Log.Save(MsgType.Error, string.Empty, message);      
+      if (message.StartsWith("ERROR"))
+      {
+        FlagErrorOccured = true;
+        Log.Save(MsgType.Error, string.Empty, message);
+        Ms.Message("ERROR", message).NoAlert().Error();
+      }
+      if (TxMessage.Text.Length > 200000) TxMessage.Clear();
     }
 
-    public void Print(string message)
+    private void Print(string message)
+    {
+      if (message.StartsWith("ERROR"))
+      {
+        FlagErrorOccured = true;
+        Ms.Message("ERROR", message).NoAlert().Error();
+        Log.Save(MsgType.Error, string.Empty, message);
+      }
+      else
+      {
+        if (message.StartsWith("-")) return;
+        Ms.Message("", message).NoAlert().Debug();
+      }
+    }
+
+    public void PrintToTextbox(string message)
     {
       if (TxMessage.InvokeRequired)
         TxMessage.Invoke((MethodInvoker)delegate { PrintInner(message); });
@@ -484,6 +509,14 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       Trace.WriteLine($"SELECT --- {guid} --- <<{setting.IdSetting}>> value === {value.Value} >>>> ms = {sw.ElapsedMilliseconds}");
     }
 
+    private void TestMessages()
+    {
+      for (int i = 1; i < 6001; i++)
+      {
+        Ms.Message(VxFaker.Internet.Password(), VxFaker.Hacker.Adjective()).NoAlert().Debug();
+        if (i % 25 == 0) Application.DoEvents();
+      }
+    }
 
     private void TestGetRandomSettingReadWrite()
     {
@@ -491,12 +524,12 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       string FolderPath = GetFolderPath(setting);
       TypeSetting type = (TypeSetting)setting.IdType;
 
-      Print($"---------------------- Random setting has been selected: ");
+      /*Print($"---------------------- Random setting has been selected: ");
       Print($"IdFolder = {setting.IdFolder}");
       Print($"FolderPath = {FolderPath}");
       Print($"IdSetting = {setting.IdSetting}");
       Print($"Type={type}");
-      Print($"String Value = {setting.SettingValue}");
+      Print($"String Value = {setting.SettingValue}");*/
 
       switch (type)
       {
@@ -534,20 +567,28 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
 
     private void TestGetRandomSettingReadWrite(object sender, EventArgs e)
     {
+      FlagErrorOccured = false;
+
       if (ListSetting.Count < 1)
       {
         MessageBox.Show("ERROR ! List of Settings is empty.");
         return;
       }
 
-      Log.Save(MsgType.Debug, "", "Begin of method [TestGetRandomSettingReadWrite]");
+      //Log.Save(MsgType.Debug, "", "Begin of method [TestGetRandomSettingReadWrite]");
 
       TxMessage.Clear();
 
-      TestGetRandomSettingReadWrite();
+      for (int i = 1; i < 11; i++)
+      {
+        TestGetRandomSettingReadWrite();
+        Application.DoEvents();
+        if (FlagErrorOccured) break;
+        Ms.Message($"{i}", "").NoAlert().Debug();
+      }
 
-      Trace.WriteLine("---------------------------------------------------------------------------------");
-      Log.Save(MsgType.Debug, "", "End of method [TestGetRandomSettingReadWrite]");
+      //Trace.WriteLine("---------------------------------------------------------------------------------");
+      //Log.Save(MsgType.Debug, "", "End of method [TestGetRandomSettingReadWrite]");
     }
 
     private void TestReadWriteSettingBoolean(string FolderPath, Setting setting)
@@ -557,7 +598,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       bool NewValue = !value.Value;
       ReturnCode code = DbSettings.SaveSettingBoolean(FolderPath, setting.IdSetting, NewValue);
@@ -565,7 +606,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingBoolean(FolderPath, setting.IdSetting);
@@ -573,9 +614,9 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !?!?! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      if (value.Value != NewValue )
+      if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
@@ -587,7 +628,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       Color NewValue = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
       ReturnCode code = DbSettings.SaveSettingColor(FolderPath, setting.IdSetting, NewValue);
@@ -595,7 +636,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingColor(FolderPath, setting.IdSetting);
@@ -605,20 +646,20 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
 
     private void TestReadWriteSettingDatetime(string FolderPath, Setting setting)
-    {    
+    {
       ReceivedValueDatetime value = DbSettings.GetSettingDatetime(FolderPath, setting.IdSetting);
       if (value.Code.Error)
       {
         Print($"ReceivedValueDatetime = {value.Value}");
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       DateTime NewValue = new DateTime(2000, 1, 1).AddSeconds(VxFaker.Random.Int(1, 600000000));
       ReturnCode code = DbSettings.SaveSettingDatetime(FolderPath, setting.IdSetting, NewValue);
@@ -626,7 +667,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingDatetime(FolderPath, setting.IdSetting);
@@ -636,7 +677,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
@@ -648,15 +689,15 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
-      string NewValue = VxFaker.System.CommonFileName(); 
+      string NewValue = VxFaker.System.CommonFileName();
       ReturnCode code = DbSettings.SaveSettingText(FolderPath, setting.IdSetting, (TypeSetting)setting.IdType, NewValue);
       if (code.Error)
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingText(FolderPath, setting.IdSetting);
@@ -666,7 +707,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
@@ -678,7 +719,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       string NewValue = VxFaker.System.DirectoryPath();
       ReturnCode code = DbSettings.SaveSettingText(FolderPath, setting.IdSetting, (TypeSetting)setting.IdType, NewValue);
@@ -686,7 +727,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingText(FolderPath, setting.IdSetting);
@@ -696,19 +737,19 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
 
     private void TestReadWriteSettingFont(string FolderPath, Setting setting)
-    {      
+    {
       ReceivedValueFont value = DbSettings.GetSettingFont(FolderPath, setting.IdSetting);
       if (value.Code.Error)
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      //Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       Font NewValue = new Font(ListFont.PickRandom(), rnd.Next(8, 28));
       ReturnCode code = DbSettings.SaveSettingFont(FolderPath, setting.IdSetting, NewValue);
@@ -716,7 +757,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      //Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingFont(FolderPath, setting.IdSetting);
@@ -724,21 +765,21 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !?!?! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      if (value.Value != NewValue)
+      if (value.Value.ToString() != NewValue.ToString())
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.SettingValue}"); return;
+        Print($"ERROR !*!*! New value = {NewValue.ToString()} , Current value = {value.Value.ToString()}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
 
     private void TestReadWriteSettingInteger64(string FolderPath, Setting setting)
-    {      
+    {
       ReceivedValueInteger64 value = DbSettings.GetSettingInteger64(FolderPath, setting.IdSetting);
       if (value.Code.Error)
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       long NewValue = VxFaker.Random.Long();
       ReturnCode code = DbSettings.SaveSettingInteger64(FolderPath, setting.IdSetting, NewValue);
@@ -746,7 +787,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingInteger64(FolderPath, setting.IdSetting);
@@ -756,7 +797,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
@@ -768,7 +809,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       string NewValue = VxFaker.Internet.Password();
       ReturnCode code = DbSettings.SaveSettingText(FolderPath, setting.IdSetting, (TypeSetting)setting.IdType, NewValue);
@@ -776,7 +817,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingText(FolderPath, setting.IdSetting);
@@ -786,7 +827,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
@@ -798,7 +839,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR !!! Could not get current value of setting {setting.IdSetting}"); return;
       }
-      Print($"Current value of setting = {value.Value}");
+      Print($"-Current value of setting = {value.Value}");
       //---------------------------------------------------------------------------------------------------------
       string NewValue = VxFaker.Lorem.Sentence(rnd.Next(1, 20));
       ReturnCode code = DbSettings.SaveSettingText(FolderPath, setting.IdSetting, (TypeSetting)setting.IdType, NewValue);
@@ -806,7 +847,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       {
         Print($"ERROR *** Could not SAVE value = {NewValue} of setting {setting.IdSetting}"); return;
       }
-      Print($"Saved new value of setting = {NewValue}");
+      Print($"-Saved new value of setting = {NewValue}");
       Thread.Sleep(123);
       //---------------------------------------------------------------------------------------------------------
       value = DbSettings.GetSettingText(FolderPath, setting.IdSetting);
@@ -816,7 +857,7 @@ namespace TestSettingsConsumer // TODO: Проверить все методы �
       }
       if (value.Value != NewValue)
       {
-        Print($"ERROR !*!*! New value = {NewValue} , Current value = {setting.IdSetting}"); return;
+        Print($"ERROR !*!*! New value = {NewValue} , Current value = {value.Value}"); return;
       }
       Print("------------------- OK. Test passed. -------------------");
     }
