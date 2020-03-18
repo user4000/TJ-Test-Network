@@ -18,9 +18,9 @@ namespace TJStandard
       {
         dt = DateTime.ParseExact(value, DatetimeFormat, CultureInfo.InvariantCulture);
       }
-      catch
+      catch (Exception ex)
       {
-        return ReceivedValueDatetime.Error(ReturnCodeFactory.NcError);
+        return ReceivedValueDatetime.Error(ReturnCodeFactory.NcError, ex.Message);
       }
       return ReceivedValueDatetime.Success(dt);
     }

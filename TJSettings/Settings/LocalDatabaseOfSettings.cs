@@ -1,16 +1,16 @@
 ﻿using System;
-using System.IO;
-using System.Data;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Telerik.WinControls.UI;
 using TJStandard;
-using System.Drawing;
 
 namespace TJSettings
 {
@@ -33,7 +33,6 @@ namespace TJSettings
     public string DefaultFolder { get; } = "settings";
 
     public string DefaultFileName { get; } = "application_settings.db";
-
 
     public Converter CvManager { get; } = new Converter();
 
@@ -76,7 +75,7 @@ namespace TJSettings
     {
       if (PathToDatabase == string.Empty)
       {
-        PathToDatabase = Path.Combine(Path.Combine(Application.StartupPath, DefaultFolder), DefaultFileName);        
+        PathToDatabase = Path.Combine(Path.Combine(Application.StartupPath, DefaultFolder), DefaultFileName);
       }
 
       //MessageBox.Show(PathToDatabase);
@@ -89,7 +88,7 @@ namespace TJSettings
       }
       catch
       {
-         return ReturnCodeFactory.Error("The file you specified is not a SQLite database.");
+        return ReturnCodeFactory.Error("The file you specified is not a SQLite database.");
       }
 
       if (code.Error) return code;
@@ -176,7 +175,6 @@ namespace TJSettings
         count = command.ZzGetScalarInteger();
         if (count != 0) return ReturnCodeFactory.Error((int)Errors.FolderAlreadyExists, "A folder with the same name already exists");
         count = command.ZzExecuteNonQuery(DbManager.SqlFolderRename);
-        //count = command.ZzGetScalarInteger(SqlFolderCountByIdFolder);
         if (count < 1) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to rename a folder");
       }
       if (IdFolder == DbManager.IdFolderRoot) RootFolderName = GetRootFolderName();
@@ -352,10 +350,10 @@ namespace TJSettings
       int IdFolder = GetIdFolder(FullPath);
       if (IdFolder < 0) return list;
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlSettingSelect, connection).ZzOpenConnection().ZzAdd("@IdFolder", IdFolder))     
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlSettingSelect, connection).ZzOpenConnection().ZzAdd("@IdFolder", IdFolder))
       using (SQLiteDataReader reader = command.ExecuteReader())
-        while (reader.Read()) if ( (reader.GetInt32(2) == (int)type) || (type==TypeSetting.Unknown)) list.Add(reader.GetString(1));
-      return list;      
+        while (reader.Read()) if ((reader.GetInt32(2) == (int)type) || (type == TypeSetting.Unknown)) list.Add(reader.GetString(1));
+      return list;
     }
 
     public bool ListHasDuplicatedRank(BindingList<Setting> list)
@@ -399,13 +397,13 @@ namespace TJSettings
       return SettingCreateOrUpdate(FolderPath, IdSetting, TypeSetting.Boolean, StringValue);
     }
 
-    public ReturnCode SaveSettingLong(bool AddNewSetting, int IdFolder, string IdSetting, long value)
+    public ReturnCode SaveSettingInteger64(bool AddNewSetting, int IdFolder, string IdSetting, long value)
     {
       string StringValue = CvManager.CvInt64.ToString(value);
       return SettingCreateOrUpdate(AddNewSetting, IdFolder, IdSetting, TypeSetting.Integer64, StringValue);
     }
 
-    public ReturnCode SaveSettingLong(string FolderPath, string IdSetting, long value)
+    public ReturnCode SaveSettingInteger64(string FolderPath, string IdSetting, long value)
     {
       string StringValue = CvManager.CvInt64.ToString(value);
       return SettingCreateOrUpdate(FolderPath, IdSetting, TypeSetting.Integer64, StringValue);
@@ -453,9 +451,18 @@ namespace TJSettings
       return SettingCreateOrUpdate(FolderPath, IdSetting, type, value);
     }
 
+    public ReturnCode CheckIdSettingCharacters(string IdSetting)
+    {
+      if (IdSetting.Trim() == string.Empty) return ReturnCodeFactory.Error("Incorrect name of the setting.");
+      string CorrectedIdSetting = IdSetting.RemoveSpecialCharacters();
+      if (CorrectedIdSetting != IdSetting)
+        return ReturnCodeFactory.Error($"Special characters are not allowed in the setting name. Allowed name may be = {CorrectedIdSetting}");
+      return ReturnCodeFactory.Success();
+    }
+
     public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
     {
-      IdSetting = IdSetting.RemoveSpecialCharacters();
+      //IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
@@ -497,7 +504,7 @@ namespace TJSettings
     {
       int IdFolder = GetIdFolder(FolderPath);
       int IdType = (int)type;
-      IdSetting = IdSetting.RemoveSpecialCharacters();
+      //IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
@@ -634,10 +641,17 @@ namespace TJSettings
       return CvManager.CvColor.FromString(TextValue.Value);
     }
 
-    public ReceivedValueDatetime GetSettingDatetime(string FolderPath, string IdSetting)
+    public ReceivedValueFont GetSettingFont(string FolderPath, string IdSetting)
     {
       ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);
-      if (TextValue.Code.Error) return ReceivedValueDatetime.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      if (TextValue.Code.Error) return ReceivedValueFont.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);
+      return CvManager.CvFont.FromString(TextValue.Value);
+    }
+
+    public ReceivedValueDatetime GetSettingDatetime(string FolderPath, string IdSetting)
+    {      
+      ReceivedValueText TextValue = GetStringValueOfSetting(FolderPath, IdSetting);     
+      if (TextValue.Code.Error) return ReceivedValueDatetime.Error(TextValue.Code.NumericValue, TextValue.Code.StringValue);    
       return CvManager.CvDatetime.FromString(TextValue.Value);
     }
 
@@ -728,7 +742,7 @@ namespace TJSettings
       DataTable table = new DataTable();
       int IdFolder = GetIdFolder(ParentFolderPath);
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlFolderGetChildren, connection).ZzAdd("@IdFolder",IdFolder))
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlFolderGetChildren, connection).ZzAdd("@IdFolder", IdFolder))
       using (SQLiteDataReader reader = command.ZzOpenConnection().ExecuteReader())
       {
         table.Load(reader);

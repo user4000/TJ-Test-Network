@@ -933,7 +933,7 @@ namespace TestNetwork
           {
             Ms.Message("Error", "Value is not an integer").Control(PnUpper).Offset(TvFolders.Width, -100).Warning(); return;
           }
-          code = DbSettings.SaveSettingLong(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text).Value);
+          code = DbSettings.SaveSettingInteger64(AddNewSetting, CurrentIdFolder, IdSetting, Manager.CvManager.CvInt64.FromString(StxLongInteger.Text).Value);
           break;
         case TypeSetting.Text:
           PvEditor.SelectedPage = PgText;
