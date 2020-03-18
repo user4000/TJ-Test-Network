@@ -134,11 +134,16 @@ namespace TJSettings
     }
 
     public ReturnCode CreateNewDatabase(string text) => DbManager.CreateNewDatabase(text);
+  
+    public bool FolderNotFound(int IdFolder) => IdFolder < 0;
+
+    public ReturnCode FolderNotFound() => ReturnCodeFactory.Error((int)Errors.FolderNotFound, "Folder not found");
 
     public ReturnCode FolderInsert(string Parent, string NameFolder) => FolderInsert(GetIdFolder(Parent), NameFolder);
 
     public ReturnCode FolderInsert(int IdParent, string NameFolder)
     {
+      if (FolderNotFound(IdParent)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"New folder has been created: {NameFolder}");
       int IdNewFolder = -1;
       using (SQLiteConnection connection = GetSqliteConnection())
@@ -166,6 +171,7 @@ namespace TJSettings
 
     public ReturnCode FolderRename(int IdFolder, string NameFolder)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Folder has been renamed: {NameFolder}");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
@@ -185,6 +191,7 @@ namespace TJSettings
 
     public ReturnCode FolderDelete(int IdFolder, string NameFolder)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Folder has been deleted: {NameFolder}");
       int count = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
@@ -203,6 +210,64 @@ namespace TJSettings
       return code;
     }
 
+    public ReturnCode FolderForceDelete(string FolderPath) // TODO: FolderForceDelete - refactor it because it works slow //
+    {
+      //Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> {FolderPath}");
+      ReturnCode code = ReturnCodeFactory.Error();
+
+      int IdFolder = GetIdFolder(FolderPath);
+
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
+
+      //Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> Point 1 --- IdFolder = {IdFolder}");
+
+      bool FlagFound = false;
+
+      void SearchNode(RadTreeNode node)
+      {
+        if (FlagFound) return;
+        if (GetIdFolder(node) == IdFolder)
+        {
+          FlagFound = true;
+          //Trace.WriteLine($"Found !!! ---> {node.FullPath}");
+          LocalMethodDeleteAllSettingsOfOneFolder(node);
+          LocalMethodDeleteFolderAndAllChildFolders(node);
+        }
+        if (!FlagFound) foreach (var item in node.Nodes) SearchNode(item);
+      }
+
+      void LocalMethodDeleteAllSettingsOfOneFolder(RadTreeNode node)
+      {
+        DeleteAllSettingsOfOneFolder(node.FullPath);
+        //Trace.WriteLine($"Delete settings of folder ======= {node.FullPath}");
+        foreach (var item in node.Nodes) LocalMethodDeleteAllSettingsOfOneFolder(item);
+      }
+
+      void LocalMethodDeleteFolderAndAllChildFolders(RadTreeNode node)
+      {       
+        foreach (var item in node.Nodes) LocalMethodDeleteFolderAndAllChildFolders(item);
+        ReturnCode result = FolderDelete(node.FullPath, string.Empty);
+        if (IdFolder == GetIdFolder(node)) code = result;
+        //Trace.WriteLine($@"Delete folder /\/\/\/\/\/\/\ === {node.FullPath}");
+      }
+
+      DataTable table = GetTableFolders();
+      FxTreeView form = new FxTreeView();
+      form.Visible = false;
+      FillTreeView(form.TvFolders, table);
+
+      foreach (var item in form.TvFolders.Nodes) SearchNode(item);
+
+      form.TvFolders.DataSource = null;
+      table.Clear();
+      form.TvFolders.Dispose();
+      table.Dispose();
+      form.Close();
+
+      //Trace.WriteLine($@" >>>>>>>>>>>>>>>>>>>>> {ReturnCodeFormatter.ToString(code)}");
+
+      return code;
+    }
 
     public void FillTreeView(RadTreeView treeView, DataTable table)
     {
@@ -307,6 +372,8 @@ namespace TJSettings
     public async Task<BindingList<Setting>> GetSettings(int IdFolder)
     {
       BindingList<Setting> list = new BindingList<Setting>();
+      if (FolderNotFound(IdFolder)) return list;
+
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlSettingSelect, connection))
       {
@@ -364,14 +431,16 @@ namespace TJSettings
       return count > 0;
     }
 
-    public string GetRootFolderName()
+    private string GetScalarString(string SqlScalarStringQuery)
     {
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlGetRootFolderName, connection).ZzOpenConnection())
+      using (SQLiteCommand command = new SQLiteCommand(SqlScalarStringQuery, connection).ZzOpenConnection())
       {
         return command.ZzGetScalarString();
       }
     }
+
+    public string GetRootFolderName() => GetScalarString(DbManager.SqlGetRootFolderName);
 
     public ReturnCode SaveSettingDatetime(bool AddNewSetting, int IdFolder, string IdSetting, DateTime value)
     {
@@ -463,6 +532,7 @@ namespace TJSettings
     public ReturnCode SettingCreate(int IdFolder, string IdSetting, int IdType, string value)
     {
       //IdSetting = IdSetting.RemoveSpecialCharacters();
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
@@ -480,6 +550,7 @@ namespace TJSettings
 
     public ReturnCode SettingUpdate(int IdFolder, string IdSetting, int IdType, string value)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Changes saved: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
@@ -503,6 +574,7 @@ namespace TJSettings
     private ReturnCode SettingCreateOrUpdate(string FolderPath, string IdSetting, TypeSetting type, string value)
     {
       int IdFolder = GetIdFolder(FolderPath);
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       int IdType = (int)type;
       //IdSetting = IdSetting.RemoveSpecialCharacters();
       ReturnCode code = ReturnCodeFactory.Success($"New setting has been created: {IdSetting}");
@@ -537,6 +609,7 @@ namespace TJSettings
 
     public ReturnCode SettingRename(int IdFolder, string IdSettingOld, string IdSettingNew)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Setting has been renamed: {IdSettingNew}");
       if (IdSettingNew.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "New setting name not specified");
 
@@ -560,6 +633,7 @@ namespace TJSettings
 
     public ReturnCode SettingDelete(int IdFolder, string IdSetting)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Setting has been deleted: {IdSetting}");
       if (IdSetting.Trim().Length < 1) return ReturnCodeFactory.Error((int)Errors.SettingNameNotSpecified, "Setting name not specified");
       int count = 0;
@@ -574,8 +648,27 @@ namespace TJSettings
       return code;
     }
 
+    public ReturnCode DeleteAllSettingsOfOneFolder(string FolderPath) => DeleteAllSettingsOfOneFolder(GetIdFolder(FolderPath));
+
+    public ReturnCode DeleteAllSettingsOfOneFolder(int IdFolder)
+    {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
+      ReturnCode code = ReturnCodeFactory.Success($"Settings has been deleted");
+      int count = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection))
+      {
+        count = command.ZzOpenConnection().ZzAdd("@IdFolder", IdFolder).ZzExecuteNonQuery(DbManager.SqlDeleteAllSettingsOfOneFolder);
+        if (count == 0) code = ReturnCodeFactory.Success($"No any settings were deleted");
+        count = command.ZzGetScalarInteger(DbManager.SqlAllSettingsCount);
+        if (count != 0) return ReturnCodeFactory.Error((int)Errors.Unknown, "Error trying to delete all settings of the folder");
+      }
+      return code;
+    }
+
     public ReturnCode SwapRank(int IdFolder, Setting settingOne, Setting settingTwo)
     {
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
       ReturnCode code = ReturnCodeFactory.Success($"Setting rank exchange completed");
       if ((settingOne == null) || (settingTwo == null)) return ReturnCodeFactory.Error("At least one parameter is null");
       int count = 0;
@@ -715,6 +808,9 @@ namespace TJSettings
       return list;
     }
 
+    /// <summary>
+    /// Get all folders of the database.
+    /// </summary>
     public List<Folder> GetListOfFolders()
     {
       List<Folder> list = new List<Folder>();
@@ -736,6 +832,9 @@ namespace TJSettings
       return list;
     }
 
+    /// <summary>
+    /// Get names of all direct child folders of the specified folder.
+    /// </summary>
     public List<string> GetListOfFolders(string ParentFolderPath)
     {
       List<string> list = new List<string>();

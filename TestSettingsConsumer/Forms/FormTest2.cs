@@ -20,7 +20,7 @@ namespace TestSettingsConsumer
 {
   public partial class FormTest2 : RadForm, IEventStartWork
   {
-   
+
     private List<Folder> ListFolder = new List<Folder>();
 
     private List<Setting> ListSetting = new List<Setting>();
@@ -43,6 +43,8 @@ namespace TestSettingsConsumer
       BxGetChildrenOfOneFolder.Click += EventGetChildrenOfOneFolder;
       BxGetIdFolder.Click += EventGetIdFolder;
       BxGetListOfSettings.Click += EventGetListOfSettings;
+      BxDeleteSettings.Click += EventDeleteSettings;
+      BxFolderForceDelete.Click += EventFolderForceDelete;
     }
 
     private void PrintInner(string message)
@@ -84,7 +86,7 @@ namespace TestSettingsConsumer
       string FolderFullPath = TxOne.Text;
       TxTwo.Text = FolderFullPath;
       int IdFolder = DbSettings.GetIdFolder(FolderFullPath);
-      TxOne.Text = IdFolder.ToString();  
+      TxOne.Text = IdFolder.ToString();
     }
 
     private void EventGetListOfSettings(object sender, EventArgs e)
@@ -97,6 +99,24 @@ namespace TestSettingsConsumer
       foreach (var item in list) names += item + Environment.NewLine;
       Print($"SETTINGS OF A FOLDER = {FolderFullPath}");
       Print(names);
+    }
+
+    private void EventDeleteSettings(object sender, EventArgs e)
+    {
+      string FolderFullPath = TxOne.Text;
+      TxTwo.Text = FolderFullPath;
+      TxOne.Clear();
+      ReturnCode code = DbSettings.DeleteAllSettingsOfOneFolder(FolderFullPath);
+      Print(ReturnCodeFormatter.ToString(code));
+    }
+
+    private void EventFolderForceDelete(object sender, EventArgs e)
+    {
+      string FolderFullPath = TxOne.Text;
+      TxTwo.Text = FolderFullPath;
+      TxOne.Clear();
+      ReturnCode code = DbSettings.FolderForceDelete(FolderFullPath);
+      Print(ReturnCodeFormatter.ToString(code));
     }
   }
 }

@@ -48,6 +48,8 @@ namespace TJSettings
 
     public string SqlSettingCount { get; private set; } = string.Empty;
 
+    public string SqlAllSettingsCount { get; private set; } = string.Empty;
+
     public string SqlFolderCountByIdParent { get; private set; } = string.Empty;
 
     public string SqlFolderInsert { get; private set; } = string.Empty;
@@ -65,6 +67,8 @@ namespace TJSettings
     public string SqlCountChildSettings { get; private set; } = string.Empty;
 
     public string SqlFolderDelete { get; private set; } = string.Empty;
+
+    public string SqlDeleteAllSettingsOfOneFolder { get; private set; } = string.Empty;
 
     public string SqlSetRank { get; private set; } = string.Empty;
 
@@ -107,6 +111,8 @@ namespace TJSettings
 
       SqlSettingCount = $"SELECT COUNT(*) from {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 
+      SqlAllSettingsCount = $"SELECT COUNT(*) from {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder";
+
       SqlSettingInsert =
       $"INSERT INTO {TnSettings} ({CnSettingsIdFolder}, {CnSettingsIdSetting}, {CnSettingsIdType}, {CnSettingsSettingValue}, {CnSettingsRank})" +
       $" VALUES (@IdFolder, @IdSetting, @IdType, @SettingValue, (SELECT IFNULL(MAX({CnSettingsRank}), 0) + 1 FROM {TnSettings} WHERE {CnSettingsIdFolder} = @IdFolder))";
@@ -119,9 +125,8 @@ namespace TJSettings
       $"UPDATE {TnSettings} SET {CnSettingsIdSetting}=@IdSettingNew " +
       $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSettingOld";
 
-      SqlSettingDelete =
-      $"DELETE FROM {TnSettings} " +
-      $"WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+      SqlSettingDelete = $"DELETE FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
+      SqlDeleteAllSettingsOfOneFolder = $"DELETE FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder";
 
       SqlFolderCountByIdParent = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdParent AND {CnFoldersNameFolder}=@NameFolder";
       SqlFolderInsert = $"INSERT INTO {TnFolders} ({CnFoldersIdParent},{CnFoldersNameFolder}) VALUES (@IdParent,@NameFolder)";
@@ -134,6 +139,7 @@ namespace TJSettings
       SqlCountChildFolder = $"SELECT COUNT(*) FROM {TnFolders} WHERE {CnFoldersIdParent} = @IdFolder";
       SqlCountChildSettings = $"SELECT COUNT(*) FROM {TnSettings} WHERE {CnFoldersIdFolder} = @IdFolder";
       SqlFolderDelete = $"DELETE FROM {TnFolders} WHERE {CnFoldersIdFolder}=@IdFolder AND {CnFoldersIdFolder}>0";
+
 
       SqlSetRank = $"UPDATE {TnSettings} SET {CnSettingsRank}=@Rank WHERE {CnSettingsIdFolder}=@IdFolder AND {CnSettingsIdSetting}=@IdSetting";
 

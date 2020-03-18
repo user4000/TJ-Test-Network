@@ -18,7 +18,7 @@ using static TestSettingsConsumer.Program;
 using static TJFramework.Logger.Manager;
 using static TJFramework.TJFrameworkManager;
 
-namespace TestSettingsConsumer // TODO: Проверить все методы получения и записи переменнных. Вызывать их через тестовую форму. //
+namespace TestSettingsConsumer
 {
   public partial class FormTest1 : RadForm, IEventStartWork
   {
