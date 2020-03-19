@@ -91,7 +91,7 @@ namespace TJSettings
       return code;
     }
 
-    public ReturnCode FolderForceDelete(string FolderPath) // TODO: FolderForceDelete - refactor it because it works slow //
+    public ReturnCode FolderForceDeleteUsingTreeview(string FolderPath) 
     {
       //Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> {FolderPath}");
       // This method uses RadTreeView class to perform search operations //
@@ -151,6 +151,37 @@ namespace TJSettings
       return code;
     }
 
+    public ReturnCode FolderForceDelete(string FolderPath) 
+    {
+      ReturnCode code = ReturnCodeFactory.Error();
+      int IdFolder = GetIdFolder(FolderPath);
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
+      List<int> list = GetListOfIdFolders(IdFolder);
+
+      void ProcessOneFolder(SQLiteCommand cmd, int InnerIdFolder)
+      {
+        List<int> InnerList = GetListOfIdFolders(cmd, InnerIdFolder);
+        foreach (int item in InnerList) ProcessOneFolder(cmd, item);
+        DeleteSettingsAndFolder(cmd, InnerIdFolder);
+      }
+
+      void DeleteSettingsAndFolder(SQLiteCommand cmd, int InnerIdFolder)
+      {
+        cmd.Parameters.Clear();
+        cmd.ZzAdd("@IdFolder", InnerIdFolder).ZzExecuteNonQuery(DbManager.SqlDeleteAllSettingsOfOneFolder);
+        cmd.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
+      }
+
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection).ZzOpenConnection())
+      {
+        foreach (int item in list) ProcessOneFolder(command, item);
+      }
+
+      DeleteAllSettingsOfOneFolder(IdFolder);
+      return FolderDelete(IdFolder, FolderPath);
+    }
+
     public string AddRootFolderNameIfNotSpecified(string FullPath)
     {
       FullPath = FullPath.Trim();
@@ -183,17 +214,14 @@ namespace TJSettings
       int IdFolder = 0;
       string sql = string.Empty;
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(connection))
+      using (SQLiteCommand command = new SQLiteCommand(connection).ZzText(DbManager.SqlGetIdFolder).ZzOpenConnection() )
       {
-        command.Connection.Open();
-        command.CommandText = DbManager.SqlGetIdFolder;
         for (int i = 0; i < names.Length; i++)
         {
           IdFolder = command.ZzAdd("@IdParent", IdFolder).ZzAdd("@NameFolder", names[i]).ZzGetScalarInteger();
           command.Parameters.Clear();
           if (IdFolder < 0) break;
-        }
-        command.Connection.Close();
+        }        
       }
       return IdFolder;
     }
@@ -274,6 +302,35 @@ namespace TJSettings
       }
       if (table.Rows.Count > 0) list = (from DataRow row in table.Rows select row[0].ToString()).ToList();
       table.Clear();
+      return list;
+    }
+
+    public List<int> GetListOfIdFolders(int IdFolder)
+    {
+      List<int> list = new List<int>();
+      int x = 0;
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlFolderGetIdChildren, connection).ZzAdd("@IdFolder", IdFolder))
+      using (SQLiteDataReader reader = command.ZzOpenConnection().ExecuteReader())    
+        while (reader.Read())
+        {
+          x = reader.GetInt32(0);
+          if (x > 0) list.Add(x);
+        }      
+      return list;
+    }
+
+    public List<int> GetListOfIdFolders(SQLiteCommand command, int IdFolder)
+    {
+      List<int> list = new List<int>();
+      int x = 0;
+      command.Parameters.Clear();
+      using (SQLiteDataReader reader = command.ZzText(DbManager.SqlFolderGetIdChildren).ZzAdd("@IdFolder", IdFolder).ExecuteReader())
+        while (reader.Read())
+        {
+          x = reader.GetInt32(0);
+          if (x > 0) list.Add(x);
+        }
       return list;
     }
   }

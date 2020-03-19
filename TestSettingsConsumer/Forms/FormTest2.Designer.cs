@@ -32,19 +32,22 @@
       this.TxOne = new Telerik.WinControls.UI.RadTextBoxControl();
       this.TxTwo = new Telerik.WinControls.UI.RadTextBoxControl();
       this.BxGetIdFolder = new Telerik.WinControls.UI.RadButton();
+      this.BxFolderForceDelete = new Telerik.WinControls.UI.RadButton();
+      this.BxDeleteSettings = new Telerik.WinControls.UI.RadButton();
       this.BxGetListOfSettings = new Telerik.WinControls.UI.RadButton();
       this.BxGetChildrenOfOneFolder = new Telerik.WinControls.UI.RadButton();
       this.BxListAllFolders = new Telerik.WinControls.UI.RadButton();
       this.BxTest = new Telerik.WinControls.UI.RadButton();
       this.radPanel2 = new Telerik.WinControls.UI.RadPanel();
       this.TxMessage = new Telerik.WinControls.UI.RadTextBox();
-      this.BxDeleteSettings = new Telerik.WinControls.UI.RadButton();
-      this.BxFolderForceDelete = new Telerik.WinControls.UI.RadButton();
+      this.BxForceDeleteFolderUsingTreeview = new Telerik.WinControls.UI.RadButton();
       ((System.ComponentModel.ISupportInitialize)(this.radPanel1)).BeginInit();
       this.radPanel1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxOne)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxTwo)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetIdFolder)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxFolderForceDelete)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxDeleteSettings)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetListOfSettings)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetChildrenOfOneFolder)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxListAllFolders)).BeginInit();
@@ -52,8 +55,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.radPanel2)).BeginInit();
       this.radPanel2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxMessage)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxDeleteSettings)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxFolderForceDelete)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxForceDeleteFolderUsingTreeview)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
       this.SuspendLayout();
       // 
@@ -62,6 +64,7 @@
       this.radPanel1.Controls.Add(this.TxOne);
       this.radPanel1.Controls.Add(this.TxTwo);
       this.radPanel1.Controls.Add(this.BxGetIdFolder);
+      this.radPanel1.Controls.Add(this.BxForceDeleteFolderUsingTreeview);
       this.radPanel1.Controls.Add(this.BxFolderForceDelete);
       this.radPanel1.Controls.Add(this.BxDeleteSettings);
       this.radPanel1.Controls.Add(this.BxGetListOfSettings);
@@ -104,6 +107,24 @@
       this.BxGetIdFolder.Size = new System.Drawing.Size(109, 28);
       this.BxGetIdFolder.TabIndex = 1;
       this.BxGetIdFolder.Text = "Get Id Folder";
+      // 
+      // BxFolderForceDelete
+      // 
+      this.BxFolderForceDelete.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxFolderForceDelete.Location = new System.Drawing.Point(156, 167);
+      this.BxFolderForceDelete.Name = "BxFolderForceDelete";
+      this.BxFolderForceDelete.Size = new System.Drawing.Size(199, 28);
+      this.BxFolderForceDelete.TabIndex = 1;
+      this.BxFolderForceDelete.Text = "Force DELETE Folder";
+      // 
+      // BxDeleteSettings
+      // 
+      this.BxDeleteSettings.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxDeleteSettings.Location = new System.Drawing.Point(735, 119);
+      this.BxDeleteSettings.Name = "BxDeleteSettings";
+      this.BxDeleteSettings.Size = new System.Drawing.Size(199, 28);
+      this.BxDeleteSettings.TabIndex = 1;
+      this.BxDeleteSettings.Text = "DELETE Settings of one folder";
       // 
       // BxGetListOfSettings
       // 
@@ -165,23 +186,14 @@
       this.TxMessage.Size = new System.Drawing.Size(1118, 491);
       this.TxMessage.TabIndex = 3;
       // 
-      // BxDeleteSettings
+      // BxForceDeleteFolderUsingTreeview
       // 
-      this.BxDeleteSettings.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxDeleteSettings.Location = new System.Drawing.Point(735, 119);
-      this.BxDeleteSettings.Name = "BxDeleteSettings";
-      this.BxDeleteSettings.Size = new System.Drawing.Size(199, 28);
-      this.BxDeleteSettings.TabIndex = 1;
-      this.BxDeleteSettings.Text = "DELETE Settings of one folder";
-      // 
-      // BxFolderForceDelete
-      // 
-      this.BxFolderForceDelete.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      this.BxFolderForceDelete.Location = new System.Drawing.Point(735, 164);
-      this.BxFolderForceDelete.Name = "BxFolderForceDelete";
-      this.BxFolderForceDelete.Size = new System.Drawing.Size(199, 28);
-      this.BxFolderForceDelete.TabIndex = 1;
-      this.BxFolderForceDelete.Text = "Force DELETE Folder";
+      this.BxForceDeleteFolderUsingTreeview.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.BxForceDeleteFolderUsingTreeview.Location = new System.Drawing.Point(390, 167);
+      this.BxForceDeleteFolderUsingTreeview.Name = "BxForceDeleteFolderUsingTreeview";
+      this.BxForceDeleteFolderUsingTreeview.Size = new System.Drawing.Size(327, 28);
+      this.BxForceDeleteFolderUsingTreeview.TabIndex = 1;
+      this.BxForceDeleteFolderUsingTreeview.Text = "Force DELETE Folder using Treeview";
       // 
       // FormTest2
       // 
@@ -201,6 +213,8 @@
       ((System.ComponentModel.ISupportInitialize)(this.TxOne)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TxTwo)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetIdFolder)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxFolderForceDelete)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxDeleteSettings)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetListOfSettings)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxGetChildrenOfOneFolder)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.BxListAllFolders)).EndInit();
@@ -209,8 +223,7 @@
       this.radPanel2.ResumeLayout(false);
       this.radPanel2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.TxMessage)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxDeleteSettings)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.BxFolderForceDelete)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.BxForceDeleteFolderUsingTreeview)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
       this.ResumeLayout(false);
 
@@ -230,5 +243,6 @@
     private Telerik.WinControls.UI.RadButton BxGetListOfSettings;
     private Telerik.WinControls.UI.RadButton BxDeleteSettings;
     private Telerik.WinControls.UI.RadButton BxFolderForceDelete;
+    private Telerik.WinControls.UI.RadButton BxForceDeleteFolderUsingTreeview;
   }
 }

@@ -13,6 +13,7 @@ using Telerik.WinControls.UI.Docking;
 using TJFramework;
 using TJSettings;
 using TJStandard;
+using TJStandard.Tools;
 using static TestSettingsConsumer.Program;
 using static TJFramework.TJFrameworkManager;
 
@@ -45,6 +46,7 @@ namespace TestSettingsConsumer
       BxGetListOfSettings.Click += EventGetListOfSettings;
       BxDeleteSettings.Click += EventDeleteSettings;
       BxFolderForceDelete.Click += EventFolderForceDelete;
+      BxForceDeleteFolderUsingTreeview.Click += EventFolderForceDelete;
     }
 
     private void PrintInner(string message)
@@ -110,13 +112,54 @@ namespace TestSettingsConsumer
       Print(ReturnCodeFormatter.ToString(code));
     }
 
-    private void EventFolderForceDelete(object sender, EventArgs e)
+    private async void EventFolderForceDelete(object sender, EventArgs e)
     {
       string FolderFullPath = TxOne.Text;
       TxTwo.Text = FolderFullPath;
       TxOne.Clear();
-      ReturnCode code = DbSettings.FolderForceDelete(FolderFullPath);
+
+      if (FolderFullPath.Trim().Length < 1)
+      {
+        Print("ERROR ! Folder name is empty");
+        return;
+      }
+
+      BxFolderForceDelete.Enabled = false;
+      BxForceDeleteFolderUsingTreeview.Enabled = false;
+
+      Application.DoEvents();
+
+      Stopwatch sw;
+
+      CxProcess.Execute(@"e:\restore_test_db.bat","");
+
+      await Task.Delay(500);
+
+      Application.DoEvents();
+
+      ReturnCode code;
+      if ((sender as RadButton).Name == BxFolderForceDelete.Name)
+      {
+        Print("FolderForceDelete");
+        sw = Stopwatch.StartNew();
+        code = DbSettings.FolderForceDelete(FolderFullPath);
+      }
+      else
+      {
+        Print("FolderForceDeleteUsingTreeview");
+        sw = Stopwatch.StartNew();
+        code = DbSettings.FolderForceDeleteUsingTreeview(FolderFullPath);
+      }
+      sw.Stop();
+
+
+      BxFolderForceDelete.Enabled = true;
+      BxForceDeleteFolderUsingTreeview.Enabled = true;
+
+      Application.DoEvents();
+
       Print(ReturnCodeFormatter.ToString(code));
+      Print($"Time = {sw.ElapsedMilliseconds} ms");
     }
   }
 }
