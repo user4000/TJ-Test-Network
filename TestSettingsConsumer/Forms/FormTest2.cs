@@ -124,14 +124,14 @@ namespace TestSettingsConsumer
         return;
       }
 
+      Print("");
+      Print("---------------------------------------------------------------------------------------------");
       BxFolderForceDelete.Enabled = false;
       BxForceDeleteFolderUsingTreeview.Enabled = false;
 
       Application.DoEvents();
 
       Stopwatch sw;
-
-      CxProcess.Execute(@"e:\restore_test_db.bat","");
 
       await Task.Delay(500);
 
@@ -140,18 +140,17 @@ namespace TestSettingsConsumer
       ReturnCode code;
       if ((sender as RadButton).Name == BxFolderForceDelete.Name)
       {
-        Print("FolderForceDelete");
+        Print(" * * *  FolderForceDelete");
         sw = Stopwatch.StartNew();
         code = DbSettings.FolderForceDelete(FolderFullPath);
       }
       else
       {
-        Print("FolderForceDeleteUsingTreeview");
+        Print(" ^ ^ ^  FolderForceDeleteUsingTreeview");
         sw = Stopwatch.StartNew();
         code = DbSettings.FolderForceDeleteUsingTreeview(FolderFullPath);
       }
       sw.Stop();
-
 
       BxFolderForceDelete.Enabled = true;
       BxForceDeleteFolderUsingTreeview.Enabled = true;
@@ -160,6 +159,14 @@ namespace TestSettingsConsumer
 
       Print(ReturnCodeFormatter.ToString(code));
       Print($"Time = {sw.ElapsedMilliseconds} ms");
+
+      await Task.Delay(500);
+
+      code = DbSettings.FolderDelete(FolderFullPath, FolderFullPath);
+
+      Print($"CHECK is folder deleted: {ReturnCodeFormatter.ToString(code)}");
+
+      CxProcess.Execute(@"e:\restore_test_db.bat", "");
     }
   }
 }

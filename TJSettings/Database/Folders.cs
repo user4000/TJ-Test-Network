@@ -91,11 +91,13 @@ namespace TJSettings
       return code;
     }
 
-    public ReturnCode FolderForceDeleteUsingTreeview(string FolderPath) 
+    private ReturnCode FolderForceDeleteUsingTreeviewOldVersionDeprecated(string FolderPath)
     {
-      //Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> {FolderPath}");
+      // Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> {FolderPath}");
       // This method uses RadTreeView class to perform search operations //
       ReturnCode code = ReturnCodeFactory.Error();
+
+      FolderPath = AddRootFolderNameIfNotSpecified(FolderPath);
 
       int IdFolder = GetIdFolder(FolderPath);
 
@@ -105,10 +107,13 @@ namespace TJSettings
 
       bool FlagFound = false;
 
+      int count = 0;
+
       void SearchNode(RadTreeNode node)
       {
         if (FlagFound) return;
-        if (GetIdFolder(node) == IdFolder)
+        //if (GetIdFolder(node) == IdFolder)
+        if (node.FullPath == FolderPath)
         {
           FlagFound = true;
           //Trace.WriteLine($"Found !!! ---> {node.FullPath}");
@@ -130,6 +135,7 @@ namespace TJSettings
         foreach (var item in node.Nodes) LocalMethodDeleteFolderAndAllChildFolders(item);
         ReturnCode result = FolderDelete(node.FullPath, string.Empty);
         if (IdFolder == GetIdFolder(node)) code = result;
+        count++;
         //Trace.WriteLine($@"Delete folder /\/\/\/\/\/\/\ === {node.FullPath}");
       }
 
@@ -147,16 +153,94 @@ namespace TJSettings
       form.Close();
 
       //Trace.WriteLine($@" >>>>>>>>>>>>>>>>>>>>> {ReturnCodeFormatter.ToString(code)}");
-
+      code.StringNote += $" Folders processed = {count}";
       return code;
     }
 
-    public ReturnCode FolderForceDelete(string FolderPath) 
+    public ReturnCode FolderForceDeleteUsingTreeview(string FolderPath)
+    {
+      // Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> {FolderPath}");
+      // This method uses RadTreeView class to perform search operations //
+      ReturnCode code = ReturnCodeFactory.Error();
+
+      FolderPath = AddRootFolderNameIfNotSpecified(FolderPath);
+     
+      int IdFolder = GetIdFolder(FolderPath);
+
+      if (FolderNotFound(IdFolder)) return FolderNotFound();
+
+      if (IdFolder == DbManager.IdFolderRoot) return ReturnCodeFactory.Error("The root folder cannot be specified as an argument to this function.");
+
+      //Trace.WriteLine($"FolderForceDelete(string FolderPath)  ---> Point 1 --- IdFolder = {IdFolder}");
+
+      bool FlagFound = false;
+
+      int count = 0;
+
+      Stack<int> stack = new Stack<int>();
+
+      void MarkNodeToBeDeleted(RadTreeNode node)
+      {
+        stack.Push(GetIdFolder(node));
+        //Trace.WriteLine($"Push to stack >>> {node.FullPath} === {x}");
+        foreach (var item in node.Nodes) MarkNodeToBeDeleted(item);
+      }
+
+      void SearchNode(RadTreeNode node)
+      {
+        if (FlagFound) return;
+        //if (GetIdFolder(node) == IdFolder)
+        if (node.FullPath == FolderPath)
+        {
+          FlagFound = true;
+          MarkNodeToBeDeleted(node);
+        }
+        if (!FlagFound) foreach (var item in node.Nodes) SearchNode(item);
+      }
+
+      DataTable table = GetTableFolders();
+      FxTreeView form = new FxTreeView();
+      form.Visible = false;
+      FillTreeView(form.TvFolders, table);
+
+      foreach (var item in form.TvFolders.Nodes) SearchNode(item);
+
+      using (SQLiteConnection connection = GetSqliteConnection())
+      using (SQLiteCommand command = new SQLiteCommand(connection).ZzOpenConnection())
+        while (stack.Count > 0)
+        {
+          int x = stack.Pop();          
+          command.Parameters.Clear();
+          command.ZzAdd("@IdFolder", x).ZzExecuteNonQuery(DbManager.SqlDeleteAllSettingsOfOneFolder);
+          if (stack.Count > 0) command.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
+          count++;
+        }
+
+      code = FolderDelete(FolderPath, FolderPath);
+
+      form.TvFolders.DataSource = null;
+      table.Clear();
+      form.TvFolders.Dispose();
+      table.Dispose();
+      form.Close();
+
+      //Trace.WriteLine($@" >>>>>>>>>>>>>>>>>>>>> {ReturnCodeFormatter.ToString(code)}");
+      code.StringNote += $" Folders processed = {count}";
+      return code;
+    }
+
+    public ReturnCode FolderForceDelete(string FolderPath)
     {
       ReturnCode code = ReturnCodeFactory.Error();
       int IdFolder = GetIdFolder(FolderPath);
+
       if (FolderNotFound(IdFolder)) return FolderNotFound();
+
+      if (IdFolder == DbManager.IdFolderRoot) return ReturnCodeFactory.Error("The root folder cannot be specified as an argument to this function.");
+
       List<int> list = GetListOfIdFolders(IdFolder);
+
+      int count = 0;
 
       void ProcessOneFolder(SQLiteCommand cmd, int InnerIdFolder)
       {
@@ -170,6 +254,7 @@ namespace TJSettings
         cmd.Parameters.Clear();
         cmd.ZzAdd("@IdFolder", InnerIdFolder).ZzExecuteNonQuery(DbManager.SqlDeleteAllSettingsOfOneFolder);
         cmd.ZzExecuteNonQuery(DbManager.SqlFolderDelete);
+        count++;
       }
 
       using (SQLiteConnection connection = GetSqliteConnection())
@@ -179,7 +264,9 @@ namespace TJSettings
       }
 
       DeleteAllSettingsOfOneFolder(IdFolder);
-      return FolderDelete(IdFolder, FolderPath);
+      code = FolderDelete(IdFolder, FolderPath);
+      code.StringNote += $" Folders processed = {++count}";
+      return code;
     }
 
     public string AddRootFolderNameIfNotSpecified(string FullPath)
@@ -214,14 +301,14 @@ namespace TJSettings
       int IdFolder = 0;
       string sql = string.Empty;
       using (SQLiteConnection connection = GetSqliteConnection())
-      using (SQLiteCommand command = new SQLiteCommand(connection).ZzText(DbManager.SqlGetIdFolder).ZzOpenConnection() )
+      using (SQLiteCommand command = new SQLiteCommand(connection).ZzText(DbManager.SqlGetIdFolder).ZzOpenConnection())
       {
         for (int i = 0; i < names.Length; i++)
         {
           IdFolder = command.ZzAdd("@IdParent", IdFolder).ZzAdd("@NameFolder", names[i]).ZzGetScalarInteger();
           command.Parameters.Clear();
           if (IdFolder < 0) break;
-        }        
+        }
       }
       return IdFolder;
     }
@@ -311,12 +398,12 @@ namespace TJSettings
       int x = 0;
       using (SQLiteConnection connection = GetSqliteConnection())
       using (SQLiteCommand command = new SQLiteCommand(DbManager.SqlFolderGetIdChildren, connection).ZzAdd("@IdFolder", IdFolder))
-      using (SQLiteDataReader reader = command.ZzOpenConnection().ExecuteReader())    
+      using (SQLiteDataReader reader = command.ZzOpenConnection().ExecuteReader())
         while (reader.Read())
         {
           x = reader.GetInt32(0);
           if (x > 0) list.Add(x);
-        }      
+        }
       return list;
     }
 

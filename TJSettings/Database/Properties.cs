@@ -12,8 +12,6 @@ namespace TJSettings
 
     public RadTreeView VxTreeview { get; private set; } = new RadTreeView();
 
-    public DataTable VxFolders { get; private set; } = null;
-
     public char SingleQuote { get; } = '\'';
 
     public int IdFolderNotFound { get; } = -1;
