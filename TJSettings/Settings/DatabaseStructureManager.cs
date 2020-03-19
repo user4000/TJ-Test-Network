@@ -92,6 +92,8 @@ namespace TJSettings
 
     public string SqlFolderGetChildren { get; private set; } = string.Empty;
 
+    public string SqlFolderGetIdChildren { get; private set; } = string.Empty;
+
     public DatabaseStructureManager()
     {
       InitVariables();
@@ -160,8 +162,6 @@ namespace TJSettings
       "SELECT 4, COUNT(*) FROM sqlite_master WHERE replace(sql,' ','') LIKE 'CREATEVIEWV_SETTINGSAS%SELECTA.IdFolder%A.IdSetting%A.IdType%B.NameType%A.SettingValue%A.Rank%BooleanValue%FROMSETTINGSA%LEFTJOIN%TYPESB%ON%A.IdType%=%B.IdType%' " +
       ")";
 
-      //Trace.WriteLine(SqlCheckDatabaseStructure);
-
       SqlGetRandomIdFolder = $"SELECT {CnFoldersIdFolder} FROM (SELECT {CnFoldersIdFolder} FROM {TnFolders} ORDER BY Random() LIMIT 1) UNION SELECT -1 as {CnFoldersIdFolder} ORDER BY 1 DESC";
 
       SqlGetRandomIdSetting = $"SELECT {CnSettingsIdSetting} FROM (SELECT {CnSettingsIdSetting} FROM {TnSettings} WHERE {CnSettingsIdFolder}=@IdFolder ORDER BY Random() LIMIT 1) UNION SELECT '' as {CnSettingsIdSetting} ORDER BY 1 DESC";
@@ -180,6 +180,7 @@ namespace TJSettings
 
       SqlFolderGetChildren = $"SELECT {CnFoldersNameFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder AND {CnFoldersIdFolder}!={CnFoldersIdParent}";
 
+      SqlFolderGetIdChildren = $"SELECT {CnFoldersIdFolder} FROM {TnFolders} WHERE {CnFoldersIdParent}=@IdFolder AND {CnFoldersIdFolder}!={CnFoldersIdParent}";
     }
 
     public ReturnCode CreateNewDatabase(string FileName)

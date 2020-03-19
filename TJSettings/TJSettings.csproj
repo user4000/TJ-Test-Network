@@ -73,6 +73,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\Folders.cs" />
+    <Compile Include="Database\GetSetting.cs" />
+    <Compile Include="Database\WinFormControls.cs" />
+    <Compile Include="Database\MethodsForTest.cs" />
+    <Compile Include="Database\Settings.cs" />
+    <Compile Include="Database\SaveSetting.cs" />
+    <Compile Include="Database\Properties.cs" />
     <Compile Include="Extensions\XxSQLiteCommand.cs" />
     <Compile Include="Form\FxTreeView.cs">
       <SubType>Form</SubType>
@@ -90,7 +97,7 @@
     <Compile Include="Settings\DatabaseStructureManager.cs" />
     <Compile Include="Settings\Errors.cs" />
     <Compile Include="Settings\ItemNameValidation.cs" />
-    <Compile Include="Settings\LocalDatabaseOfSettings.cs" />
+    <Compile Include="Database\LocalDatabaseOfSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TJStandard\TJStandard.csproj">
