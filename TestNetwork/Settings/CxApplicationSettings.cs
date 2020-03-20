@@ -61,8 +61,6 @@ namespace TestNetwork
       //Log.Save(MsgType.Debug, "public override void PropertyValueChanged(string PropertyName)", PropertyName);
       if (PropertyName == nameof(MainPageOrientation))
         TJFrameworkManager.Service.SetMainPageViewOrientation(MainPageOrientation);
-
-
     }
 
     public override void EventBeforeSaving()
