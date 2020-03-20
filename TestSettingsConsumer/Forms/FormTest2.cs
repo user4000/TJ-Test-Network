@@ -26,6 +26,8 @@ namespace TestSettingsConsumer
 
     private List<Setting> ListSetting = new List<Setting>();
 
+    private Faker VxFaker = new Faker();
+
     public FormTest2()
     {
       InitializeComponent();
@@ -45,8 +47,11 @@ namespace TestSettingsConsumer
       BxGetIdFolder.Click += EventGetIdFolder;
       BxGetListOfSettings.Click += EventGetListOfSettings;
       BxDeleteSettings.Click += EventDeleteSettings;
+
       BxFolderForceDelete.Click += EventFolderForceDelete;
+      BxFolderForceDeleteAsync.Click += EventFolderForceDelete;
       BxForceDeleteFolderUsingTreeview.Click += EventFolderForceDelete;
+      BxCreateTestBranch.Click += EventCreateTestBranch;
     }
 
     private void PrintInner(string message)
@@ -112,6 +117,37 @@ namespace TestSettingsConsumer
       Print(ReturnCodeFormatter.ToString(code));
     }
 
+    private void EventCreateTestBranch(object sender, EventArgs e)
+    {
+      string MainFolder = "TestBranchForDelete300";
+      if (DbSettings.FolderExists(MainFolder))
+      {
+        Ms.Message("ERROR!", $"Folder {MainFolder} already exists").Wire(BxCreateTestBranch).Fail(); return;
+      }
+
+      ReturnCode code = DbSettings.FolderInsert(DbSettings.RootFolderName, MainFolder);
+      int IdParent = code.IdObject;
+
+      TxMessage.Clear();
+
+      for (int i = 1; i < 301; i++)
+      {
+        code = DbSettings.FolderInsert(IdParent, VxFaker.Hacker.Phrase() + $"_{i}");
+        Print($"Folder >>> {i} {code.Success}");
+        int IdParent2 = code.IdObject;
+        /*if (code.Success)
+          for (int j = 1; j < 11; j++)
+          {
+            code = DbSettings.FolderInsert(IdParent2, VxFaker.Person.FullName + $"_{i}_{j}");
+            Print($"   Folder --- {i} --- {j} --- {code.Success}");
+          }*/
+      }
+
+      TxMessage.Clear();
+      Print("Test branch created.");
+
+    }
+
     private async void EventFolderForceDelete(object sender, EventArgs e)
     {
       string FolderFullPath = TxOne.Text;
@@ -131,25 +167,35 @@ namespace TestSettingsConsumer
 
       Application.DoEvents();
 
-      Stopwatch sw;
+      Stopwatch sw = new Stopwatch();
 
       await Task.Delay(500);
 
       Application.DoEvents();
 
-      ReturnCode code;
+      ReturnCode code = ReturnCodeFactory.Error("ERROR ! No any action was performed!");
+
       if ((sender as RadButton).Name == BxFolderForceDelete.Name)
       {
         Print(" * * *  FolderForceDelete");
         sw = Stopwatch.StartNew();
         code = DbSettings.FolderForceDelete(FolderFullPath);
       }
-      else
+
+      if ((sender as RadButton).Name == BxFolderForceDeleteAsync.Name)
+      {
+        Print(@" /\/\/\  FolderForceDeleteAsync");
+        sw = Stopwatch.StartNew();
+        code = await DbSettings.FolderForceDeleteAsync(FolderFullPath);
+      }
+
+      if ((sender as RadButton).Name == BxForceDeleteFolderUsingTreeview.Name)
       {
         Print(" ^ ^ ^  FolderForceDeleteUsingTreeview");
         sw = Stopwatch.StartNew();
         code = DbSettings.FolderForceDeleteUsingTreeview(FolderFullPath);
       }
+
       sw.Stop();
 
       BxFolderForceDelete.Enabled = true;

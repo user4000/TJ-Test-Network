@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using System.Threading.Tasks;
 using TJStandard;
 
 namespace TJSettings
@@ -27,6 +28,11 @@ namespace TJSettings
       command.CommandText = sql; return command.ExecuteNonQuery();
     }
 
+    public static async Task<int> ZzExecuteNonQueryAsync(this SQLiteCommand command, string sql)
+    {
+      command.CommandText = sql; return await command.ExecuteNonQueryAsync();
+    }
+
     public static int ZzGetScalarInteger(this SQLiteCommand command, string sql)
     {
       command.CommandText = sql;
@@ -36,6 +42,11 @@ namespace TJSettings
     public static int ZzGetScalarInteger(this SQLiteCommand command)
     {
       return CxConvert.ToInt32(command.ExecuteScalar(), -1);
+    }
+
+    public static async Task<int> ZzGetScalarIntegerAsync(this SQLiteCommand command)
+    {
+      return CxConvert.ToInt32(await command.ExecuteScalarAsync(), -1);
     }
 
     public static string ZzGetScalarString(this SQLiteCommand command, string sql)

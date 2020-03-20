@@ -84,7 +84,7 @@ namespace TJSettings
       }
     }
 
-    public ReceivedValueText GetStringValueOfSetting(string FolderPath, string IdSetting) // TODO: Test it and compare with previous method
+    public ReceivedValueText GetStringValueOfSetting(string FolderPath, string IdSetting) 
     {
       int IdFolder = GetIdFolder(FolderPath);
       if (IdFolder < 0) return ReceivedValueText.Error((int)Errors.FolderNotFound, "Folder not found");
