@@ -19,7 +19,7 @@ namespace TestNetwork
   {
     private int HeightCollapsed { get; } = 82;
     private int HeightExpanded { get; } = 126;
-    private int HeightForLongText { get; } = 200;
+    private int HeightForLongText { get; } = 200; // default = 200;
     private TreeviewManager TvManager { get; set; } = null;
     private GridSettings VxGridSettings { get; set; } = null;
     private DataTable TableFolders { get; set; } = null;
@@ -70,6 +70,9 @@ namespace TestNetwork
 
       TxDatabaseFile.ReadOnly = true;
       TxFolderDelete.ReadOnly = true;
+
+      StxFolder.ReadOnly = !Program.ApplicationSettings.AllowEditSettingFolderName;
+      StxFile.ReadOnly = !Program.ApplicationSettings.AllowEditSettingFileName;
 
       PvEditor.SelectedPage = PgEmpty;
       PvEditor.ZzPagesVisibility(ElementVisibility.Collapsed);
@@ -354,7 +357,6 @@ namespace TestNetwork
         PnTreeview.SizeInfo.AbsoluteSize = new Size((39 * PnUpper.Width) / 100, 0);
     }
 
-
     private void EventSettingOneRowSelected() // Event - user selected a setting in the grid //
     {
       bool OneRowSelected = CurrentIdSetting.Length > 0;
@@ -365,8 +367,10 @@ namespace TestNetwork
 
       TxSettingRename.Text = CurrentIdSetting;
       TxSettingDelete.Text = CurrentIdSetting;
+
       if (PgSettingDelete.Enabled != OneRowSelected) PgSettingDelete.Enabled = OneRowSelected;
       if (PgSettingRename.Enabled != OneRowSelected) PgSettingRename.Enabled = OneRowSelected;
+      if (PgSettingChange.Enabled != OneRowSelected) PgSettingChange.Enabled = OneRowSelected;
 
       if (OneRowSelected && (PvSettings.SelectedPage == PgSettingMessage))
       {
@@ -384,11 +388,17 @@ namespace TestNetwork
     {
       CurrentIdSetting = string.Empty;
       CurrentSetting = null;
-      BxSettingChange.Enabled = false;
+
       PgSettingDelete.Enabled = false;
       PgSettingRename.Enabled = false;
+      PgSettingChange.Enabled = false;
+      if (PvSettings.SelectedPage != PgSettingEmpty) PvSettings.SelectedPage = PgSettingEmpty;
+
+      /*
+      BxSettingChange.Enabled = false;
       BxSettingUp.Enabled = false;
       BxSettingDown.Enabled = false;
+      */
     }
 
     private async Task RefreshGridSettingsAndClearSelection()
@@ -450,10 +460,10 @@ namespace TestNetwork
           StxPassword.Text = string.Empty;
           break;
         case TypeSetting.File:
-          StxFile.Text = string.Empty;
+          StxFile.Text = CurrentSetting.SettingValue;
           break;
         case TypeSetting.Folder:
-          StxFolder.Text = string.Empty;
+          StxFolder.Text = CurrentSetting.SettingValue;
           break;
         case TypeSetting.Font:
           StxFont.Text = CurrentSetting.SettingValue;

@@ -40,11 +40,19 @@ namespace TestNetwork
     public StripViewAlignment MainPageOrientation { get; set; } = StripViewAlignment.Top;
 
     [Category("User interface")]
-    [DisplayName("Font of a hierarchy folder list")]
+    [DisplayName("Font of a hierarchical folder list")]
     public Font TreeViewFont { get; set; } = new Font("Verdana", 9.75F);
 
     [Browsable(false)]
     public Size TreeViewSize { get; set; } = new Size(400, 0);
+
+    [Category("Setting value editor")]
+    [DisplayName("Allow direct editing of \"File name\" text field")]
+    public bool AllowEditSettingFileName { get; set; } = true;
+
+    [Category("Setting value editor")]
+    [DisplayName("Allow direct editing of \"Folder name\" text field")]
+    public bool AllowEditSettingFolderName { get; set; } = true;
 
     public override void PropertyValueChanged(string PropertyName)
     {
@@ -53,6 +61,8 @@ namespace TestNetwork
       //Log.Save(MsgType.Debug, "public override void PropertyValueChanged(string PropertyName)", PropertyName);
       if (PropertyName == nameof(MainPageOrientation))
         TJFrameworkManager.Service.SetMainPageViewOrientation(MainPageOrientation);
+
+
     }
 
     public override void EventBeforeSaving()

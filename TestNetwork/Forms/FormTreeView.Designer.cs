@@ -30,7 +30,7 @@
         {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTreeView));
-      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition3 = new Telerik.WinControls.UI.TableViewDefinition();
+      Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
       this.TvFolders = new Telerik.WinControls.UI.RadTreeView();
       this.ImageListFolders = new System.Windows.Forms.ImageList(this.components);
       this.PvFolders = new Telerik.WinControls.UI.RadPageView();
@@ -268,7 +268,7 @@
       this.TxFolderAdd.Name = "TxFolderAdd";
       this.TxFolderAdd.RightButtonItems.AddRange(new Telerik.WinControls.RadItem[] {
             this.BxFolderAdd});
-      this.TxFolderAdd.Size = new System.Drawing.Size(344, 23);
+      this.TxFolderAdd.Size = new System.Drawing.Size(344, 21);
       this.TxFolderAdd.TabIndex = 5;
       // 
       // BxFolderAdd
@@ -575,7 +575,7 @@
       this.GvSettings.MasterTemplate.AllowRowResize = false;
       this.GvSettings.MasterTemplate.AutoGenerateColumns = false;
       this.GvSettings.MasterTemplate.EnableGrouping = false;
-      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition3;
+      this.GvSettings.MasterTemplate.ViewDefinition = tableViewDefinition1;
       this.GvSettings.Name = "GvSettings";
       this.GvSettings.ShowGroupPanel = false;
       this.GvSettings.ShowGroupPanelScrollbars = false;
@@ -597,7 +597,7 @@
       this.PvSettings.ItemSizeMode = Telerik.WinControls.UI.PageViewItemSizeMode.EqualWidth;
       this.PvSettings.Location = new System.Drawing.Point(0, 0);
       this.PvSettings.Name = "PvSettings";
-      this.PvSettings.SelectedPage = this.PgSettingRename;
+      this.PvSettings.SelectedPage = this.PgSettingMessage;
       this.PvSettings.Size = new System.Drawing.Size(513, 253);
       this.PvSettings.TabIndex = 1;
       this.PvSettings.Tag = "Normal Size = 82";
